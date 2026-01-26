@@ -1,30 +1,31 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <stdlib.h>
-
 #include "raylib.h"
 
-typedef struct 
-{
-  Texture2D texture;
-} sprite_t;
+namespace engine {
 
-inline static sprite_t* init_sprite(const char* path) 
-{
-  sprite_t* s = calloc(1, sizeof(sprite_t));
-  if (!s) {
-    return NULL; 
-  }
+class Sprite {
+public:
+  explicit Sprite(const char* path);
+  ~Sprite();
+  
+  // remove copy
+  Sprite(const Sprite&) = delete;
+  Sprite& operator=(const Sprite&) = delete;
+  
+  // accept move
+  Sprite(Sprite&& other) noexcept;
+  Sprite& operator=(Sprite&& other) noexcept;
+  
+  void Draw(float x, float y) const;
+  void Draw(Vector2 pos) const;
+  
+private:
+  Texture2D _texture;
+  bool _loaded;
+};
 
-  s->texture = LoadTexture(path);
-
-  return s;
-}
-
-#define draw_sprite(s) \
-  do { \
-    DrawTexture(s->texture, 100, 100, WHITE); \
-  } while(0) 
+} // namespace engine
 
 #endif // SPRITE_H
