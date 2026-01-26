@@ -12,7 +12,7 @@ int main() {
   engine::Engine engine(config);
   
   engine.Run([](engine::Engine& eng) {
-    eng.AddEntity(std::make_unique<game::Player>("assets/Beaf.png"));
+    eng.AddEntity(std::make_unique<game::Player>("assets/actors/monkey/Idle.png"));
   });
   
   return 0;

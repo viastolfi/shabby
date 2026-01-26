@@ -9,7 +9,7 @@ Sprite::Sprite(const char* path)
   _loaded = true;
 }
 
-Sprite::~Sprite() 
+Sprite::~Sprite()
 {
   if (_loaded) 
     UnloadTexture(_texture);
@@ -49,6 +49,12 @@ void Sprite::Draw(Vector2 pos) const
 {
   if (_loaded)
     DrawTextureV(_texture, pos, WHITE);
+}
+
+void Sprite::Draw(Rectangle frame_rec, Vector2 pos) const 
+{
+  if (_loaded)
+    DrawTextureRec(_texture, frame_rec, pos, WHITE);
 }
 
 } // namespace engine

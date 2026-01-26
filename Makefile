@@ -8,7 +8,8 @@ CPPS = \
 	$(SRC)/engine/entities/entity_manager.cpp \
 	$(SRC)/engine/core/engine.cpp \
 	$(SRC)/engine/core/sprite/sprite.cpp \
-	$(SRC)/game/player.cpp
+	$(SRC)/game/player.cpp \
+	$(SRC)/engine/core/sprite/animated_sprite.cpp
 
 OBJ = \
 	$(BUILD)/main.o \
@@ -16,7 +17,8 @@ OBJ = \
 	$(BUILD)/engine/entities/entity_manager.o \
 	$(BUILD)/engine/core/engine.o \
 	$(BUILD)/engine/core/sprite/sprite.o \
-	$(BUILD)/game/player.o
+	$(BUILD)/game/player.o \
+	$(BUILD)/engine/core/sprite/animated_sprite.o
 
 CXX = g++
 
