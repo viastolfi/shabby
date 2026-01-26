@@ -9,7 +9,9 @@ CPPS = \
 	$(SRC)/engine/core/engine.cpp \
 	$(SRC)/engine/core/sprite/sprite.cpp \
 	$(SRC)/game/player.cpp \
-	$(SRC)/engine/core/sprite/animated_sprite.cpp
+	$(SRC)/engine/core/sprite/animated_sprite.cpp \
+	$(SRC)/engine/scene/scene.cpp \
+	$(SRC)/game/main_scene.cpp
 
 OBJ = \
 	$(BUILD)/main.o \
@@ -18,7 +20,9 @@ OBJ = \
 	$(BUILD)/engine/core/engine.o \
 	$(BUILD)/engine/core/sprite/sprite.o \
 	$(BUILD)/game/player.o \
-	$(BUILD)/engine/core/sprite/animated_sprite.o
+	$(BUILD)/engine/core/sprite/animated_sprite.o \
+	$(BUILD)/engine/scene/scene.o \
+	$(BUILD)/game/main_scene.o
 
 CXX = g++
 
@@ -42,6 +46,7 @@ $(BUILD)/%.o: $(SRC)/%.cpp
 	@mkdir -p $(BUILD)/engine/core
 	@mkdir -p $(BUILD)/engine/core/sprite
 	@mkdir -p $(BUILD)/game
+	@mkdir -p $(BUILD)/engine/scene
 	$(CXX) $(CXXFLAGS) $(RAYLIB_INC) -c $< -o $@
 
 check-platform:
