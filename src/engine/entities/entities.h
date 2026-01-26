@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "engine/core/sprite/sprite.h"
+#include "engine/core/sprite/animated_sprite.h"
 
 namespace engine {
 
@@ -21,16 +22,15 @@ public:
   
   virtual void Update(float dt);
   virtual void Draw() const;
-
-  Vector2 GetPos();
-
-protected:
-  void SetPos(Vector2 p);
   
+  Vector2 GetPos() const;
 private:
   std::unique_ptr<Sprite> _sprite;
   int _velocity;
   Vector2 _pos;
+
+protected:
+  void SetPos(Vector2 p);
 };
 
 } // namespace engine

@@ -8,7 +8,7 @@ namespace engine {
 class Sprite {
 public:
   explicit Sprite(const char* path);
-  ~Sprite();
+  virtual ~Sprite(); 
   
   // remove copy
   Sprite(const Sprite&) = delete;
@@ -18,9 +18,12 @@ public:
   Sprite(Sprite&& other) noexcept;
   Sprite& operator=(Sprite&& other) noexcept;
   
-  void Draw(float x, float y) const;
-  void Draw(Vector2 pos) const;
-  
+  virtual void Draw(float x, float y) const;
+  virtual void Draw(Vector2 pos) const;  
+  virtual void Draw(Rectangle frame_rec, Vector2 pos) const;
+protected:
+  const Texture2D& GetTexture() const { return _texture; }
+
 private:
   Texture2D _texture;
   bool _loaded;
