@@ -9,7 +9,8 @@ namespace engine {
 
 class Entity {
 public:
-  explicit Entity(const char* texture_path);
+  explicit Entity(std::unique_ptr<Sprite> s);
+  explicit Entity(std::unique_ptr<Sprite> s, Vector2 pos);
   virtual ~Entity() = default;
   
   // remove copy

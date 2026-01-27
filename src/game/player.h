@@ -2,13 +2,14 @@
 #define PLAYER_H
 
 #include "engine/entities/entities.h"
-#include "raylib.h"
+#include "raymath.h"
 
 namespace game {
 
 class Player : public engine::Entity {
 public:
-  explicit Player(const char* texture_path);
+  explicit Player(std::unique_ptr<engine::Sprite> s);
+  explicit Player(std::unique_ptr<engine::Sprite> s, Vector2 pos);
   ~Player() override = default;
   
   void Update(float dt) override;

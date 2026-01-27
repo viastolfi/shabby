@@ -18,6 +18,11 @@ public:
   Scene& operator=(Scene&&) = default;
 
   void AddEntity(std::unique_ptr<Entity> e);
+  
+  template<typename T, typename... Args>
+  void AddEntity(Args&&... args) {
+    AddEntity(std::make_unique<T>(std::forward<Args>(args)...));
+  }
 
   void UpdateScene(float dt);
   void DrawScene() const;

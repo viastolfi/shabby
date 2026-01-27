@@ -11,7 +11,8 @@ CPPS = \
 	$(SRC)/game/player.cpp \
 	$(SRC)/engine/core/sprite/animated_sprite.cpp \
 	$(SRC)/engine/scene/scene.cpp \
-	$(SRC)/game/main_scene.cpp
+	$(SRC)/game/main_scene.cpp \
+	$(SRC)/game/ennemy.cpp
 
 OBJ = \
 	$(BUILD)/main.o \
@@ -22,7 +23,8 @@ OBJ = \
 	$(BUILD)/game/player.o \
 	$(BUILD)/engine/core/sprite/animated_sprite.o \
 	$(BUILD)/engine/scene/scene.o \
-	$(BUILD)/game/main_scene.o
+	$(BUILD)/game/main_scene.o \
+	$(BUILD)/game/ennemy.o
 
 CXX = g++
 
@@ -34,7 +36,7 @@ RAYLIB_LIB = -L$(RAYLIB_FOLDER)/lib -l:libraylib.a -lm
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
-.PHONY: all clean check-platform
+.PHONY: all clean check-platform clean-src
 
 all: check-platform $(BUILD)/shabby
 
@@ -68,3 +70,5 @@ clean:
 	rm -rf $(BUILD)
 	rm -rf $(RAYLIB_FOLDER)
 
+clean-src:
+	rm -rf $(BUILD)
