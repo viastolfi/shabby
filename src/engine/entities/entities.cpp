@@ -2,10 +2,16 @@
 
 namespace engine {
 
-Entity::Entity(const char* texture_path) 
-  : _sprite(std::make_unique<AnimatedSprite>(texture_path,4,1,1)), 
+Entity::Entity(std::unique_ptr<Sprite> s) 
+  : _sprite(std::move(s)), 
     _velocity(10),
     _pos(Vector2{100.0f, 100.0f})
+{}
+
+Entity::Entity(std::unique_ptr<Sprite> s, Vector2 pos)
+  : _sprite(std::move(s)),
+    _velocity(10),
+    _pos(pos)
 {}
 
 Vector2 Entity::GetPos() const

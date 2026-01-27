@@ -1,10 +1,13 @@
 #include "player.h"
-#include "raymath.h"
 
 namespace game {
 
-Player::Player(const char* texture_path) 
-  : Entity(texture_path) 
+Player::Player(std::unique_ptr<engine::Sprite> s) 
+  : Entity(std::move(s)) 
+{}
+
+Player::Player(std::unique_ptr<engine::Sprite> s, Vector2 pos)
+  : Entity(std::move(s), pos)
 {}
 
 void Player::Update(float dt) {
