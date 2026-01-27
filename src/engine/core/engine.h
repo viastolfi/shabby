@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <functional>
-#include "engine/entities/entity_manager.h"
+#include "engine/scene/scene.h"
 
 namespace engine {
 
@@ -23,13 +23,12 @@ public:
   Engine(Engine&&) = default;
   Engine& operator=(Engine&&) = default;
   
-  void AddEntity(std::unique_ptr<Entity> entity);
-  
-  void Run(std::function<void(Engine&)> setup_callback);
+  void LoadScene(std::unique_ptr<Scene> s);
+  void Run();
   
 private:
   EngineConfig _config;
-  std::unique_ptr<EntityManager> _entity_manager;
+  std::unique_ptr<Scene> _loaded_scene;
   bool _initialized;
 };
 
