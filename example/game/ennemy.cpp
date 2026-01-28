@@ -11,8 +11,6 @@ Ennemy::Ennemy(std::unique_ptr<engine::Sprite> s, Vector2 pos)
 {}
 
 void Ennemy::Update(float dt)
-{
-  Entity::Update(dt);
-}
+{}
 
 } // namespace game

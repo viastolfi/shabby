@@ -21,8 +21,8 @@ public:
   Entity(Entity&&) = default;
   Entity& operator=(Entity&&) = default;
   
-  virtual void Update(float dt);
-  virtual void Draw() const;
+  virtual void Update(float dt) = 0;
+  void Draw() const;
   
   Vector2 GetPos() const;
 private:
