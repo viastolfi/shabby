@@ -1,55 +1,69 @@
 SRC = src
 BUILD = build
 RAYLIB_FOLDER = raylib-5.5_linux_amd64
+LIB_DIR = lib
+EXAMPLE = example
+STATIC_LIB = $(LIB_DIR)/libshabby.a
 
-CPPS = \
-	$(SRC)/main.cpp \
-	$(SRC)/engine/entities/entities.cpp \
-	$(SRC)/engine/entities/entity_manager.cpp \
-	$(SRC)/engine/core/engine.cpp \
-	$(SRC)/engine/core/sprite/sprite.cpp \
-	$(SRC)/game/player.cpp \
-	$(SRC)/engine/core/sprite/animated_sprite.cpp \
-	$(SRC)/engine/scene/scene.cpp \
-	$(SRC)/game/main_scene.cpp \
-	$(SRC)/game/ennemy.cpp
+SHABBY_LIB_SRC = \
+	$(SRC)/entities/entities.cpp \
+	$(SRC)/entities/entity_manager.cpp \
+	$(SRC)/core/engine/engine.cpp \
+	$(SRC)/core/sprite/sprite.cpp \
+	$(SRC)/core/sprite/animated_sprite.cpp \
+	$(SRC)/scene/scene.cpp 
 
-OBJ = \
+EXAMPLE_SRC = \
+	$(EXAMPLE)/main.cpp \
+	$(EXAMPLE)/game/player.cpp \
+	$(EXAMPLE)/game/main_scene.cpp \
+	$(EXAMPLE)/game/ennemy.cpp
+
+SHABBY_LIB_OBJ = \
+	$(BUILD)/entities/entities.o \
+	$(BUILD)/entities/entity_manager.o \
+	$(BUILD)/core/engine/engine.o \
+	$(BUILD)/core/sprite/sprite.o \
+	$(BUILD)/core/sprite/animated_sprite.o \
+	$(BUILD)/scene/scene.o 
+
+EXAMPLE_OBJ = \
 	$(BUILD)/main.o \
-	$(BUILD)/engine/entities/entities.o \
-	$(BUILD)/engine/entities/entity_manager.o \
-	$(BUILD)/engine/core/engine.o \
-	$(BUILD)/engine/core/sprite/sprite.o \
 	$(BUILD)/game/player.o \
-	$(BUILD)/engine/core/sprite/animated_sprite.o \
-	$(BUILD)/engine/scene/scene.o \
 	$(BUILD)/game/main_scene.o \
 	$(BUILD)/game/ennemy.o
 
 CXX = g++
 
-CXXFLAGS = -std=c++17 -Wall -Wextra -g -Isrc
+CXXFLAGS = -std=c++17 -Wall -Wextra -g -Iinclude
 
 RAYLIB_INC = -isystem $(RAYLIB_FOLDER)/include
 RAYLIB_LIB = -L$(RAYLIB_FOLDER)/lib -l:libraylib.a -lm
+SHABBY_LIB = -L$(LIB_DIR)
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
 
-.PHONY: all clean check-platform clean-src
+.PHONY: all clean check-platform clean-src lib clean-lib clean-raylib
 
-all: check-platform $(BUILD)/shabby
+all: check-platform $(STATIC_LIB) $(BUILD)/example_game
 
-$(BUILD)/shabby: $(OBJ)
-	$(CXX) -o $@ $^ $(RAYLIB_LIB)
+lib: check-platform $(STATIC_LIB)
+
+$(STATIC_LIB): $(SHABBY_LIB_OBJ)
+	@mkdir -p $(LIB_DIR)
+	ar -rcs $@ $^
 
 $(BUILD)/%.o: $(SRC)/%.cpp
-	@mkdir -p $(BUILD)/engine/entities
-	@mkdir -p $(BUILD)/engine/core
-	@mkdir -p $(BUILD)/engine/core/sprite
-	@mkdir -p $(BUILD)/game
-	@mkdir -p $(BUILD)/engine/scene
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(RAYLIB_INC) -c $< -o $@
+
+$(BUILD)/%.o: $(EXAMPLE)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(RAYLIB_INC) -c $< -o $@
+
+$(BUILD)/example_game: $(EXAMPLE_OBJ) $(STATIC_LIB)
+	$(CXX) -o $@ $(EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(RAYLIB_LIB)
 
 check-platform:
 	@sh -c '\
@@ -66,9 +80,13 @@ check-platform:
 		echo "raylib downloaded and extracted"; \
 	fi'
 
-clean:
-	rm -rf $(BUILD)
+clean: clean-src clean-lib
+
+clean-raylib:
 	rm -rf $(RAYLIB_FOLDER)
 
 clean-src:
 	rm -rf $(BUILD)
+
+clean-lib:
+	rm -rf $(LIB_DIR)

@@ -1,4 +1,4 @@
-#include "scene.h"
+#include "scene/scene.h"
 
 namespace engine {
 

@@ -1,7 +1,7 @@
 #ifndef ENNEMY_H
 #define ENNEMY_H
 
-#include "engine/entities/entities.h"
+#include "entities/entities.h"
 
 namespace game {
 

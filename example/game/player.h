@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "engine/entities/entities.h"
+#include "entities/entities.h"
 #include "raymath.h"
 
 namespace game {

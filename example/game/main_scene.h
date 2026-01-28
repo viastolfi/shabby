@@ -1,7 +1,7 @@
 #ifndef MAIN_SCENE_H
 #define MAIN_SCENE_H
 
-#include "engine/scene/scene.h"
+#include "scene/scene.h"
 
 namespace game {
 

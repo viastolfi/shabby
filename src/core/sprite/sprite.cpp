@@ -1,4 +1,4 @@
-#include "sprite.h"
+#include "core/sprite/sprite.h"
 
 namespace engine {
 
