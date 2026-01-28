@@ -1,7 +1,7 @@
 #ifndef ANIMATED_SPRITE_H
 #define ANIMATED_SPRITE_H
 
-#include "sprite.h"
+#include "core/sprite/sprite.h"
 #include "raylib.h"
 
 namespace engine {

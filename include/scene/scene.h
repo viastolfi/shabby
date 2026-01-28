@@ -1,8 +1,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "engine/entities/entities.h"
-#include "engine/entities/entity_manager.h"
+#include "entities/entities.h"
+#include "entities/entity_manager.h"
 
 namespace engine {
 

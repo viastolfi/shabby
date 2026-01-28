@@ -1,4 +1,4 @@
-#include "animated_sprite.h"
+#include "core/sprite/animated_sprite.h"
 
 namespace engine {
 

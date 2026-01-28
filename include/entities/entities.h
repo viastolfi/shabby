@@ -2,8 +2,8 @@
 #define ENTITIES_H
 
 #include <memory>
-#include "engine/core/sprite/sprite.h"
-#include "engine/core/sprite/animated_sprite.h"
+#include "core/sprite/sprite.h"
+#include "core/sprite/animated_sprite.h"
 
 namespace engine {
 

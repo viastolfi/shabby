@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <functional>
-#include "engine/scene/scene.h"
+#include "scene/scene.h"
 
 namespace engine {
 
