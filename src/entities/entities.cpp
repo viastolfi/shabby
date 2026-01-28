@@ -24,8 +24,6 @@ void Entity::SetPos(Vector2 p)
   _pos = p;
 }
 
-void Entity::Update(float dt) {}
-
 void Entity::Draw() const 
 {
   if (_sprite) 

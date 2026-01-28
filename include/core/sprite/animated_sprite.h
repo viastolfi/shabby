@@ -25,9 +25,6 @@ private:
   mutable int _frame_counter = 0;
   mutable int _current_frame = 0;
   mutable Rectangle _frame_rec;
-
-  void SetCurrentFrame(int s);
-  void SetFrameCounter(int s);
 };
 
 } // namespace engine

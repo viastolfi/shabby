@@ -17,16 +17,6 @@ AnimatedSprite::AnimatedSprite(
   _frame_rec.height = static_cast<float>(GetTexture().height);
 }
 
-void AnimatedSprite::SetCurrentFrame(int s)
-{
-  _current_frame = s; 
-}
-
-void AnimatedSprite::SetFrameCounter(int s)
-{
-  _frame_counter = s; 
-}
-
 int AnimatedSprite::GetFrameCounter() const
 {
   return _frame_counter;
