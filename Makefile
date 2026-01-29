@@ -8,10 +8,14 @@ STATIC_LIB = $(LIB_DIR)/libshabby.a
 SHABBY_LIB_SRC = \
 	$(SRC)/entities/entities.cpp \
 	$(SRC)/entities/entity_manager.cpp \
+	$(SRC)/replication/snapshot/snapshot.cpp \
+	$(SRC)/replication/snapshot/entity_snapshot.cpp \
 	$(SRC)/core/engine/engine.cpp \
 	$(SRC)/core/sprite/sprite.cpp \
 	$(SRC)/core/sprite/animated_sprite.cpp \
-	$(SRC)/scene/scene.cpp 
+	$(SRC)/scene/scene.cpp \
+	$(SRC)/networking/server.cpp \
+	$(SRC)/networking/network_manager.cpp 
 
 EXAMPLE_SRC = \
 	$(EXAMPLE)/main.cpp \
@@ -22,10 +26,14 @@ EXAMPLE_SRC = \
 SHABBY_LIB_OBJ = \
 	$(BUILD)/entities/entities.o \
 	$(BUILD)/entities/entity_manager.o \
+	$(BUILD)/replication/snapshot/snapshot.o \
+	$(BUILD)/replication/snapshot/entity_snapshot.o \
 	$(BUILD)/core/engine/engine.o \
 	$(BUILD)/core/sprite/sprite.o \
 	$(BUILD)/core/sprite/animated_sprite.o \
-	$(BUILD)/scene/scene.o 
+	$(BUILD)/scene/scene.o \
+	$(BUILD)/networking/server.o \
+	$(BUILD)/networking/network_manager.o 
 
 EXAMPLE_OBJ = \
 	$(BUILD)/main.o \

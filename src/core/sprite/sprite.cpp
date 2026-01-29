@@ -3,7 +3,8 @@
 namespace engine {
 
 Sprite::Sprite(const char* path) 
-  : _loaded(false) 
+  : _loaded(false),
+    _path(path)
 {
   _texture = LoadTexture(path);
   _loaded = true;
@@ -55,6 +56,11 @@ void Sprite::Draw(Rectangle frame_rec, Vector2 pos) const
 {
   if (_loaded)
     DrawTextureRec(_texture, frame_rec, pos, WHITE);
+}
+
+const char* Sprite::GetPath()
+{
+  return _path;
 }
 
 } // namespace engine

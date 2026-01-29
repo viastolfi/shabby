@@ -6,12 +6,22 @@ namespace raylib {
   class Texture2D
 }
 
+class EngineMode {
+    STANDALONE
+    CLIENT
+    SERVER
+    HOST
+}
+
+<<Enum>> EngineMode
+
 class Engine {
   + Run(): void
   + LoadScene(Scene*): void
   - EngineConfig _config
   - Scene* _loaded_scene
   - bool _initialized
+  - EngineMode _mode
 }
 
 class Scene {
@@ -63,5 +73,6 @@ Entity --> Sprite
 AnimatedSprite --|> Sprite
 
 Engine --> Window
+Engine --> EngineMode
 Sprite --> Texture2D
 ```
