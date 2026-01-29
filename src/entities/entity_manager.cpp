@@ -22,4 +22,24 @@ void EntityManager::DrawAll() const
       entity->Draw();
 }
 
+void EntityManager::UpdateOne(size_t id, Vector2 direction)
+{
+  for (auto& e : _entities) {
+    if (e->GetId() == id) {
+      e->SetPos(e->GetPos() + direction);
+      break;
+    }
+  }
+}
+
+void EntityManager::UpdatePosition(size_t id, Vector2 pos)
+{
+  for (auto& e : _entities) {
+    if (e->GetId() == id) {
+      e->SetPos(pos);
+      break;
+    }
+  }
+}
+
 } // namespace engine

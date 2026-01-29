@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "entities/entities.h"
+#include "utils/vector2.h"
 
 namespace engine {
 
@@ -22,8 +23,12 @@ public:
   
   void AddEntity(std::unique_ptr<Entity> entity);
   
+  void UpdateOne(size_t id, Vector2 direction);
   void UpdateAll(float dt);
   void DrawAll() const;
+  void UpdatePosition(size_t id, Vector2 pos);
+
+  const std::vector<std::unique_ptr<Entity>>& GetEntities() const { return _entities; }
   
   size_t Count() const { return _entities.size(); }
   

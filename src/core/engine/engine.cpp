@@ -5,16 +5,30 @@ namespace engine {
 
 Engine::Engine(const EngineConfig& config) 
   : _config(config), 
-    _loaded_scene(nullptr),
     _initialized(false) 
 {
-  InitWindow(_config.width, _config.height, _config.title);
-  SetTargetFPS(60);
+  if (_config.mode != SERVER) {
+    InitWindow(_config.width, _config.height, _config.title);
+    SetTargetFPS(60);
+
+    if (_config.mode == CLIENT) {
+      _network_manager = std::make_unique<NetworkManager>(); 
+      _network_manager->InitClient();
+    }
+  }
+  else {
+    _network_manager = std::make_unique<NetworkManager>();
+    // TODO: make this choice of the user
+    ServerConf conf{8080, 2};
+    _network_manager->InitServer(conf);
+  }
   _initialized = true;
 }
 
 Engine::~Engine() 
 {
+  _loaded_scene.reset();
+  
   if (_initialized) 
     CloseWindow();
 }
@@ -26,11 +40,27 @@ void Engine::LoadScene(std::unique_ptr<Scene> s)
 
 void Engine::Run() 
 {
+  if (_config.mode != SERVER) 
+    RunGame();
+  else
+    RunServer();
+}
+
+void Engine::RunGame() 
+{
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
 
-    if (_loaded_scene) 
+    if (_config.mode == CLIENT && _loaded_scene) {
+      Packet packet = Client::GetInstance().ReceiveNonBlocking();
+      if (packet._type == PacketType::WORLD_SNAPSHOT) {
+        _loaded_scene->ApplyWorldSnapshot(packet, _local_player_id);
+      }
+    }
+
+    if (_loaded_scene) {
       _loaded_scene->UpdateScene(dt); 
+    }
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
@@ -40,6 +70,12 @@ void Engine::Run()
 
     EndDrawing();
   }
+}
+
+void Engine::RunServer()
+{
+  if (_initialized)
+    _network_manager->RunServer(std::move(_loaded_scene));
 }
 
 } // namespace engine

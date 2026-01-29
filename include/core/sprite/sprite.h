@@ -21,12 +21,15 @@ public:
   virtual void Draw(float x, float y) const;
   virtual void Draw(Vector2 pos) const;  
   virtual void Draw(Rectangle frame_rec, Vector2 pos) const;
+
+  const char* GetPath();
 protected:
   const Texture2D& GetTexture() const { return _texture; }
 
 private:
   Texture2D _texture;
   bool _loaded;
+  const char* _path;
 };
 
 } // namespace engine
