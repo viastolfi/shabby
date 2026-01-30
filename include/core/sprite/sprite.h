@@ -11,6 +11,8 @@ class Sprite {
 public:
   explicit Sprite(const char* path);
   explicit Sprite(std::string path);
+  explicit Sprite(Texture2D texture);
+  explicit Sprite(Texture2D texture, const char* path);
   virtual ~Sprite(); 
   
   // remove copy

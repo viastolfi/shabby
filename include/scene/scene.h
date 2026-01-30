@@ -29,7 +29,8 @@ public:
   }
   
   template<typename T, typename... Args>
-  size_t AddEntityWithServerId(Args&&... args) {
+  size_t AddEntityWithServerId(Args&&... args) 
+  {
     auto entity = std::make_unique<T>(std::forward<Args>(args)...);
     
     Packet request(PacketType::ENTITY_CREATE_REQUEST);

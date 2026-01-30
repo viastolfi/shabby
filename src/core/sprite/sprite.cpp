@@ -12,6 +12,17 @@ Sprite::Sprite(std::string path)
     _path(path.c_str())
 {}
 
+Sprite::Sprite(Texture2D texture)
+  : _texture(texture),
+    _loaded(true)
+{}
+     
+Sprite::Sprite(Texture2D texture, const char* path)
+  : _texture(texture),
+    _loaded(true),
+    _path(path)
+{}
+
 Sprite::~Sprite()
 {
   if (_loaded) 

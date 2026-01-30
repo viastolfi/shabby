@@ -1,6 +1,7 @@
 #ifndef ANIMATED_SPRITE_H
 #define ANIMATED_SPRITE_H
 
+#include "core/assets/assets_registry.h"
 #include "core/sprite/sprite.h"
 #include "raylib.h"
 
@@ -13,6 +14,26 @@ public:
       int cols,
       int rows,
       float frame_speed);
+
+  explicit AnimatedSprite(
+      Texture2D texture,
+      int cols,
+      int rows,
+      float frame_speed);
+
+  template<typename T>
+  explicit AnimatedSprite(
+       AssetRegistry<T> registry,
+       T asset_id,
+       int cols,
+       int rows,
+       float frame_speed)
+  : Sprite(registry.GetTexture(asset_id), registry.GetTexturePath(asset_id)),
+    _cols(cols),
+    _rows(rows),
+    _frame_speed(frame_speed),
+    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
+  {}
 
   void Load() override;
   void Draw(Vector2 pos) const override;

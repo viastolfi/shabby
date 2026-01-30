@@ -35,6 +35,7 @@ SHABBY_LIB_OBJ = \
 	$(BUILD)/networking/server.o \
 	$(BUILD)/networking/network_manager.o 
 
+
 EXAMPLE_OBJ = \
 	$(BUILD)/main.o \
 	$(BUILD)/game/player.o \
@@ -42,7 +43,7 @@ EXAMPLE_OBJ = \
 
 CXX = g++
 
-CXXFLAGS = -std=c++17 -Wall -Wextra -g -Iinclude
+CXXFLAGS = -std=c++20 -Wall -Wextra -g -Iinclude
 
 RAYLIB_INC = -isystem $(RAYLIB_FOLDER)/include
 RAYLIB_LIB = -L$(RAYLIB_FOLDER)/lib -l:libraylib.a -lm

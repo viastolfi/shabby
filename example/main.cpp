@@ -1,9 +1,17 @@
 #include "core/engine/engine.h"
 #include "game/player.h"
 #include "game/main_scene.h"
+#include "core/assets/assets_registry.h"
 #include <memory>
 
-int main(int argc, char* argv[]) {
+enum class TextureId
+{
+  Monkey,
+  Monk
+};
+
+int main(int argc, char* argv[]) 
+{
   engine::EngineConfig config{
     800,
     450,
@@ -19,22 +27,28 @@ int main(int argc, char* argv[]) {
   }
 
   engine::Engine engine(config);
-
+  //
   // TODO: make this all easier to use for game maker
   if (config.mode != engine::SERVER) {
+    engine::AssetRegistry<TextureId> registry;
+    registry.LoadAll(
+        engine::AssetDesc<TextureId> { TextureId::Monkey, "assets/actors/monkey/Idle.png"},
+        engine::AssetDesc<TextureId> { TextureId::Monk, "assets/actors/monk/Idle.png"}
+        );
+
     auto scene = std::make_unique<game::MainScene>();
     size_t player_id;
 
     if (argc > 2 && strcmp(argv[2], "2") == 0) {
       player_id = scene->AddEntityWithServerId<game::Player>(
-        std::make_unique<engine::AnimatedSprite>
-        ("assets/actors/monkey/Idle.png", 4, 1, 3), 
-        Vector2{100.0f, 100.0f});
+          std::make_unique<engine::AnimatedSprite>
+          (registry, TextureId::Monkey, 4, 1, 3),
+          Vector2{100.0f, 100.0f});
     } else {
-       player_id = scene->AddEntityWithServerId<game::Player>(
-        std::make_unique<engine::AnimatedSprite>
-        ("assets/actors/monk/Idle.png", 6, 1, 3), 
-        Vector2{100.0f, 100.0f});
+      player_id = scene->AddEntityWithServerId<game::Player>(
+          std::make_unique<engine::AnimatedSprite>
+          (registry, TextureId::Monk, 6, 1, 3),
+          Vector2{100.0f, 100.0f});
 
     }
 
