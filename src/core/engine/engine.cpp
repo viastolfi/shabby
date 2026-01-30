@@ -1,4 +1,5 @@
 #include "core/engine/engine.h"
+#include "networking/packet_handler.h"
 #include "raylib.h"
 
 namespace engine {
@@ -48,14 +49,16 @@ void Engine::Run()
 
 void Engine::RunGame() 
 {
+  PacketHandler packet_handler(_loaded_scene.get(), _local_player_id, &_sprite_factory);
+  
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
 
     if (_config.mode == CLIENT && _loaded_scene) {
       Packet packet = Client::GetInstance().ReceiveNonBlocking();
-      if (packet._type == PacketType::WORLD_SNAPSHOT) {
-        _loaded_scene->ApplyWorldSnapshot(packet, _local_player_id);
-      } 
+      if (packet._type != PacketType::NONE) {
+        packet_handler.HandlePacket(packet);
+      }
     }
 
     if (_loaded_scene) {

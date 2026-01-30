@@ -28,7 +28,7 @@ public:
        int cols,
        int rows,
        float frame_speed)
-  : Sprite(registry.GetTexture(asset_id), registry.GetTexturePath(asset_id)),
+  : Sprite(registry, asset_id),
     _cols(cols),
     _rows(rows),
     _frame_speed(frame_speed),

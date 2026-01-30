@@ -84,28 +84,26 @@ void Server::HandlePacket(int client_socket, Packet& packet, Scene* scene)
 {
   switch (packet._type) {
     case PacketType::ENTITY_CREATE_REQUEST: {
-      std::cout << "DEBUG: Received ENTITY_CREATE_REQUEST, packet size: " 
-                << packet.GetSize() << " bytes" << std::endl;
-      
       Vector2 position;
+      int texture_id;
       packet.Read(position);
-      std::string path = packet.ReadString();
+      packet.Read(texture_id);
       
       size_t entity_id = GenerateEntityId();
       
       scene->AddEntity(std::make_unique<Entity>(
-            std::make_unique<Sprite>(path),
+            std::make_unique<Sprite>(texture_id),
             position, 
             entity_id));
       
       Packet response(PacketType::ENTITY_CREATE_RESPONSE);
       response.Write(entity_id);
-      response.WriteString(path);
-      Send(client_socket, response);
+      response.Write(texture_id);
+      BroadcastSnapshot(_connected_clients, response);
       
       std::cout << "Entity created with ID: " << entity_id << " at position { " 
                 << position.x << ":" << position.y << " }" 
-                << " with sprite: " << path << std::endl;
+                << " with texture id: " << texture_id << std::endl;
       break;
     }
     
