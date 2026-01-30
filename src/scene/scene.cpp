@@ -94,4 +94,27 @@ void Scene::ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id)
   }
 }
 
+void Scene::ApplyNewEntitySnapshot(
+    Packet& snapshot, 
+    size_t ignore_entity_id,
+    std::function<std::unique_ptr<Sprite>(int)> sprite_factory)
+{
+  if (!_entity_manager) return;
+
+  size_t entity_id;
+  int texture_id;
+  Vector2 pos;
+
+  snapshot.Read(entity_id);
+  snapshot.Read(texture_id);
+  snapshot.Read(pos);
+
+  if (entity_id == ignore_entity_id) return;
+
+  auto sprite = sprite_factory(texture_id);
+  if (sprite) {
+    AddEntity<Entity>(std::move(sprite), pos, entity_id);
+  }
+}
+
 } // namespace engine

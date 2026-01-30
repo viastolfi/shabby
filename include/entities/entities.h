@@ -32,12 +32,13 @@ public:
   void SetPos(Vector2 p);
   void LoadSprite() const;
   const char* GetSpritePath() const;
+  int GetSpriteTextureId() const;
 private:
   size_t _id;
   std::unique_ptr<Sprite> _sprite;
   int _velocity;
   Vector2 _pos;
-  Client* _client;
+  Client* _client = nullptr;
 };
 
 } // namespace engine

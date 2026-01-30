@@ -40,11 +40,8 @@ void Entity::Update(float dt)
 
 void Entity::Draw() const 
 {
-  if (_sprite) {
+  if (_sprite) 
     _sprite->Draw(_pos);
-  } else {
-    // Entité sans sprite (probablement côté serveur)
-  }
 }
 
 size_t Entity::GetId() const
@@ -61,6 +58,12 @@ const char* Entity::GetSpritePath() const
 {
   if (!_sprite) return nullptr;
   return _sprite->GetPath();
+}
+
+int Entity::GetSpriteTextureId() const
+{
+  if (!_sprite) return 0;
+  return _sprite->GetTextureId();
 }
   
 void Entity::LoadSprite() const

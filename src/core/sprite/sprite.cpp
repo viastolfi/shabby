@@ -23,6 +23,12 @@ Sprite::Sprite(Texture2D texture, const char* path)
     _path(path)
 {}
 
+Sprite::Sprite(int texture_id)
+  : _texture_id(texture_id),
+    _loaded(false),
+    _path(nullptr)
+{}
+
 Sprite::~Sprite()
 {
   if (_loaded) 
@@ -88,6 +94,11 @@ void Sprite::Draw(Rectangle frame_rec, Vector2 pos) const
 const char* Sprite::GetPath() const
 {
   return _path;
+}
+
+int Sprite::GetTextureId() const
+{
+  return _texture_id;
 }
 
 } // namespace engine

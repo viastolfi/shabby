@@ -12,6 +12,15 @@ template<typename T>
 struct AssetDesc {
   T id;
   const char* path;
+  int cols = 0;
+  int rows = 0;
+};
+
+struct TextureDesc {
+  Texture2D texture;
+  const char* path;
+  int cols;
+  int rows;
 };
 
 template<typename T>
@@ -26,22 +35,35 @@ public:
 
   Texture2D GetTexture(T id) const
   {
-    return _textures.at(static_cast<int>(id)); 
+    return _textures.at(static_cast<int>(id)).texture; 
   }
 
   const char* GetTexturePath(T id) const
   {
-    return _textures_path.at(static_cast<int>(id)); 
+    return _textures.at(static_cast<int>(id)).path; 
+  }
+
+  int GetTextureCols(T id) const 
+  {
+    return _textures.at(static_cast<int>(id)).cols; 
+  }
+
+  int GetTextureRows(T id) const
+  {
+    return _textures.at(static_cast<int>(id)).rows; 
   }
 private:
-  std::unordered_map<int, Texture2D> _textures;
-  std::unordered_map<int, const char*> _textures_path;
+  std::unordered_map<int, TextureDesc> _textures;
 
   void LoadOne(const AssetDesc<T>& asset)
   {
     int key = static_cast<int>(asset.id); 
-    _textures.emplace(key, LoadTexture(asset.path));
-    _textures_path.emplace(key, asset.path);
+    _textures.emplace(key, TextureDesc{
+        LoadTexture(asset.path), 
+        asset.path,
+        asset.cols,
+        asset.rows
+      });
   }
 };
 

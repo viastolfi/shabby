@@ -15,7 +15,8 @@ SHABBY_LIB_SRC = \
 	$(SRC)/core/sprite/animated_sprite.cpp \
 	$(SRC)/scene/scene.cpp \
 	$(SRC)/networking/server.cpp \
-	$(SRC)/networking/network_manager.cpp 
+	$(SRC)/networking/network_manager.cpp \
+	$(SRC)/networking/packet_handler.cpp 
 
 EXAMPLE_SRC = \
 	$(EXAMPLE)/main.cpp \
@@ -33,7 +34,8 @@ SHABBY_LIB_OBJ = \
 	$(BUILD)/core/sprite/animated_sprite.o \
 	$(BUILD)/scene/scene.o \
 	$(BUILD)/networking/server.o \
-	$(BUILD)/networking/network_manager.o 
+	$(BUILD)/networking/network_manager.o \
+	$(BUILD)/networking/packet_handler.o 
 
 
 EXAMPLE_OBJ = \

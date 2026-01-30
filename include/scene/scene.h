@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include <string>
+#include <functional>
 
 #include "entities/entities.h"
 #include "entities/entity_manager.h"
@@ -35,7 +36,7 @@ public:
     
     Packet request(PacketType::ENTITY_CREATE_REQUEST);
     request.Write(entity->GetPos());
-    request.WriteString(entity->GetSpritePath());
+    request.Write(entity->GetSpriteTextureId());
     Client::GetInstance().Send(request);
     
     Packet response = Client::GetInstance().Receive();
@@ -56,6 +57,11 @@ public:
   Packet GenerateWorldSnapshot() const;
   
   void ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id = 0);
+  
+  void ApplyNewEntitySnapshot(
+      Packet& snapshot, 
+      size_t ignore_entity_id,
+      std::function<std::unique_ptr<Sprite>(int)> sprite_factory);
   
 private:
   std::unique_ptr<EntityManager> _entity_manager;
