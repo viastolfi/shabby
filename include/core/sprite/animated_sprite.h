@@ -14,6 +14,7 @@ public:
       int rows,
       float frame_speed);
 
+  void Load() override;
   void Draw(Vector2 pos) const override;
 
   int GetFrameCounter() const;

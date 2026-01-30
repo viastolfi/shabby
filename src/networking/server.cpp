@@ -44,7 +44,7 @@ void Server::Run(std::unique_ptr<Scene> scene)
   fcntl(_server_socket, F_SETFL, O_NONBLOCK);
   
   auto last_tick = std::chrono::high_resolution_clock::now();
-  const float tick_rate = 1.0f / 20.0f; 
+  const float tick_rate = 1.0f / 60.0f; 
   
   while (true) {
     auto now = std::chrono::high_resolution_clock::now();
@@ -84,19 +84,28 @@ void Server::HandlePacket(int client_socket, Packet& packet, Scene* scene)
 {
   switch (packet._type) {
     case PacketType::ENTITY_CREATE_REQUEST: {
+      std::cout << "DEBUG: Received ENTITY_CREATE_REQUEST, packet size: " 
+                << packet.GetSize() << " bytes" << std::endl;
+      
       Vector2 position;
       packet.Read(position);
+      std::string path = packet.ReadString();
       
       size_t entity_id = GenerateEntityId();
       
-      scene->AddEntity(std::make_unique<Entity>(position, entity_id));
+      scene->AddEntity(std::make_unique<Entity>(
+            std::make_unique<Sprite>(path),
+            position, 
+            entity_id));
       
       Packet response(PacketType::ENTITY_CREATE_RESPONSE);
       response.Write(entity_id);
+      response.WriteString(path);
       Send(client_socket, response);
       
       std::cout << "Entity created with ID: " << entity_id << " at position { " 
-                << position.x << ":" << position.y << " }" << std::endl;
+                << position.x << ":" << position.y << " }" 
+                << " with sprite: " << path << std::endl;
       break;
     }
     

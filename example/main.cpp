@@ -23,11 +23,20 @@ int main(int argc, char* argv[]) {
   // TODO: make this all easier to use for game maker
   if (config.mode != engine::SERVER) {
     auto scene = std::make_unique<game::MainScene>();
+    size_t player_id;
 
-    size_t player_id = scene->AddEntityWithServerId<game::Player>(
+    if (argc > 2 && strcmp(argv[2], "2") == 0) {
+      player_id = scene->AddEntityWithServerId<game::Player>(
         std::make_unique<engine::AnimatedSprite>
         ("assets/actors/monkey/Idle.png", 4, 1, 3), 
         Vector2{100.0f, 100.0f});
+    } else {
+       player_id = scene->AddEntityWithServerId<game::Player>(
+        std::make_unique<engine::AnimatedSprite>
+        ("assets/actors/monk/Idle.png", 6, 1, 3), 
+        Vector2{100.0f, 100.0f});
+
+    }
 
     engine.SetLocalPlayerId(player_id);
     engine.LoadScene(std::move(scene));

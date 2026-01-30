@@ -1,6 +1,8 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <string>
+
 #include "raylib.h"
 
 namespace engine {
@@ -8,6 +10,7 @@ namespace engine {
 class Sprite {
 public:
   explicit Sprite(const char* path);
+  explicit Sprite(std::string path);
   virtual ~Sprite(); 
   
   // remove copy
@@ -18,11 +21,12 @@ public:
   Sprite(Sprite&& other) noexcept;
   Sprite& operator=(Sprite&& other) noexcept;
   
+  virtual void Load();
   virtual void Draw(float x, float y) const;
   virtual void Draw(Vector2 pos) const;  
   virtual void Draw(Rectangle frame_rec, Vector2 pos) const;
 
-  const char* GetPath();
+  const char* GetPath() const;
 protected:
   const Texture2D& GetTexture() const { return _texture; }
 
