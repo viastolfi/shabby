@@ -14,6 +14,18 @@ AnimatedSprite::AnimatedSprite(
     _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
 {}
 
+AnimatedSprite::AnimatedSprite(
+    Texture2D texture,
+    int cols,
+    int rows,
+    float frame_speed)
+  : Sprite(texture),
+    _cols(cols),
+    _rows(rows),
+    _frame_speed(frame_speed),
+    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
+{}
+
 void AnimatedSprite::Load()
 {
   Sprite::Load();
