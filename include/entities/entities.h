@@ -30,6 +30,8 @@ public:
   size_t GetId() const;
   void SetId(size_t id);
   void SetPos(Vector2 p);
+  void LoadSprite() const;
+  const char* GetSpritePath() const;
 private:
   size_t _id;
   std::unique_ptr<Sprite> _sprite;

@@ -5,10 +5,12 @@ namespace engine {
 Sprite::Sprite(const char* path) 
   : _loaded(false),
     _path(path)
-{
-  _texture = LoadTexture(path);
-  _loaded = true;
-}
+{}
+
+Sprite::Sprite(std::string path)
+  : _loaded(false),
+    _path(path.c_str())
+{}
 
 Sprite::~Sprite()
 {
@@ -18,9 +20,11 @@ Sprite::~Sprite()
 
 Sprite::Sprite(Sprite&& other) noexcept 
   : _texture(other._texture), 
-    _loaded(other._loaded) 
+    _loaded(other._loaded),
+    _path(other._path)
 {
   other._loaded = false;
+  other._path = nullptr;
 }
 
 Sprite& Sprite::operator=(Sprite&& other) noexcept 
@@ -31,9 +35,21 @@ Sprite& Sprite::operator=(Sprite&& other) noexcept
 
     _texture = other._texture;
     _loaded = other._loaded;
+    _path = other._path;
+    _path = other._path;
     other._loaded = false;
+    other._path = nullptr;
   }
   return *this;
+}
+
+void Sprite::Load()
+{
+  if (_loaded) {
+    return;
+  }
+  _texture = LoadTexture(_path);
+  _loaded = true;
 }
 
 void Sprite::Draw(float x, float y) const 
@@ -58,7 +74,7 @@ void Sprite::Draw(Rectangle frame_rec, Vector2 pos) const
     DrawTextureRec(_texture, frame_rec, pos, WHITE);
 }
 
-const char* Sprite::GetPath()
+const char* Sprite::GetPath() const
 {
   return _path;
 }

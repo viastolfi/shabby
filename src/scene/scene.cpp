@@ -14,8 +14,10 @@ Scene::~Scene()
 
 void Scene::AddEntity(std::unique_ptr<Entity> entity) 
 {
-  if (_entity_manager) 
+  if (_entity_manager) {
+    entity->LoadSprite();
     _entity_manager->AddEntity(std::move(entity));
+  }
 }
 
 void Scene::UpdateScene(float dt)
@@ -64,8 +66,6 @@ void Scene::ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id)
   size_t count;
   snapshot.Read(count);
 
-  TraceLog(LOG_INFO, "Snapshot count: %d", static_cast<int>(count));
-  
   for (size_t i = 0; i < count; ++i) {
     size_t id;
     Vector2 pos;

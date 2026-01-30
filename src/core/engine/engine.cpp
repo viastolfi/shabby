@@ -55,7 +55,7 @@ void Engine::RunGame()
       Packet packet = Client::GetInstance().ReceiveNonBlocking();
       if (packet._type == PacketType::WORLD_SNAPSHOT) {
         _loaded_scene->ApplyWorldSnapshot(packet, _local_player_id);
-      }
+      } 
     }
 
     if (_loaded_scene) {

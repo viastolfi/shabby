@@ -38,8 +38,7 @@ SHABBY_LIB_OBJ = \
 EXAMPLE_OBJ = \
 	$(BUILD)/main.o \
 	$(BUILD)/game/player.o \
-	$(BUILD)/game/main_scene.o \
-	$(BUILD)/game/ennemy.o
+	$(BUILD)/game/main_scene.o 
 
 CXX = g++
 

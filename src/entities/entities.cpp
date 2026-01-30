@@ -18,6 +18,7 @@ Entity::Entity(std::unique_ptr<Sprite> s, Vector2 pos, size_t id)
 
 Entity::Entity(Vector2 pos, size_t id)
   : _id(id),
+    _sprite(nullptr),
     _velocity(10),
     _pos(pos)
 {}
@@ -39,8 +40,11 @@ void Entity::Update(float dt)
 
 void Entity::Draw() const 
 {
-  if (_sprite) 
+  if (_sprite) {
     _sprite->Draw(_pos);
+  } else {
+    // Entité sans sprite (probablement côté serveur)
+  }
 }
 
 size_t Entity::GetId() const
@@ -51,6 +55,19 @@ size_t Entity::GetId() const
 void Entity::SetId(size_t id)
 {
   _id = id;
+}
+
+const char* Entity::GetSpritePath() const
+{
+  if (!_sprite) return nullptr;
+  return _sprite->GetPath();
+}
+  
+void Entity::LoadSprite() const
+{
+  if (_sprite && _sprite->GetPath() != nullptr) {
+    _sprite->Load();
+  }
 }
 
 } // namespace engine

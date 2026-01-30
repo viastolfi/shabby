@@ -34,6 +34,7 @@ public:
     
     Packet request(PacketType::ENTITY_CREATE_REQUEST);
     request.Write(entity->GetPos());
+    request.WriteString(entity->GetSpritePath());
     Client::GetInstance().Send(request);
     
     Packet response = Client::GetInstance().Receive();

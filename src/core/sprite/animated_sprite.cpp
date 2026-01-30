@@ -12,7 +12,11 @@ AnimatedSprite::AnimatedSprite(
     _rows(rows), 
     _frame_speed(frame_speed),
     _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
+{}
+
+void AnimatedSprite::Load()
 {
+  Sprite::Load();
   _frame_rec.width = static_cast<float>(GetTexture().width) / _cols;
   _frame_rec.height = static_cast<float>(GetTexture().height);
 }
