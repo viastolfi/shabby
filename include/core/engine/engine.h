@@ -9,6 +9,8 @@
 #include "networking/network_manager.h"
 #include "core/assets/assets_registry.h"
 #include "core/factories/sprite_factory.h"
+#include "networking/packet_handler.h"
+#include "raylib.h"
 
 namespace engine {
 
@@ -20,15 +22,18 @@ enum EngineMode {
 };
 
 struct EngineConfig {
-  int width;
-  int height;
-  const char* title;
+  int width = 0;
+  int height = 0;
+  const char* title = "";
   EngineMode mode = STANDALONE;
 };
 
 class Engine {
 public:
   explicit Engine(const EngineConfig& config);
+  explicit Engine(
+      const ServerConf& server_config,
+      std::unique_ptr<ServerLogic> logic);
   ~Engine();
   
   Engine(const Engine&) = delete;
@@ -69,9 +74,11 @@ public:
   
 private:
   EngineConfig _config;
+
   std::shared_ptr<void> _assets_registry;
   std::type_index _assets_registry_type{typeid(void)};
   SpriteFactory _sprite_factory;
+
   std::unique_ptr<Scene> _loaded_scene;
   std::unique_ptr<NetworkManager> _network_manager;
   bool _initialized;

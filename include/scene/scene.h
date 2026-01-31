@@ -54,25 +54,29 @@ public:
   {
     auto entity = std::make_unique<T>(std::forward<Args>(args)...);
     
+    size_t temp_id = 0;
+    entity->SetId(temp_id);
+    AddEntity(std::move(entity));
+    
     Packet request(PacketType::ENTITY_CREATE_REQUEST);
-    request.Write(entity->GetPos());
-    request.Write(entity->GetSpriteTextureId());
+    request.Write(_entity_manager->GetEntities().back()->GetPos());
+    request.Write(_entity_manager->GetEntities().back()->GetSpriteTextureId());
     Client::GetInstance().Send(request);
     
     Packet response = Client::GetInstance().Receive();
     size_t server_id = 0;
     if (response._type == PacketType::ENTITY_CREATE_RESPONSE) {
       response.Read(server_id);
-      entity->SetId(server_id);
+      UpdateEntityId(temp_id, server_id);
     }
     
-    AddEntity(std::move(entity));
     return server_id;
   }
 
   void UpdateScene(float dt);
   void DrawScene() const;
   void ApplySnapshot(Snapshot& s);
+  void UpdateEntityId(size_t old_id, size_t new_id);
 
   Packet GenerateWorldSnapshot() const;
 

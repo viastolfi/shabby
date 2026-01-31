@@ -5,6 +5,9 @@
 #include "networking/packet.h"
 #include "raylib.h"
 #include "replication/snapshot/entity_snapshot.h"
+#include "core/scheduler/scheduler.h"
+#include "networking/server_logic.h"
+#include "core/game_simulation/game_simulation.h"
 
 #include <memory>
 #include <netinet/in.h>
@@ -25,10 +28,13 @@ struct ServerConf {
 
 class Server {
 public:
-  explicit Server(ServerConf conf);  
+  explicit Server(
+      ServerConf conf, 
+      std::unique_ptr<ServerLogic> logic,
+      std::unique_ptr<Scene> scene);
   ~Server();
 
-  void Run(std::unique_ptr<Scene> scene);
+  void Run();
   Packet Receive(int client_socket);
   Packet ReceiveNonBlocking(int client_socket);
   void Send(int client_socket, Packet packet);
@@ -41,6 +47,8 @@ private:
   ServerConf _conf;
   size_t _next_entity_id = 1;
   std::vector<int> _connected_clients;
+  std::unique_ptr<ServerLogic> _logic;
+  std::unique_ptr<GameSimulation> _game_simulation;
 };
 
 } // namespace engine

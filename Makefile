@@ -16,13 +16,16 @@ SHABBY_LIB_SRC = \
 	$(SRC)/scene/scene.cpp \
 	$(SRC)/networking/server.cpp \
 	$(SRC)/networking/network_manager.cpp \
-	$(SRC)/networking/packet_handler.cpp 
+	$(SRC)/networking/packet_handler.cpp \
+	$(SRC)/core/scheduler/scheduler.cpp \
+	$(SRC)/core/game_simulation/game_simulation.cpp
 
 EXAMPLE_SRC = \
 	$(EXAMPLE)/main.cpp \
 	$(EXAMPLE)/game/player.cpp \
 	$(EXAMPLE)/game/main_scene.cpp \
-	$(EXAMPLE)/game/ennemy.cpp
+	$(EXAMPLE)/game/ennemy.cpp \
+	$(EXAMPLE)/example_logic.cpp
 
 SHABBY_LIB_OBJ = \
 	$(BUILD)/entities/entities.o \
@@ -35,13 +38,16 @@ SHABBY_LIB_OBJ = \
 	$(BUILD)/scene/scene.o \
 	$(BUILD)/networking/server.o \
 	$(BUILD)/networking/network_manager.o \
-	$(BUILD)/networking/packet_handler.o 
+	$(BUILD)/networking/packet_handler.o \
+	$(BUILD)/core/scheduler/scheduler.o \
+	$(BUILD)/core/game_simulation/game_simulation.o
 
 
 EXAMPLE_OBJ = \
 	$(BUILD)/main.o \
 	$(BUILD)/game/player.o \
-	$(BUILD)/game/main_scene.o 
+	$(BUILD)/game/main_scene.o \
+	$(BUILD)/example_logic.o
 
 CXX = g++
 

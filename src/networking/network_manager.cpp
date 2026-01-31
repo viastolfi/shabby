@@ -8,15 +8,19 @@ NetworkManager::NetworkManager()
 NetworkManager::~NetworkManager()
 {}
 
-void NetworkManager::InitServer(ServerConf conf)
+void NetworkManager::InitServer(
+    ServerConf conf, 
+    std::unique_ptr<ServerLogic> logic,
+    std::unique_ptr<Scene> scene)
 {
-  _server = std::make_unique<Server>(conf);
+  _server = std::make_unique<Server>(
+      conf, std::move(logic), std::move(scene));
 }
 
-void NetworkManager::RunServer(std::unique_ptr<Scene> scene) 
+void NetworkManager::RunServer() 
 {
   if (_server)
-    _server->Run(std::move(scene));
+    _server->Run();
 }
 
 void NetworkManager::InitClient() 

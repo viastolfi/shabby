@@ -31,30 +31,33 @@ Sprite::Sprite(int texture_id)
 
 Sprite::~Sprite()
 {
-  if (_loaded) 
+  if (_loaded && _owns_texture) 
     UnloadTexture(_texture);
 }
 
 Sprite::Sprite(Sprite&& other) noexcept 
   : _texture(other._texture), 
     _loaded(other._loaded),
+    _owns_texture(other._owns_texture),
     _path(other._path)
 {
   other._loaded = false;
+  other._owns_texture = false;
   other._path = nullptr;
 }
 
 Sprite& Sprite::operator=(Sprite&& other) noexcept 
 {
   if (this != &other) {
-    if (_loaded) 
+    if (_loaded && _owns_texture) 
       UnloadTexture(_texture);
 
     _texture = other._texture;
     _loaded = other._loaded;
-    _path = other._path;
+    _owns_texture = other._owns_texture;
     _path = other._path;
     other._loaded = false;
+    other._owns_texture = false;
     other._path = nullptr;
   }
   return *this;
@@ -63,6 +66,9 @@ Sprite& Sprite::operator=(Sprite&& other) noexcept
 void Sprite::Load()
 {
   if (_loaded) {
+    return;
+  }
+  if (_path == nullptr) {
     return;
   }
   _texture = LoadTexture(_path);

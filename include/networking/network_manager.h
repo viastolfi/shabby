@@ -3,6 +3,7 @@
 
 #include "networking/server.h"
 #include "networking/client.h"
+#include "networking/server_logic.h"
 #include "scene/scene.h"
 
 namespace engine {
@@ -12,8 +13,11 @@ public:
   explicit NetworkManager();
   ~NetworkManager();
 
-  void InitServer(ServerConf _conf);
-  void RunServer(std::unique_ptr<Scene> scene);
+  void InitServer(
+      ServerConf _conf, 
+      std::unique_ptr<ServerLogic> logic,
+      std::unique_ptr<Scene> scene);
+  void RunServer();
 
   void InitClient();
 private:

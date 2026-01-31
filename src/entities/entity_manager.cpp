@@ -41,5 +41,13 @@ void EntityManager::UpdatePosition(size_t id, Vector2 pos)
     }
   }
 }
-
+void EntityManager::UpdateEntityId(size_t old_id, size_t new_id)
+{
+  for (auto& e : _entities) {
+    if (e->GetId() == old_id) {
+      e->SetId(new_id);
+      return;
+    }
+  }
+}
 } // namespace engine
