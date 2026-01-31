@@ -31,6 +31,7 @@ void Player::Update(float dt) {
   engine::Packet p(engine::PacketType::INPUT_COMMAND);
   p.Write(GetId());
   p.Write(movement);
+  p.Write(GetSpriteTextureId());
   engine::Client::GetInstance().Send(p);
 }
 

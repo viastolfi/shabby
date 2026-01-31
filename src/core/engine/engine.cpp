@@ -36,6 +36,10 @@ Engine::~Engine()
 
 void Engine::LoadScene(std::unique_ptr<Scene> s)
 {
+  if (s) {
+    s->SetSpriteFactory(&_sprite_factory);
+    s->SetAssetRegistryPtr(_assets_registry.get(), _assets_registry_type);
+  }
   _loaded_scene = std::move(s);
 }
 
