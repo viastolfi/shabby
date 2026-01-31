@@ -2,8 +2,9 @@
 
 namespace engine {
 
-EntitySnapshot::EntitySnapshot(size_t id, Vector2 direction)
-  :_id(id), _direction(direction)
+EntitySnapshot::EntitySnapshot(
+    size_t id, Vector2 direction, int texture_id)
+  :_id(id), _direction(direction), _texture_id(texture_id)
 {}
 
 EntitySnapshot::~EntitySnapshot() 
@@ -27,6 +28,11 @@ size_t EntitySnapshot::GetId() const
 Vector2 EntitySnapshot::GetDirection() const
 {
   return _direction; 
+}
+
+int EntitySnapshot::GetTextureId() const 
+{
+  return _texture_id;
 }
 
 } // namesapce engine

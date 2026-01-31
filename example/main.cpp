@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
 
     engine.LoadScene(std::move(scene));
   }
+  
   engine.Run();
   
   return 0;

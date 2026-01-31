@@ -99,7 +99,7 @@ void Server::HandlePacket(int client_socket, Packet& packet, Scene* scene)
       Packet response(PacketType::ENTITY_CREATE_RESPONSE);
       response.Write(entity_id);
       response.Write(texture_id);
-      BroadcastSnapshot(_connected_clients, response);
+      Send(client_socket, response);
       
       std::cout << "Entity created with ID: " << entity_id << " at position { " 
                 << position.x << ":" << position.y << " }" 
@@ -110,11 +110,13 @@ void Server::HandlePacket(int client_socket, Packet& packet, Scene* scene)
     case PacketType::INPUT_COMMAND: {
       size_t id;
       Vector2 direction;
+      int texture_id;
 
       packet.Read(id);
       packet.Read(direction);
+      packet.Read(texture_id);
 
-      EntitySnapshot snapshot(id, direction);
+      EntitySnapshot snapshot(id, direction, texture_id);
       scene->ApplySnapshot(snapshot); 
       break;
     }

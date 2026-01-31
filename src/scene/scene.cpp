@@ -1,5 +1,6 @@
 #include "scene/scene.h"
 #include "replication/snapshot/entity_snapshot.h"
+#include "core/factories/sprite_factory.h"
 
 namespace engine {
 
@@ -36,7 +37,8 @@ void Scene::ApplySnapshot(Snapshot& s)
 {
   EntitySnapshot* es = dynamic_cast<EntitySnapshot*>(&s);
   if (es != nullptr) {
-    _entity_manager->UpdateOne(es->GetId(), es->GetDirection());
+    _entity_manager->UpdateOne(
+        es->GetId(), es->GetDirection());
   }
 }
 
@@ -53,6 +55,7 @@ Packet Scene::GenerateWorldSnapshot() const
     for (const auto& entity : entities) {
       snapshot.Write(entity->GetId());
       snapshot.Write(entity->GetPos());
+      snapshot.Write(entity->GetSpriteTextureId());
     }
   }
   
@@ -69,8 +72,10 @@ void Scene::ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id)
   for (size_t i = 0; i < count; ++i) {
     size_t id;
     Vector2 pos;
+    int texture_id;
     snapshot.Read(id);
     snapshot.Read(pos);
+    snapshot.Read(texture_id);
     
     if (id == ignore_entity_id) {
       continue;
@@ -87,9 +92,12 @@ void Scene::ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id)
     if (entity_exists) {
       _entity_manager->UpdatePosition(id, pos);
     } else {
-      AddEntity<Entity>(
-          std::make_unique<AnimatedSprite>("assets/actors/monkey/Idle.png", 4, 1, 3),
-          pos, id);
+      if (_sprite_factory && _sprite_factory->IsInitialized()) {
+        auto sprite = _sprite_factory->CreateSprite(texture_id);
+        if (sprite) {
+          AddEntity<Entity>(std::move(sprite), pos, id);
+        }
+      }
     }
   }
 }

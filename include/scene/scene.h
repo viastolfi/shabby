@@ -3,11 +3,14 @@
 
 #include <string>
 #include <functional>
+#include <typeindex>
 
 #include "entities/entities.h"
 #include "entities/entity_manager.h"
 #include "replication/snapshot/snapshot.h"
 #include "networking/client.h"
+#include "core/factories/sprite_factory.h"
+#include "core/assets/assets_registry.h"
 
 namespace engine {
 
@@ -21,6 +24,23 @@ public:
 
   Scene(Scene&&) = default;
   Scene& operator=(Scene&&) = default;
+
+  void SetSpriteFactory(SpriteFactory* factory) { _sprite_factory = factory; }
+  
+  void SetAssetRegistryPtr(void* registry_ptr, std::type_index type) {
+    _assets_registry_ptr = registry_ptr;
+    _assets_registry_type = type;
+  }
+  
+  template<typename T>
+  AssetRegistry<T>* GetAssetRegistry() {
+    if (_assets_registry_type != std::type_index(typeid(T))) {
+      return nullptr;
+    }
+    return static_cast<AssetRegistry<T>*>(_assets_registry_ptr);
+  }
+  
+  SpriteFactory* GetSpriteFactory() const { return _sprite_factory; }
 
   void AddEntity(std::unique_ptr<Entity> e);
   
@@ -53,18 +73,20 @@ public:
   void UpdateScene(float dt);
   void DrawScene() const;
   void ApplySnapshot(Snapshot& s);
-  
+
   Packet GenerateWorldSnapshot() const;
-  
+
   void ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id = 0);
-  
+
   void ApplyNewEntitySnapshot(
       Packet& snapshot, 
       size_t ignore_entity_id,
       std::function<std::unique_ptr<Sprite>(int)> sprite_factory);
-  
 private:
   std::unique_ptr<EntityManager> _entity_manager;
+  void* _assets_registry_ptr = nullptr;
+  std::type_index _assets_registry_type{typeid(void)};
+  SpriteFactory* _sprite_factory = nullptr;
 };
 
 } // namespace engine
