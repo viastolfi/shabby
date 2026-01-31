@@ -42,6 +42,13 @@ void Scene::ApplySnapshot(Snapshot& s)
   }
 }
 
+void Scene::UpdateEntityId(size_t old_id, size_t new_id)
+{
+  if (_entity_manager) {
+    _entity_manager->UpdateEntityId(old_id, new_id);
+  }
+}
+
 Packet Scene::GenerateWorldSnapshot() const
 {
   Packet snapshot(PacketType::WORLD_SNAPSHOT);

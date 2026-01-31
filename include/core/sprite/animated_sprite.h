@@ -21,6 +21,14 @@ public:
       int rows,
       float frame_speed);
 
+  explicit AnimatedSprite(
+    int texture_id, 
+    int cols,
+    int rows,
+    float frame_speed
+  );
+
+
   template<typename T>
   explicit AnimatedSprite(
        AssetRegistry<T> registry,

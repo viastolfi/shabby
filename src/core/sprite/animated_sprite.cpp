@@ -26,9 +26,22 @@ AnimatedSprite::AnimatedSprite(
     _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
 {}
 
+AnimatedSprite::AnimatedSprite(
+    int texture_id, 
+    int cols,
+    int rows,
+    float frame_speed)
+  : Sprite(texture_id),
+    _cols(cols),
+    _rows(rows),
+    _frame_speed(frame_speed),
+    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
+{}  
+
 void AnimatedSprite::Load()
 {
   Sprite::Load();
+  
   _frame_rec.width = static_cast<float>(GetTexture().width) / _cols;
   _frame_rec.height = static_cast<float>(GetTexture().height);
 }

@@ -68,7 +68,7 @@ int Entity::GetSpriteTextureId() const
   
 void Entity::LoadSprite() const
 {
-  if (_sprite && _sprite->GetPath() != nullptr) {
+  if (_sprite) {
     _sprite->Load();
   }
 }

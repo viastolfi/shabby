@@ -23,7 +23,8 @@ public:
   : _texture(registry.GetTexture(asset_id)),
     _texture_id(static_cast<int>(asset_id)),
     _loaded(true),
-    _path(registry.GetTexturePath(asset_id))
+    _owns_texture(false),
+    _path(nullptr)
   {}
 
   virtual ~Sprite(); 
@@ -50,6 +51,7 @@ private:
   Texture2D _texture;
   int _texture_id = 0;
   bool _loaded;
+  bool _owns_texture = true;
   const char* _path;
 };
 

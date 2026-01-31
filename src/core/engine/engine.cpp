@@ -1,6 +1,4 @@
 #include "core/engine/engine.h"
-#include "networking/packet_handler.h"
-#include "raylib.h"
 
 namespace engine {
 
@@ -8,24 +6,30 @@ Engine::Engine(const EngineConfig& config)
   : _config(config), 
     _initialized(false) 
 {
-  if (_config.mode != SERVER) {
-    InitWindow(_config.width, _config.height, _config.title);
-    SetTargetFPS(60);
+  InitWindow(_config.width, _config.height, _config.title);
+  SetTargetFPS(60);
 
-    if (_config.mode == CLIENT) {
-      _network_manager = std::make_unique<NetworkManager>(); 
-      _network_manager->InitClient();
-    }
-  }
-  else {
-    _network_manager = std::make_unique<NetworkManager>();
-    // TODO: make this choice of the user
-    ServerConf conf{8080, 2};
-    _network_manager->InitServer(conf);
+  if (_config.mode == CLIENT) {
+    _network_manager = std::make_unique<NetworkManager>(); 
+    _network_manager->InitClient();
   }
   _initialized = true;
 }
 
+Engine::Engine(
+    const ServerConf& server_config, 
+    std::unique_ptr<ServerLogic> logic)
+  : _config(EngineConfig{0, 0, "", EngineMode::SERVER}),
+    _initialized(false)
+{
+  _network_manager = std::make_unique<NetworkManager>();
+  _network_manager->InitServer(
+      server_config, 
+      std::move(logic),
+      std::make_unique<Scene>());
+  _initialized = true;
+}
+    
 Engine::~Engine() 
 {
   _loaded_scene.reset();
@@ -82,7 +86,7 @@ void Engine::RunGame()
 void Engine::RunServer()
 {
   if (_initialized)
-    _network_manager->RunServer(std::move(_loaded_scene));
+    _network_manager->RunServer();
 }
 
 } // namespace engine

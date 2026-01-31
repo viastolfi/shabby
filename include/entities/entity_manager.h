@@ -27,6 +27,7 @@ public:
   void UpdateAll(float dt);
   void DrawAll() const;
   void UpdatePosition(size_t id, Vector2 pos);
+  void UpdateEntityId(size_t old_id, size_t new_id);
 
   const std::vector<std::unique_ptr<Entity>>& GetEntities() const { return _entities; }
   

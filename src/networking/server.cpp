@@ -2,8 +2,13 @@
 
 namespace engine {
 
-Server::Server(ServerConf conf)
-  :_conf(conf)
+Server::Server(
+      ServerConf conf, 
+      std::unique_ptr<ServerLogic> logic,
+      std::unique_ptr<Scene> scene)
+  : _conf(conf),
+    _logic(std::move(logic)),
+    _game_simulation(std::make_unique<GameSimulation>(std::move(scene)))
 {
   _server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -18,6 +23,12 @@ Server::Server(ServerConf conf)
       sizeof(server_address));
 
   listen(_server_socket, _conf.clientNumber);
+
+  _game_simulation->SetEntityIdGenerator([this]() {
+    return this->GenerateEntityId();
+  });
+
+  _logic->OnStart(*_game_simulation.get());
 }
 
 Server::~Server()
@@ -37,7 +48,7 @@ void Server::BroadcastSnapshot(const std::vector<int>& clients, Packet snapshot)
   }
 }
 
-void Server::Run(std::unique_ptr<Scene> scene) 
+void Server::Run()
 {
   std::cout << "Server starting on port " << _conf.port << "..." << std::endl;
   
@@ -62,16 +73,17 @@ void Server::Run(std::unique_ptr<Scene> scene)
     for (int client_socket : _connected_clients) {
       Packet packet = ReceiveNonBlocking(client_socket);
       if (packet._type != PacketType::NONE) {
-        HandlePacket(client_socket, packet, scene.get());
+        HandlePacket(client_socket, packet, _game_simulation->GetScene());
       }
     }
     
     if (dt >= tick_rate) {
       last_tick = now;
-      scene->UpdateScene(dt);
+      _game_simulation->Update(dt);
+      _game_simulation->GetScene()->UpdateScene(dt);
       
       if (!_connected_clients.empty()) {
-        Packet snapshot = scene->GenerateWorldSnapshot();
+        Packet snapshot = _game_simulation->GetScene()->GenerateWorldSnapshot();
         BroadcastSnapshot(_connected_clients, snapshot);
       }
     }
