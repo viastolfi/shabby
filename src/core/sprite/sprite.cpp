@@ -2,23 +2,12 @@
 
 namespace engine {
 
-Sprite::Sprite(const char* path) 
-  : _loaded(false),
-    _path(path)
-{}
-
-Sprite::Sprite(std::string path)
-  : _loaded(false),
-    _path(path.c_str())
-{}
-
-Sprite::Sprite(Texture2D texture)
+Sprite::Sprite(
+      Texture2D texture,
+      int texture_id,
+      const char* path)
   : _texture(texture),
-    _loaded(true)
-{}
-     
-Sprite::Sprite(Texture2D texture, const char* path)
-  : _texture(texture),
+    _texture_id(texture_id),
     _loaded(true),
     _path(path)
 {}

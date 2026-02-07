@@ -25,7 +25,6 @@ struct ScheduledTask {
   Scheduler::Task task;
 };
 
-
 } // namespace engine
 
 #endif // SCHEDULER_H

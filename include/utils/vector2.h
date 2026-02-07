@@ -1,6 +1,8 @@
 #ifndef VECTOR2_H
 #define  VECTOR2_H
 
+#include "raylib.h"
+
 namespace engine {
 
 inline Vector2 operator+(const Vector2 v1, const Vector2 v2)

@@ -10,38 +10,18 @@ namespace engine {
 class AnimatedSprite : public Sprite {
 public: 
   explicit AnimatedSprite(
+      Texture2D texture,
+      int texture_id,
       const char* path,
       int cols,
       int rows,
       float frame_speed);
 
   explicit AnimatedSprite(
-      Texture2D texture,
+      int texture_id,
       int cols,
       int rows,
       float frame_speed);
-
-  explicit AnimatedSprite(
-    int texture_id, 
-    int cols,
-    int rows,
-    float frame_speed
-  );
-
-
-  template<typename T>
-  explicit AnimatedSprite(
-       AssetRegistry<T> registry,
-       T asset_id,
-       int cols,
-       int rows,
-       float frame_speed)
-  : Sprite(registry, asset_id),
-    _cols(cols),
-    _rows(rows),
-    _frame_speed(frame_speed),
-    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
-  {}
 
   void Load() override;
   void Draw(Vector2 pos) const override;
@@ -54,7 +34,7 @@ private:
   float _frame_speed;
   mutable int _frame_counter = 0;
   mutable int _current_frame = 0;
-  mutable Rectangle _frame_rec;
+  mutable Rectangle _frame_rec = {0.0f, 0.0f, 0.0f, 0.0f};
 };
 
 } // namespace engine

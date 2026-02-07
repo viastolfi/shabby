@@ -1,135 +1,106 @@
 #include "scene/scene.h"
-#include "replication/snapshot/entity_snapshot.h"
-#include "core/factories/sprite_factory.h"
 
 namespace engine {
 
+Scene::Scene(AssetRegistry* assets_registry)
+  : _task_scheduler(std::make_unique<Scheduler>()),
+    _entity_manager(std::make_unique<EntityManager>())
+{
+  auto sprite_factory = std::make_unique<SpriteFactory>(assets_registry);
+  _entity_manager->SetEntityFactory(
+      std::make_unique<EntityFactory>(std::move(sprite_factory)));
+}
+
 Scene::Scene()
-  :_entity_manager(std::make_unique<EntityManager>())
-{}
+  : _task_scheduler(std::make_unique<Scheduler>()),
+    _entity_manager(std::make_unique<EntityManager>())
+{
+  auto sprite_factory = std::make_unique<SpriteFactory>(nullptr);
+  _entity_manager->SetEntityFactory(
+      std::make_unique<EntityFactory>(std::move(sprite_factory)));
+}
 
 Scene::~Scene()
 {
   _entity_manager.reset();
 }
 
-void Scene::AddEntity(std::unique_ptr<Entity> entity) 
-{
-  if (_entity_manager) {
-    entity->LoadSprite();
-    _entity_manager->AddEntity(std::move(entity));
-  }
-}
-
-void Scene::UpdateScene(float dt)
+void Scene::Update(float dt)
 {
   if (_entity_manager)
     _entity_manager->UpdateAll(dt);
+  if (_task_scheduler)
+    _task_scheduler->Update(dt);
 }
 
-void Scene::DrawScene() const
+void Scene::Draw() const
 {
   if (_entity_manager)
     _entity_manager->DrawAll();
 }
 
-void Scene::ApplySnapshot(Snapshot& s) 
+Entity* Scene::AddEntity(
+    std::unique_ptr<IEntityController> controller,
+    int texture_id)
 {
-  EntitySnapshot* es = dynamic_cast<EntitySnapshot*>(&s);
-  if (es != nullptr) {
-    _entity_manager->UpdateOne(
-        es->GetId(), es->GetDirection());
+  return _entity_manager->AddEntity(std::move(controller), texture_id);
+}
+
+void Scene::AddEntity(
+      uint64_t id,
+      int texture_id,
+      Vector2 position)
+{
+  _entity_manager->AddEntity(id, texture_id, position);
+}
+
+void Scene::RemoveEntity(uint64_t id)
+{
+  _entity_manager->RemoveEntity(id);
+}
+
+void Scene::ScheduleTaskAfter(float seconds, std::function<void(Scene*)> task)
+{
+  if (_task_scheduler) {
+    _task_scheduler->After(seconds, [this, task]() {
+      task(this);
+    });
   }
 }
 
-void Scene::UpdateEntityId(size_t old_id, size_t new_id)
+void Scene::ScheduleTaskEvery(float seconds, std::function<void(Scene*)> task)
 {
-  if (_entity_manager) {
-    _entity_manager->UpdateEntityId(old_id, new_id);
+  if (_task_scheduler) {
+    _task_scheduler->Every(seconds, [this, task]() {
+      task(this);
+    });
   }
 }
 
-Packet Scene::GenerateWorldSnapshot() const
+const std::vector<Entity*>& Scene::GetEntities() const
 {
-  Packet snapshot(PacketType::WORLD_SNAPSHOT);
-  
-  if (_entity_manager) {
-    const auto& entities = _entity_manager->GetEntities();
+  return _entity_manager->GetEntities();
+}
 
-    size_t count = entities.size();
-    snapshot.Write(count);
-    
-    for (const auto& entity : entities) {
-      snapshot.Write(entity->GetId());
-      snapshot.Write(entity->GetPos());
-      snapshot.Write(entity->GetSpriteTextureId());
-    }
+WorldSnapshot Scene::CreateWorldSnapshot() const
+{
+  WorldSnapshot snapshot;
+  for (const auto* entity : _entity_manager->GetEntities()) {
+    snapshot.AddEntity(entity->_id, entity->_pos, entity->GetSpriteTextureId());
   }
-  
   return snapshot;
 }
 
-void Scene::ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id)
+void Scene::ApplyWorldSnapshot(WorldSnapshot& snapshot)
 {
-  if (!_entity_manager) return;
-  
-  size_t count;
-  snapshot.Read(count);
-
-  for (size_t i = 0; i < count; ++i) {
-    size_t id;
-    Vector2 pos;
-    int texture_id;
-    snapshot.Read(id);
-    snapshot.Read(pos);
-    snapshot.Read(texture_id);
-    
-    if (id == ignore_entity_id) {
-      continue;
-    }
-    
-    bool entity_exists = false;
-    for (const auto& e : _entity_manager->GetEntities()) {
-      if (e->GetId() == id) {
-        entity_exists = true;
+  for (const auto& entity_data : snapshot.GetEntities()) {
+    for (auto* entity : _entity_manager->GetEntities()) {
+      if (entity->_id == entity_data.id && !entity->_is_local) {
+        entity->_pos = entity_data.position;
         break;
       }
     }
-    
-    if (entity_exists) {
-      _entity_manager->UpdatePosition(id, pos);
-    } else {
-      if (_sprite_factory && _sprite_factory->IsInitialized()) {
-        auto sprite = _sprite_factory->CreateSprite(texture_id);
-        if (sprite) {
-          AddEntity<Entity>(std::move(sprite), pos, id);
-        }
-      }
-    }
   }
 }
-
-void Scene::ApplyNewEntitySnapshot(
-    Packet& snapshot, 
-    size_t ignore_entity_id,
-    std::function<std::unique_ptr<Sprite>(int)> sprite_factory)
-{
-  if (!_entity_manager) return;
-
-  size_t entity_id;
-  int texture_id;
-  Vector2 pos;
-
-  snapshot.Read(entity_id);
-  snapshot.Read(texture_id);
-  snapshot.Read(pos);
-
-  if (entity_id == ignore_entity_id) return;
-
-  auto sprite = sprite_factory(texture_id);
-  if (sprite) {
-    AddEntity<Entity>(std::move(sprite), pos, entity_id);
-  }
-}
-
+ 
 } // namespace engine

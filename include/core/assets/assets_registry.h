@@ -8,12 +8,11 @@
 
 namespace engine {
 
-template<typename T>
 struct AssetDesc {
-  T id;
+  int id;
   const char* path;
-  int cols = 0;
-  int rows = 0;
+  int cols = -1;
+  int rows = -1;
 };
 
 struct TextureDesc {
@@ -23,8 +22,6 @@ struct TextureDesc {
   int rows;
 };
 
-template<typename T>
-requires std::is_enum_v<T>
 class AssetRegistry {
 public:
   template<typename... Args>
@@ -33,31 +30,37 @@ public:
     (LoadOne(std::forward<Args>(assets)), ...); 
   }
 
-  Texture2D GetTexture(T id) const
+  Texture2D GetTexture(int id) const
   {
-    return _textures.at(static_cast<int>(id)).texture; 
+    return _textures.at(id).texture;
   }
 
-  const char* GetTexturePath(T id) const
+  const char* GetTexturePath(int id) const
   {
-    return _textures.at(static_cast<int>(id)).path; 
+    return _textures.at(id).path; 
   }
 
-  int GetTextureCols(T id) const 
+  int GetTextureCols(int id) const 
   {
-    return _textures.at(static_cast<int>(id)).cols; 
+    return _textures.at(id).cols; 
   }
 
-  int GetTextureRows(T id) const
+  int GetTextureRows(int id) const
   {
-    return _textures.at(static_cast<int>(id)).rows; 
+    return _textures.at(id).rows; 
   }
+
+  TextureDesc GetTextureDesc(int id) const 
+  {
+    return _textures.at(id);
+  }
+  
 private:
   std::unordered_map<int, TextureDesc> _textures;
 
-  void LoadOne(const AssetDesc<T>& asset)
+  void LoadOne(const AssetDesc& asset)
   {
-    int key = static_cast<int>(asset.id); 
+    int key = asset.id; 
     _textures.emplace(key, TextureDesc{
         LoadTexture(asset.path), 
         asset.path,
