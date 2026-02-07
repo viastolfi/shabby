@@ -10,22 +10,12 @@ namespace engine {
 
 class Sprite {
 public:
-  explicit Sprite(const char* path);
-  explicit Sprite(std::string path);
-  explicit Sprite(Texture2D texture);
-  explicit Sprite(Texture2D texture, const char* path);
-  explicit Sprite(int texture_id);
-
-  template<typename T>
   explicit Sprite(
-      AssetRegistry<T> registry,
-      T asset_id)
-  : _texture(registry.GetTexture(asset_id)),
-    _texture_id(static_cast<int>(asset_id)),
-    _loaded(true),
-    _owns_texture(false),
-    _path(nullptr)
-  {}
+      Texture2D texture,
+      int texture_id,
+      const char* path);
+
+  explicit Sprite(int texture_id);
 
   virtual ~Sprite(); 
   
@@ -44,6 +34,7 @@ public:
 
   const char* GetPath() const;
   int GetTextureId() const;
+  void SetOwnsTexture(bool owns) { _owns_texture = owns; }
 protected:
   const Texture2D& GetTexture() const { return _texture; }
 

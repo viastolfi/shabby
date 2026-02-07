@@ -2,36 +2,49 @@
 #define SPRITE_FACTORY_H
 
 #include <memory>
-#include <functional>
+#include <typeindex>
+#include <stdexcept>
 #include "core/sprite/sprite.h"
+#include "core/assets/assets_registry.h"
 
 namespace engine {
 
 class SpriteFactory {
 public:
-  SpriteFactory() = default;
+  SpriteFactory(AssetRegistry* assets_registry)
+    :_assets_registry(assets_registry)
+  {}
+
   ~SpriteFactory() = default;
-  
-  void SetFactory(std::function<std::unique_ptr<Sprite>(int)> factory) 
-  {
-    _factory = factory;
-  }
   
   std::unique_ptr<Sprite> CreateSprite(int texture_id) const 
   {
-    if (_factory) {
-      return _factory(texture_id);
+    if (!_assets_registry || texture_id < 0)
+      return nullptr;
+  
+    try {
+      TextureDesc desc = _assets_registry->GetTextureDesc(texture_id);    
+      if (desc.rows == -1) {
+        auto sprite = std::make_unique<Sprite>(
+            desc.texture, texture_id, desc.path);
+        sprite->SetOwnsTexture(false);
+        return sprite;
+      } else {
+        auto sprite = std::make_unique<AnimatedSprite>(
+            desc.texture, 
+            texture_id, 
+            desc.path, 
+            desc.cols, 
+            desc.rows, 3.0f);
+        sprite->SetOwnsTexture(false);
+        return sprite;
+      }
+    } catch (const std::out_of_range&) {
+      return nullptr;
     }
-    return nullptr;
   }
-  
-  bool IsInitialized() const 
-  {
-    return _factory != nullptr;
-  }
-  
 private:
-  std::function<std::unique_ptr<Sprite>(int)> _factory;
+  AssetRegistry* _assets_registry;
 };
 
 } // namespace engine

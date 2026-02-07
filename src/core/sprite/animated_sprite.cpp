@@ -3,40 +3,34 @@
 namespace engine {
 
 AnimatedSprite::AnimatedSprite(
-    const char* path,
-    int cols,
-    int rows,
-    float frame_speed)
-  : Sprite(path), 
-    _cols(cols), 
-    _rows(rows), 
-    _frame_speed(frame_speed),
-    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
-{}
-
-AnimatedSprite::AnimatedSprite(
-    Texture2D texture,
-    int cols,
-    int rows,
-    float frame_speed)
-  : Sprite(texture),
+      Texture2D texture,
+      int texture_id,
+      const char* path,
+      int cols,
+      int rows,
+      float frame_speed)
+  : Sprite(texture, texture_id, path),
     _cols(cols),
     _rows(rows),
-    _frame_speed(frame_speed),
-    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
-{}
+    _frame_speed(frame_speed)
+{
+  _frame_rec.width = static_cast<float>(texture.width) / _cols;
+  _frame_rec.height = static_cast<float>(texture.height);
+  _frame_rec.x = 0;
+  _frame_rec.y = 0;
+}
 
 AnimatedSprite::AnimatedSprite(
-    int texture_id, 
-    int cols,
-    int rows,
-    float frame_speed)
+      int texture_id,
+      int cols,
+      int rows,
+      float frame_speed)
   : Sprite(texture_id),
     _cols(cols),
     _rows(rows),
-    _frame_speed(frame_speed),
-    _frame_rec{0.0f, 0.0f, 0.0f, 0.0f}
-{}  
+    _frame_speed(frame_speed)
+{}
+
 
 void AnimatedSprite::Load()
 {

@@ -12,7 +12,7 @@ public:
       size_t id, Vector2 direction, int textutre_id);
   ~EntitySnapshot();
 
-  Packet SnapshotToPacket() override;
+  NetworkPacket SnapshotToPacket() override;
 
   size_t GetId() const;
   Vector2 GetDirection() const;

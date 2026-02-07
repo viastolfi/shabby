@@ -14,12 +14,18 @@ void Scheduler::After(float seconds, Task task)
 
 void Scheduler::Update(float dt)
 {
-  for (auto& t : tasks) {
-    t.timer -= dt; 
-    if (t.timer < 0.f) {
-      t.task();  
-      if (t.repeat)
-        t.timer = t.interval;
+  for (auto it = tasks.begin(); it != tasks.end(); ) {
+    it->timer -= dt; 
+    if (it->timer < 0.f) {
+      it->task();  
+      if (it->repeat) {
+        it->timer = it->interval;
+        ++it;
+      } else {
+        it = tasks.erase(it);
+      }
+    } else {
+      ++it;
     }
   }  
 }

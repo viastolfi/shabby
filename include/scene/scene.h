@@ -1,21 +1,26 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <string>
-#include <functional>
-#include <typeindex>
+#include <vector>
 
-#include "entities/entities.h"
-#include "entities/entity_manager.h"
+#include "entities/entity.h"
+#include "entities/entity_manager/entity_manager.h"
 #include "replication/snapshot/snapshot.h"
+#include "replication/snapshot/world_snapshot.h"
 #include "networking/client.h"
 #include "core/factories/sprite_factory.h"
 #include "core/assets/assets_registry.h"
+#include "entities/controllers/entity_controller.h"
+#include "replication/snapshot/entity_snapshot.h"
+#include "core/factories/sprite_factory.h"
+#include "core/factories/entity_factory.h"
+#include "core/scheduler/scheduler.h"
 
 namespace engine {
 
 class Scene {
 public:
+  explicit Scene(AssetRegistry* assets_registry);
   explicit Scene();
   virtual ~Scene();
 
@@ -25,72 +30,33 @@ public:
   Scene(Scene&&) = default;
   Scene& operator=(Scene&&) = default;
 
-  void SetSpriteFactory(SpriteFactory* factory) { _sprite_factory = factory; }
-  
-  void SetAssetRegistryPtr(void* registry_ptr, std::type_index type) {
-    _assets_registry_ptr = registry_ptr;
-    _assets_registry_type = type;
-  }
-  
-  template<typename T>
-  AssetRegistry<T>* GetAssetRegistry() {
-    if (_assets_registry_type != std::type_index(typeid(T))) {
-      return nullptr;
-    }
-    return static_cast<AssetRegistry<T>*>(_assets_registry_ptr);
-  }
-  
-  SpriteFactory* GetSpriteFactory() const { return _sprite_factory; }
-
-  void AddEntity(std::unique_ptr<Entity> e);
-  
-  template<typename T, typename... Args>
-  void AddEntity(Args&&... args) {
-    AddEntity(std::make_unique<T>(std::forward<Args>(args)...));
-  }
-  
-  template<typename T, typename... Args>
-  size_t AddEntityWithServerId(Args&&... args) 
-  {
-    auto entity = std::make_unique<T>(std::forward<Args>(args)...);
-    
-    size_t temp_id = 0;
-    entity->SetId(temp_id);
-    AddEntity(std::move(entity));
-    
-    Packet request(PacketType::ENTITY_CREATE_REQUEST);
-    request.Write(_entity_manager->GetEntities().back()->GetPos());
-    request.Write(_entity_manager->GetEntities().back()->GetSpriteTextureId());
-    Client::GetInstance().Send(request);
-    
-    Packet response = Client::GetInstance().Receive();
-    size_t server_id = 0;
-    if (response._type == PacketType::ENTITY_CREATE_RESPONSE) {
-      response.Read(server_id);
-      UpdateEntityId(temp_id, server_id);
-    }
-    
-    return server_id;
-  }
-
-  void UpdateScene(float dt);
-  void DrawScene() const;
+  void Update(float dt);
+  void Draw() const;
   void ApplySnapshot(Snapshot& s);
-  void UpdateEntityId(size_t old_id, size_t new_id);
+  void ApplyWorldSnapshot(WorldSnapshot& snapshot);
 
-  Packet GenerateWorldSnapshot() const;
-
-  void ApplyWorldSnapshot(Packet& snapshot, size_t ignore_entity_id = 0);
-
-  void ApplyNewEntitySnapshot(
-      Packet& snapshot, 
-      size_t ignore_entity_id,
-      std::function<std::unique_ptr<Sprite>(int)> sprite_factory);
+  Entity* AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      int texture_id);
+  
+  void AddEntity(
+      uint64_t id,
+      int texture_id,
+      Vector2 position);
+  
+  void RemoveEntity(uint64_t id);
+  
+  void ScheduleTaskAfter(float seconds, std::function<void(Scene*)> task);
+  void ScheduleTaskEvery(float seconds, std::function<void(Scene*)> task);
+  
+  Scheduler* GetScheduler() { return _task_scheduler.get(); }
+  const std::vector<Entity*>& GetEntities() const;
+  
+  WorldSnapshot CreateWorldSnapshot() const;
+  
 private:
+  std::unique_ptr<Scheduler> _task_scheduler;
   std::unique_ptr<EntityManager> _entity_manager;
-  void* _assets_registry_ptr = nullptr;
-  std::type_index _assets_registry_type{typeid(void)};
-  SpriteFactory* _sprite_factory = nullptr;
 };
 
 } // namespace engine

@@ -6,13 +6,41 @@ Engine::Engine(const EngineConfig& config)
   : _config(config), 
     _initialized(false) 
 {
-  InitWindow(_config.width, _config.height, _config.title);
-  SetTargetFPS(60);
+  if (_config.mode == STANDALONE || _config.mode == CLIENT) {
+    RenderConfig render_config;
+    render_config.width = _config.width;
+    render_config.height = _config.height;
+    render_config.title = _config.title;
+    render_config.target_fps = 60;
+    _render_system = std::make_unique<RenderSystem>(render_config);
+  }
+
+  GameLoopConfig loop_config;
+  loop_config.target_fps = 60.0f;
+  loop_config.fixed_timestep = false;
+  _game_loop = std::make_unique<GameLoop>(loop_config);
 
   if (_config.mode == CLIENT) {
-    _network_manager = std::make_unique<NetworkManager>(); 
-    _network_manager->InitClient();
+    ClientConfig client_config;
+    client_config.server_address = "127.0.0.1";
+    client_config.port = 8080;
+    _client = std::make_unique<Client>(client_config);
+    
+    _packet_registry = std::make_unique<PacketRegistry>();
+    _packet_registry->RegisterHandler(
+      PacketType::ENTITY_SPAWN,
+      std::make_unique<EntitySpawnHandler>()
+    );
+    _packet_registry->RegisterHandler(
+      PacketType::ENTITY_DESTROY,
+      std::make_unique<EntityDestroyHandler>()
+    );
+    _packet_registry->RegisterHandler(
+      PacketType::SNAPSHOT,
+      std::make_unique<SnapshotHandler>()
+    );
   }
+  
   _initialized = true;
 }
 
@@ -22,71 +50,60 @@ Engine::Engine(
   : _config(EngineConfig{0, 0, "", EngineMode::SERVER}),
     _initialized(false)
 {
-  _network_manager = std::make_unique<NetworkManager>();
-  _network_manager->InitServer(
+  _loaded_scene = std::make_unique<Scene>();
+  
+  _server = std::make_unique<Server>(
       server_config, 
       std::move(logic),
-      std::make_unique<Scene>());
+      _loaded_scene.get(),
+      _loaded_scene->GetScheduler());
   _initialized = true;
 }
     
 Engine::~Engine() 
 {
   _loaded_scene.reset();
-  
-  if (_initialized) 
-    CloseWindow();
+  _render_system.reset();
+  _server.reset();
 }
 
 void Engine::LoadScene(std::unique_ptr<Scene> s)
 {
-  if (s) {
-    s->SetSpriteFactory(&_sprite_factory);
-    s->SetAssetRegistryPtr(_assets_registry.get(), _assets_registry_type);
-  }
-  _loaded_scene = std::move(s);
+  if (s) 
+    _loaded_scene = std::move(s);
 }
 
 void Engine::Run() 
 {
-  if (_config.mode != SERVER) 
-    RunGame();
-  else
-    RunServer();
-}
-
-void Engine::RunGame() 
-{
-  PacketHandler packet_handler(_loaded_scene.get(), _local_player_id, &_sprite_factory);
-  
-  while (!WindowShouldClose()) {
-    float dt = GetFrameTime();
-
-    if (_config.mode == CLIENT && _loaded_scene) {
-      Packet packet = Client::GetInstance().ReceiveNonBlocking();
-      if (packet._type != PacketType::NONE) {
-        packet_handler.HandlePacket(packet);
-      }
-    }
-
-    if (_loaded_scene) {
-      _loaded_scene->UpdateScene(dt); 
-    }
-
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-
-    if (_loaded_scene) 
-      _loaded_scene->DrawScene();
-
-    EndDrawing();
+  if (_config.mode == STANDALONE) {
+    if (!_game_loop || !_loaded_scene) return;
+    _game_loop->Run(
+      _loaded_scene.get(),
+      _render_system.get(),
+      [this]() { return _render_system && !_render_system->ShouldClose(); }
+    );
   }
-}
-
-void Engine::RunServer()
-{
-  if (_initialized)
-    _network_manager->RunServer();
+  else if (_config.mode == SERVER) {
+    if (_server) {
+      _server->Run();
+    }
+  }
+  else if (_config.mode == CLIENT) {
+    if (!_game_loop || !_loaded_scene) return;
+    _game_loop->Run(
+      _loaded_scene.get(),
+      _render_system.get(),
+      [this]() {
+        if (_client && _client->IsConnected()) {
+          NetworkPacket packet = _client->ReceiveNonBlocking();
+          if (packet.GetType() != PacketType::NONE) {
+            _packet_registry->RouteFromServer(packet, _loaded_scene.get());
+          }
+        }
+        return _render_system && !_render_system->ShouldClose();
+      }
+    );
+  }
 }
 
 } // namespace engine

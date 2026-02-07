@@ -10,11 +10,11 @@ EntitySnapshot::EntitySnapshot(
 EntitySnapshot::~EntitySnapshot() 
 {}
 
-Packet EntitySnapshot::SnapshotToPacket() 
+NetworkPacket EntitySnapshot::SnapshotToPacket() 
 {
-  Packet p(PacketType::ENTITY_SNAPSHOT);
+  NetworkPacket p(PacketType::SNAPSHOT);
 
-  p.Write(_id);
+  p.Write(static_cast<uint64_t>(_id));
   p.Write(_direction);
 
   return p;

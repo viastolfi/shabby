@@ -11,13 +11,13 @@ PacketHandler::PacketHandler(
     _sprite_factory(sprite_factory)
 {}
 
-void PacketHandler::HandlePacket(Packet& packet)
+void PacketHandler::HandlePacket(NetworkPacket& packet)
 {
-  switch (packet._type) {
-    case PacketType::WORLD_SNAPSHOT:
+  switch (packet.GetType()) {
+    case PacketType::SNAPSHOT:
       HandleWorldSnapshot(packet);
       break;
-    case PacketType::ENTITY_CREATE_RESPONSE:
+    case PacketType::ENTITY_SPAWN:
       HandleEntityCreateResponse(packet);
       break;
     default:
@@ -25,21 +25,14 @@ void PacketHandler::HandlePacket(Packet& packet)
   }
 }
 
-void PacketHandler::HandleWorldSnapshot(Packet& packet)
+void PacketHandler::HandleWorldSnapshot(NetworkPacket& packet)
 {
-  if (_scene) {
-    _scene->ApplyWorldSnapshot(packet, _local_player_id);
-  }
+  (void)packet;
 }
 
-void PacketHandler::HandleEntityCreateResponse(Packet& packet)
+void PacketHandler::HandleEntityCreateResponse(NetworkPacket& packet)
 {
-  if (_scene && _sprite_factory && _sprite_factory->IsInitialized()) {
-    auto factory_fn = [this](int texture_id) {
-      return _sprite_factory->CreateSprite(texture_id);
-    };
-    _scene->ApplyNewEntitySnapshot(packet, _local_player_id, factory_fn);
-  }
+  (void)packet;
 }
 
 } // namespace engine

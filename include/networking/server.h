@@ -2,28 +2,29 @@
 #define SERVER_H
 
 #include "scene/scene.h"
-#include "networking/packet.h"
-#include "raylib.h"
-#include "replication/snapshot/entity_snapshot.h"
-#include "core/scheduler/scheduler.h"
+#include "networking/protocol/network_packet.h"
+#include "networking/protocol/packet_registry.h"
 #include "networking/server_logic.h"
-#include "core/game_simulation/game_simulation.h"
-
+#include "core/scheduler/scheduler.h"
+#include "networking/handlers/entity_spawn_handler.h"
 #include <memory>
+#include <vector>
+#include <set>
+#include <map>
 #include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <sys/socket.h>
-#include <iostream>
-#include <unistd.h>
-#include <cstdint>
-#include <chrono>
+#include <netinet/tcp.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <chrono>
+#include <iostream>
 
 namespace engine {
 
 struct ServerConf {
   int port;
   int clientNumber;
+  float tick_rate = 60.0f;  
 };
 
 class Server {
@@ -31,24 +32,31 @@ public:
   explicit Server(
       ServerConf conf, 
       std::unique_ptr<ServerLogic> logic,
-      std::unique_ptr<Scene> scene);
+      Scene* scene,
+      Scheduler* scheduler);
   ~Server();
 
   void Run();
-  Packet Receive(int client_socket);
-  Packet ReceiveNonBlocking(int client_socket);
-  void Send(int client_socket, Packet packet);
-  void BroadcastSnapshot(const std::vector<int>& clients, Packet snapshot);
-  void HandlePacket(int client_socket, Packet& packet, Scene* scene);
+  void SendToClient(int client_socket, const NetworkPacket& packet);
+  void BroadcastToAll(const NetworkPacket& packet);
+  void BroadcastToAllExcept(int except_client, const NetworkPacket& packet);
   
-  size_t GenerateEntityId();
 private:
-  int _server_socket = 0;
+  void InitializeProtocol();
+  void AcceptNewClients();
+  void ProcessClientPackets();
+  NetworkPacket ReceiveNonBlocking(int client_socket);
+  
+  int _server_socket;
   ServerConf _conf;
-  size_t _next_entity_id = 1;
   std::vector<int> _connected_clients;
+  std::set<int> _pending_clients;
+  std::map<int, uint64_t> _client_entities;
+  
+  Scene* _scene;
+  Scheduler* _scheduler;
   std::unique_ptr<ServerLogic> _logic;
-  std::unique_ptr<GameSimulation> _game_simulation;
+  std::unique_ptr<PacketRegistry> _packet_registry;
 };
 
 } // namespace engine
