@@ -40,6 +40,7 @@ private:
   int _velocity = 0;
   std::unique_ptr<Sprite> _sprite;
   std::unique_ptr<IEntityController> _controller;
+  std::unique_ptr<Hitbox> _hitbox;
 protected:
 };
 
