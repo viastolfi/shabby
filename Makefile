@@ -31,7 +31,8 @@ SHABBY_LIB_SRC = \
 	$(SRC)/networking/packet_handler.cpp \
 	$(SRC)/core/scheduler/scheduler.cpp \
 	$(SRC)/physics/hitbox/rectangle_hitbox.cpp \
-	$(SRC)/physics/hitbox/hitbox.cpp
+	$(SRC)/physics/hitbox/hitbox.cpp \
+	$(SRC)/physics/collision/collision_system.cpp
 
 EXAMPLE_SRC = \
 	$(ONLINE_EXAMPLE)/main.cpp \
@@ -67,7 +68,8 @@ SHABBY_LIB_OBJ = \
 	$(BUILD)/networking/packet_handler.o \
 	$(BUILD)/core/scheduler/scheduler.o \
 	$(BUILD)/physics/hitbox/rectangle_hitbox.o \
-	$(BUILD)/physics/hitbox/hitbox.o
+	$(BUILD)/physics/hitbox/hitbox.o \
+	$(BUILD)/physics/collision/collision_system.o
 
 
 EXAMPLE_OBJ = \
