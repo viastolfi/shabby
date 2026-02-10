@@ -69,4 +69,9 @@ void AnimatedSprite::Draw(Vector2 pos) const
   Sprite::Draw(_frame_rec, pos);
 }
 
+const Rectangle& AnimatedSprite::GetCurrentFrameRec() const 
+{
+  return _frame_rec;
+}
+
 } // namespace engine

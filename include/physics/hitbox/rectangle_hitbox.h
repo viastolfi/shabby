@@ -7,10 +7,13 @@
 
 namespace engine {
 
-class RectangleHitbox : public Hitbox{
+class RectangleHitbox : public Hitbox {
 public:
   explicit RectangleHitbox(uint64_t id, Rectangle shape); 
   ~RectangleHitbox();
+
+  void Draw() override;
+  void Update(Vector2 new_pos) override;
 private:
   Rectangle _shape;
 }; 

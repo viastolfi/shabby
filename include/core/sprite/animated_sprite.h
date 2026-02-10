@@ -28,6 +28,7 @@ public:
 
   int GetFrameCounter() const;
   int GetCurrentFrame() const;
+  const Rectangle& GetCurrentFrameRec() const;
 private:
   int _cols;
   int _rows;

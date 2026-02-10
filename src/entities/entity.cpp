@@ -15,6 +15,8 @@ void Entity::Draw() const
 {
   if (_sprite) 
     _sprite->Draw(_pos);
+  if (_hitbox)
+    _hitbox->Draw();
 }
 
 void Entity::Init()
@@ -27,6 +29,8 @@ void Entity::Update(float dt)
 {
   if (_controller)
     _controller->OnUpdate(this, dt);
+  if (_hitbox)
+    _hitbox->Update(_pos);
 }
 
 const char* Entity::GetSpritePath() const
@@ -71,6 +75,25 @@ const Texture2D* Entity::GetTexture() const
 void Entity::SetHitbox(Hitbox* hitbox)
 {
   _hitbox = hitbox;
+}
+
+std::optional<std::reference_wrapper<const Rectangle>> 
+Entity::GetFrameRec() const 
+{
+  if (AnimatedSprite* d = dynamic_cast<AnimatedSprite*>(_sprite.get()); d != nullptr)
+    return std::cref(d->GetCurrentFrameRec());
+
+  return std::nullopt;
+}
+
+void Entity::SetHitboxCreationFunction(std::function<Hitbox*()> func) 
+{
+  _hitbox_creation_function = func;
+}
+  
+const std::function<Hitbox*()> Entity::GetHitboxCreateFuncion() const
+{
+  return _hitbox_creation_function;
 }
 
 } // namespace engine

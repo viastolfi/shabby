@@ -29,9 +29,9 @@ Entity* EntityManager::AddEntity(
   if (e) {
     e->_id = GenerateEntityId();
     e->_texture_id = texture_id;
-    e->SetHitbox(_hitbox_factory->CreateHitboxScaleOnTexture(*e));
     _entities.push_back(e);
     e->Init();
+    e->SetHitbox(_hitbox_factory->CreateHitbox(*e));
   }
   return e;
 }

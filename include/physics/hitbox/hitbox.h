@@ -11,6 +11,9 @@ public:
     : _id(id)
   {}
   virtual ~Hitbox() = 0;
+
+  virtual void Draw() = 0;
+  virtual void Update(Vector2 new_pos) = 0;
 private:
   uint64_t _id;
 };
