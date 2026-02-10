@@ -29,7 +29,9 @@ SHABBY_LIB_SRC = \
 	$(SRC)/networking/handlers/snapshot_handler.cpp \
 	$(SRC)/networking/handlers/input_command_handler.cpp \
 	$(SRC)/networking/packet_handler.cpp \
-	$(SRC)/core/scheduler/scheduler.cpp
+	$(SRC)/core/scheduler/scheduler.cpp \
+	$(SRC)/physics/hitbox/rectangle_hitbox.cpp \
+	$(SRC)/physics/hitbox/hitbox.cpp
 
 EXAMPLE_SRC = \
 	$(ONLINE_EXAMPLE)/main.cpp \
@@ -63,7 +65,9 @@ SHABBY_LIB_OBJ = \
 	$(BUILD)/networking/handlers/snapshot_handler.o \
 	$(BUILD)/networking/handlers/input_command_handler.o \
 	$(BUILD)/networking/packet_handler.o \
-	$(BUILD)/core/scheduler/scheduler.o
+	$(BUILD)/core/scheduler/scheduler.o \
+	$(BUILD)/physics/hitbox/rectangle_hitbox.o \
+	$(BUILD)/physics/hitbox/hitbox.o
 
 
 EXAMPLE_OBJ = \

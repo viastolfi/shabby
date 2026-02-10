@@ -2,6 +2,11 @@
 
 namespace engine {
 
+EntityManager::EntityManager()
+{
+  _hitbox_factory = std::make_unique<HitboxFactory>();
+}
+
 EntityManager::~EntityManager()
 {
   for (auto* entity : _entities) {
@@ -24,6 +29,7 @@ Entity* EntityManager::AddEntity(
   if (e) {
     e->_id = GenerateEntityId();
     e->_texture_id = texture_id;
+    e->SetHitbox(_hitbox_factory->CreateHitboxScaleOnTexture(*e));
     _entities.push_back(e);
     e->Init();
   }

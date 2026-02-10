@@ -35,9 +35,7 @@ public:
   const char* GetPath() const;
   int GetTextureId() const;
   void SetOwnsTexture(bool owns) { _owns_texture = owns; }
-protected:
-  const Texture2D& GetTexture() const { return _texture; }
-
+  const Texture2D* GetTexture() const { return &_texture; }
 private:
   Texture2D _texture;
   int _texture_id = 0;

@@ -6,13 +6,14 @@
 #include "core/sprite/animated_sprite.h"
 #include "networking/client.h"
 #include "entities/controllers/entity_controller.h"
+#include "physics/hitbox/hitbox.h"
 
 namespace engine {
 
 class Entity {
 public:
   explicit Entity();
-  virtual ~Entity() = default;
+  ~Entity(); 
   
   Entity(const Entity&) = delete;
   Entity& operator=(const Entity&) = delete;
@@ -26,10 +27,12 @@ public:
   void LoadSprite() const;
   const char* GetSpritePath() const;
   int GetSpriteTextureId() const;
+  const Texture2D* GetTexture() const;
 
   void SetController(std::unique_ptr<IEntityController> c);
   void SetVelocity(int velocity);
   void SetSprite(std::unique_ptr<Sprite> sprite);
+  void SetHitbox(Hitbox* hitbox);
 
   size_t _id = 0;
   Vector2 _pos = {0.f, 0.f};
@@ -40,7 +43,7 @@ private:
   int _velocity = 0;
   std::unique_ptr<Sprite> _sprite;
   std::unique_ptr<IEntityController> _controller;
-  std::unique_ptr<Hitbox> _hitbox;
+  Hitbox* _hitbox = nullptr;
 protected:
 };
 

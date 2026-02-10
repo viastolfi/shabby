@@ -1,15 +1,16 @@
 #ifndef RECTANGLE_HITBOX_h
 #define RECTANGLE_HITBOX_h
 
+#include <cstdint>
 #include "raylib.h"
 #include "physics/hitbox/hitbox.h"
 
 namespace engine {
 
-class RectangleHitbox {
+class RectangleHitbox : public Hitbox{
 public:
-  explicit RectangleHitbox() = default;
-  ~RectangleHitbox() = default;
+  explicit RectangleHitbox(uint64_t id, Rectangle shape); 
+  ~RectangleHitbox();
 private:
   Rectangle _shape;
 }; 

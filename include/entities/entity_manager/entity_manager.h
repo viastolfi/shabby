@@ -5,6 +5,7 @@
 #include "utils/vector2.h"
 #include "core/factories/entity_factory.h"
 #include "core/factories/sprite_factory.h"
+#include "core/factories/hitbox_factory.h"
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -13,7 +14,7 @@ namespace engine {
 
 class EntityManager {
 public:
-  EntityManager() = default;
+  EntityManager(); 
   ~EntityManager();
   
   // delete copy
@@ -50,6 +51,7 @@ public:
 private:
   std::vector<Entity*> _entities;
   std::unique_ptr<EntityFactory> _entity_factory;
+  std::unique_ptr<HitboxFactory> _hitbox_factory;
   size_t _next_entity_id = 1;
 };
 

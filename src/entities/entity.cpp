@@ -5,6 +5,12 @@ namespace engine {
 Entity::Entity()
 {}
 
+Entity::~Entity()
+{
+  if (_hitbox)
+    delete _hitbox;
+}
+
 void Entity::Draw() const 
 {
   if (_sprite) 
@@ -55,6 +61,16 @@ void Entity::SetVelocity(int velocity)
 void Entity::SetSprite(std::unique_ptr<Sprite> sprite)
 {
   _sprite = std::move(sprite);
+}
+
+const Texture2D* Entity::GetTexture() const 
+{
+  return _sprite->GetTexture();
+}
+
+void Entity::SetHitbox(Hitbox* hitbox)
+{
+  _hitbox = hitbox;
 }
 
 } // namespace engine

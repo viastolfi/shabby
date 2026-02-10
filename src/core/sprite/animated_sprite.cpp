@@ -36,8 +36,8 @@ void AnimatedSprite::Load()
 {
   Sprite::Load();
   
-  _frame_rec.width = static_cast<float>(GetTexture().width) / _cols;
-  _frame_rec.height = static_cast<float>(GetTexture().height);
+  _frame_rec.width = static_cast<float>(GetTexture()->width) / _cols;
+  _frame_rec.height = static_cast<float>(GetTexture()->height);
 }
 
 int AnimatedSprite::GetFrameCounter() const
@@ -63,8 +63,7 @@ void AnimatedSprite::Draw(Vector2 pos) const
 
     _frame_rec.x = 
       static_cast<float>(_current_frame) *
-      static_cast<float>(GetTexture().width) /
-      _cols;
+      static_cast<float>(GetTexture()->width) / _cols;
   }
 
   Sprite::Draw(_frame_rec, pos);
