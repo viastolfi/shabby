@@ -16,7 +16,9 @@ public:
   Hitbox* CreateHitbox(Entity& entity)
   {
     auto f = entity.GetHitboxCreateFuncion();
-    return f();
+    Hitbox* h = f();
+    h->SetId(_id_counter++);
+    return h;
   }
 private:
   uint64_t _id_counter = 0;

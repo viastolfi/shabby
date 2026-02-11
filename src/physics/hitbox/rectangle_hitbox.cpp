@@ -2,8 +2,8 @@
 
 namespace engine {
 
-RectangleHitbox::RectangleHitbox(uint64_t id, Rectangle shape)
-  : Hitbox(id), _shape(shape)
+RectangleHitbox::RectangleHitbox(Rectangle shape)
+  : _shape(shape)
 {}
 
 RectangleHitbox::~RectangleHitbox()

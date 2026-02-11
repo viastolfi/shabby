@@ -8,8 +8,7 @@ void PlayerController::OnInit(engine::Entity* entity)
     auto rOpt = entity->GetFrameRec();
     const Rectangle& r = rOpt->get();
 
-    Hitbox* h= new RectangleHitbox(
-        _id_counter++, 
+    engine::Hitbox* h = new engine::RectangleHitbox(
         {entity->_pos.x, entity->_pos.y, 
          static_cast<float>(r.width), 
          static_cast<float>(r.height)});

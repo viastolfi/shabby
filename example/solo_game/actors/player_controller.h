@@ -3,6 +3,8 @@
 
 #include "entities/controllers/entity_controller.h"
 #include "entities/entity.h"
+#include "physics/hitbox/hitbox.h"
+#include "physics/hitbox/rectangle_hitbox.h"
 #include "raymath.h"
 
 class PlayerController : public engine::IEntityController {
