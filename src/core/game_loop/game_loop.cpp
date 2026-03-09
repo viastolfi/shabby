@@ -35,6 +35,11 @@ void GameLoop::Run(
     } else {
       scene->Update(frame_dt);
     }
+
+    if (_collision_system) {
+      _collision_system->BroadPhase(scene);
+      _collision_system->NarrowPhase();
+    }
     
     if (render_system) {
       render_system->BeginFrame();
@@ -42,6 +47,11 @@ void GameLoop::Run(
       render_system->EndFrame();
     }
   }
+}
+
+void GameLoop::SetCollisionSystem(std::unique_ptr<CollisionSystem> cs)
+{
+  _collision_system = std::move(cs);
 }
 
 } // namespace engine

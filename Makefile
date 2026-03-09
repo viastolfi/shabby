@@ -41,7 +41,8 @@ EXAMPLE_SRC = \
 
 EXAMPLE_OFFLINE_SRC = \
 	$(OFFLINE_EXAMPLE)/main.cpp \
-	$(OFFLINE_EXAMPLE)/actors/player_controller.cpp
+	$(OFFLINE_EXAMPLE)/actors/player_controller.cpp \
+	$(OFFLINE_EXAMPLE)/actors/ennemy_controller.cpp
 
 SHABBY_LIB_OBJ = \
 	$(BUILD)/entities/entity.o \
@@ -79,7 +80,8 @@ EXAMPLE_OBJ = \
 
 EXAMPLE_OFFLINE_OBJ = \
 	$(BUILD)/solo_game/main.o \
-	$(BUILD)/solo_game/actors/player_controller.o
+	$(BUILD)/solo_game/actors/player_controller.o \
+	$(BUILD)/solo_game/actors/ennemy_controller.o
 
 CXX = g++
 

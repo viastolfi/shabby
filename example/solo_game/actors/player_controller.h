@@ -6,6 +6,7 @@
 #include "physics/hitbox/hitbox.h"
 #include "physics/hitbox/rectangle_hitbox.h"
 #include "raymath.h"
+#include "raylib.h"
 
 class PlayerController : public engine::IEntityController {
 public:
@@ -13,6 +14,8 @@ public:
 
   void OnInit(engine::Entity* entity) override;
   void OnUpdate(engine::Entity* entity, float dt) override;
+  void OnHitboxEntered(engine::Hitbox* enter, engine::Hitbox* from) override;
+  void OnHitboxExited(engine::Hitbox* enter, engine::Hitbox* from) override;
 };
 
 #endif // PLAYER_CONTROLLER_H

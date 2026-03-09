@@ -3,6 +3,8 @@
 
 #include "scene/scene.h"
 #include "core/render/render_system.h"
+#include "physics/collision/collision_system.h"
+
 #include <functional>
 #include "raylib.h"
 
@@ -28,9 +30,11 @@ public:
       std::function<bool()> should_continue = nullptr,
       std::function<void()> on_frame_start = nullptr);
   
+  void SetCollisionSystem(std::unique_ptr<CollisionSystem> cs);
 private:
   GameLoopConfig _config;
   float _accumulator;
+  std::unique_ptr<CollisionSystem> _collision_system;
 };
 
 } // namespace engine

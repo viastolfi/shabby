@@ -75,6 +75,8 @@ void Engine::LoadScene(std::unique_ptr<Scene> s)
 
 void Engine::Run() 
 {
+  _game_loop->SetCollisionSystem(std::make_unique<CollisionSystem>
+      (_config.width, _config.height));
   if (_config.mode == STANDALONE) {
     if (!_game_loop || !_loaded_scene) return;
     _game_loop->Run(

@@ -17,7 +17,7 @@ public:
   {
     auto f = entity.GetHitboxCreateFuncion();
     Hitbox* h = f();
-    h->SetId(_id_counter++);
+    h->_id = _id_counter++;
     return h;
   }
 private:

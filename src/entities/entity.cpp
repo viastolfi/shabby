@@ -96,4 +96,21 @@ const std::function<Hitbox*()> Entity::GetHitboxCreateFuncion() const
   return _hitbox_creation_function;
 }
 
+Hitbox* Entity::GetHitbox() const 
+{
+  return _hitbox;
+}
+
+void Entity::OnHitboxEntered(Hitbox* enter, Hitbox* from)
+{
+  if (_controller)
+    _controller->OnHitboxEntered(enter, from);
+}
+
+void Entity::OnHitboxExited(Hitbox* enter, Hitbox* from)
+{
+  if (_controller)
+    _controller->OnHitboxExited(enter, from);
+}
+
 } // namespace engine

@@ -23,4 +23,9 @@ void RectangleHitbox::Update(Vector2 new_pos)
   _shape.y = new_pos.y;
 }
 
+const Rectangle RectangleHitbox::GetShape() const 
+{
+  return _shape;
+}
+
 } // namespace engine

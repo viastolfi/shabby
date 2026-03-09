@@ -25,6 +25,8 @@ public:
   void Draw() const;
   void Init();
   void Update(float dt);
+  void OnHitboxEntered(Hitbox* enter, Hitbox* from);
+  void OnHitboxExited(Hitbox* enter, Hitbox* from);
 
   void LoadSprite() const;
   const char* GetSpritePath() const;
@@ -33,6 +35,7 @@ public:
   std::optional<std::reference_wrapper<const Rectangle>>
     GetFrameRec() const;
   const std::function<Hitbox*()> GetHitboxCreateFuncion() const;
+  Hitbox* GetHitbox() const;
 
   void SetController(std::unique_ptr<IEntityController> c);
   void SetVelocity(int velocity);

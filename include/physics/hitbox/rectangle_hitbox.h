@@ -14,6 +14,8 @@ public:
 
   void Draw() override;
   void Update(Vector2 new_pos) override;
+
+  const Rectangle GetShape() const override;
 private:
   Rectangle _shape;
 }; 

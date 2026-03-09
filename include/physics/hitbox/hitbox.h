@@ -14,9 +14,10 @@ public:
   virtual void Draw() = 0;
   virtual void Update(Vector2 new_pos) = 0;
 
-  void SetId(uint64_t id);
-private:
+  virtual const Rectangle GetShape() const = 0;
   uint64_t _id;
+
+  bool _is_entered = false;
 };
 
 } // namespace engine

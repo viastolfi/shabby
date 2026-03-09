@@ -1,7 +1,9 @@
 #include <memory>
 #include "actors/player_controller.h"
+#include "actors/ennemy_controller.h"
 #include "core/engine/engine.h"
 #include "scene/scene.h"
+#include "raylib.h"
 
 enum class TextureId
 {
@@ -11,6 +13,7 @@ enum class TextureId
 
 int main() 
 {
+  SetTraceLogLevel(1);
   engine::EngineConfig config{
     800,
     450,
@@ -37,10 +40,10 @@ int main()
       std::make_unique<PlayerController>(), 
       static_cast<int>(TextureId::Monkey));
 
-  scene->ScheduleTaskEvery(4.f, [](engine::Scene* s) {
+  scene->ScheduleTaskAfter(1.f, [](engine::Scene* s) {
       s->AddEntity(
-          std::make_unique<PlayerController>(),
-          static_cast<int>(TextureId::Monk)); 
+          std::make_unique<EnnemyController>(),
+          static_cast<int>(TextureId::Monkey)); 
   });
 
   engine.LoadScene(std::move(scene));
