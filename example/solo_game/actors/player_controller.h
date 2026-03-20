@@ -5,6 +5,7 @@
 #include "entities/entity.h"
 #include "physics/hitbox/hitbox.h"
 #include "physics/hitbox/rectangle_hitbox.h"
+#include "utils/raylog.h"
 #include "raymath.h"
 #include "raylib.h"
 

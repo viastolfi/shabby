@@ -13,7 +13,7 @@ enum class TextureId
 
 int main() 
 {
-  SetTraceLogLevel(1);
+  Raylog::GetInstance(1).Log(1, "Logger set");
   engine::EngineConfig config{
     800,
     450,

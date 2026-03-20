@@ -35,11 +35,11 @@ void PlayerController::OnUpdate(engine::Entity* entity, float dt)
 void PlayerController::OnHitboxEntered(
     engine::Hitbox* enter, engine::Hitbox* from)
 {
-  TraceLog(3, "Hitbox %d entered %d", from->_id, enter->_id);  
+  Raylog::GetInstance().Log(3, "Hitbox %d entered %d", from->_id, enter->_id);  
 }
 
 void PlayerController::OnHitboxExited(
     engine::Hitbox* enter, engine::Hitbox* from)
 {
-  TraceLog(3, "Hitbox %d exited %d", from->_id, enter->_id);
+  Raylog::GetInstance().Log(3, "Hitbox %d exited %d", from->_id, enter->_id);
 }
