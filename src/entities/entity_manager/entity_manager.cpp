@@ -31,8 +31,29 @@ Entity* EntityManager::AddEntity(
     e->_texture_id = texture_id;
     _entities.push_back(e);
     e->Init();
-    e->SetHitbox(_hitbox_factory->CreateHitbox(*e));
+    if (e->GetHitboxCreateFunction())
+      e->SetHitbox(_hitbox_factory->CreateHitbox(*e));
   }
+  return e;
+}
+
+Entity* EntityManager::AddEntity(
+    std::unique_ptr<IEntityController> controller,
+    int texture_id,
+    float x, float y, float width, float height)
+{
+  Entity* e = _entity_factory->CreateEntity(
+      std::move(controller), texture_id);
+  
+  // TODO: add memory safety
+
+  e->_id = GenerateEntityId();
+  e->_texture_id = texture_id;
+  _entities.push_back(e);
+  e->Init();
+  e->SetHitbox(_hitbox_factory->CreateBaseRectangleHitbox(
+        x, y, width, height));
+
   return e;
 }
 

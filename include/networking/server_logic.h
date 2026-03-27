@@ -7,7 +7,9 @@
 #include "replication/snapshot/world_snapshot.h"
 #include "networking/handlers/entity_spawn_handler.h"
 #include "networking/handlers/input_command_handler.h"
+#include "entities/controllers/entity_controller.h"
 #include <errno.h>
+#include <memory>
 
 namespace engine {
 
@@ -28,6 +30,8 @@ public:
       int client_id, Scene* scene) { (void)client_id; (void)scene; };
   virtual void OnClientDisconnect(
       int client_id, Scene* scene) { (void)client_id; (void)scene; };
+  virtual std::unique_ptr<IEntityController> CreateControllerFor(
+      int texture_id) { (void)texture_id; return nullptr; };
 };
 
 } // namespace engine

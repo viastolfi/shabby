@@ -13,6 +13,7 @@ enum class PacketType : uint8_t {
   ENTITY_SPAWN = 10,
   ENTITY_DESTROY = 11,
   ENTITY_UPDATE = 12,
+  ENTITY_SPAWN_WITH_HITBOX = 13,
   
   SNAPSHOT = 20,
   

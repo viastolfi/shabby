@@ -51,8 +51,9 @@ void CollisionSystem::NarrowPhase()
           if (CheckCollisionRecs(
                 e1->GetHitbox()->GetShape(),
                 e2->GetHitbox()->GetShape())) {
-            if (!e1->GetHitbox()->_is_entered)
+            if (!e1->GetHitbox()->_is_entered) {
               e1->OnHitboxEntered(e1->GetHitbox(), e2->GetHitbox());
+            }
           } else {
             if (e1->GetHitbox()->_is_entered)
              e1->OnHitboxExited(e1->GetHitbox(), e2->GetHitbox());

@@ -9,6 +9,7 @@
 #include "networking/client.h"
 #include "entities/controllers/entity_controller.h"
 #include "physics/hitbox/hitbox.h"
+#include "utils/raylog.h"
 
 namespace engine {
 
@@ -34,7 +35,7 @@ public:
   const Texture2D* GetTexture() const;
   std::optional<std::reference_wrapper<const Rectangle>>
     GetFrameRec() const;
-  const std::function<Hitbox*()> GetHitboxCreateFuncion() const;
+  const std::function<Hitbox*()> GetHitboxCreateFunction() const;
   Hitbox* GetHitbox() const;
 
   void SetController(std::unique_ptr<IEntityController> c);

@@ -45,6 +45,7 @@ SHABBY_LIB_SRC = \
 EXAMPLE_ONLINE_SRC = \
   $(ONLINE_EXAMPLE_DIR)/main.cpp \
   $(ONLINE_EXAMPLE_DIR)/actors/player_controller.cpp \
+  $(ONLINE_EXAMPLE_DIR)/actors/player_controller_base.cpp \
   $(ONLINE_EXAMPLE_DIR)/server/logic/example_logic.cpp
 
 EXAMPLE_OFFLINE_SRC = \
@@ -84,6 +85,7 @@ SHABBY_LIB_OBJ = \
 ONLINE_EXAMPLE_OBJ = \
   $(ONLINE_EXAMPLE_BUILD_DIR)/main.o \
   $(ONLINE_EXAMPLE_BUILD_DIR)/actors/player_controller.o \
+  $(ONLINE_EXAMPLE_BUILD_DIR)/actors/player_controller_base.o \
   $(ONLINE_EXAMPLE_BUILD_DIR)/server/logic/example_logic.o
 
 OFFLINE_EXAMPLE_OBJ = \

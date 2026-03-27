@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include <cstdarg>
 #include <cstdio>
+#include <iostream>
 
 class Raylog {
 public:
@@ -31,7 +32,8 @@ public:
     vsnprintf(buffer, sizeof(buffer), text, args);
     va_end(args);
 
-    TraceLog(logLevel, "%s", buffer);
+    if (IsWindowReady()) TraceLog(logLevel, "%s", buffer);
+    else std::cout << buffer << std::endl;
   }
 
 private:

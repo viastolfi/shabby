@@ -2,6 +2,10 @@
 
 namespace engine {
 
+EntitySpawnHandler::EntitySpawnHandler(ControllerFactory factory)
+  : _controller_factory(std::move(factory))
+{}
+
 NetworkPacket* EntitySpawnHandler::HandleFromClient(
     int client_id,
     NetworkPacket& packet,
@@ -12,8 +16,13 @@ NetworkPacket* EntitySpawnHandler::HandleFromClient(
   packet.Read(position);
   packet.Read(texture_id);
 
+  std::unique_ptr<IEntityController> controller = nullptr;
+  if (_controller_factory) {
+    controller = _controller_factory(static_cast<int>(texture_id));
+  }
+
   Entity* entity = scene->AddEntity(
-    nullptr,
+    std::move(controller),
     static_cast<int>(texture_id)
   );
   

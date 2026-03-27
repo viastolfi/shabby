@@ -7,6 +7,7 @@
 #include "networking/server_logic.h"
 #include "core/scheduler/scheduler.h"
 #include "networking/handlers/entity_spawn_handler.h"
+#include "networking/handlers/entity_spawn_with_hitbox_handler.h"
 #include <memory>
 #include <vector>
 #include <set>
@@ -36,15 +37,17 @@ public:
       Scheduler* scheduler);
   ~Server();
 
-  void Run();
+  void AcceptNewClients();
+  void ProcessClientPackets();
+  void BroadcastSnapshot(Scene* scene);
   void SendToClient(int client_socket, const NetworkPacket& packet);
   void BroadcastToAll(const NetworkPacket& packet);
   void BroadcastToAllExcept(int except_client, const NetworkPacket& packet);
   
+  ServerLogic* GetLogic() { return _logic.get(); }
+
 private:
   void InitializeProtocol();
-  void AcceptNewClients();
-  void ProcessClientPackets();
   NetworkPacket ReceiveNonBlocking(int client_socket);
   
   int _server_socket;

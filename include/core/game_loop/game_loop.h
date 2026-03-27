@@ -4,8 +4,10 @@
 #include "scene/scene.h"
 #include "core/render/render_system.h"
 #include "physics/collision/collision_system.h"
+#include "utils/raylog.h"
 
 #include <functional>
+#include <chrono>
 #include "raylib.h"
 
 namespace engine {
@@ -28,7 +30,8 @@ public:
       Scene* scene,
       RenderSystem* render_system = nullptr,
       std::function<bool()> should_continue = nullptr,
-      std::function<void()> on_frame_start = nullptr);
+      std::function<void()> on_frame_start = nullptr,
+      std::function<void(float)> on_tick = nullptr);
   
   void SetCollisionSystem(std::unique_ptr<CollisionSystem> cs);
 private:

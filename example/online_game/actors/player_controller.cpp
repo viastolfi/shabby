@@ -1,11 +1,13 @@
 #include "actors/player_controller.h"
 
+PlayerController::PlayerController(engine::Client* client)
+  : _network(std::make_unique<engine::NetworkedEntityController>(client))
+{}
+
 void PlayerController::OnInit(engine::Entity* entity)
 {
-  entity->_pos = {200.f, 200.f};
-  entity->SetVelocity(10);
-
-  engine::NetworkedEntityController::OnInit(entity);
+  PlayerControllerBase::OnInit(entity);
+  _network->OnInit(entity);
 }
 
 void PlayerController::OnUpdate(engine::Entity* entity, float dt) 
@@ -24,5 +26,5 @@ void PlayerController::OnUpdate(engine::Entity* entity, float dt)
   entity->_pos = entity->_pos + movement;
 
   if (!Vector2Equals(dir, {0, 0}))
-    engine::NetworkedEntityController::OnUpdate(entity, dt);
+    _network->OnUpdate(entity, dt);
 }

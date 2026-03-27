@@ -44,47 +44,30 @@ Server::~Server()
 
 void Server::InitializeProtocol()
 {
+  ControllerFactory factory = [this](int texture_id) {
+    return _logic->CreateControllerFor(texture_id);
+  };
+
   _packet_registry->RegisterHandler(
     PacketType::ENTITY_SPAWN,
-    std::make_unique<EntitySpawnHandler>()
+    std::make_unique<EntitySpawnHandler>(factory)
   );
   _packet_registry->RegisterHandler(
     PacketType::INPUT_COMMAND,
     std::make_unique<InputCommandHandler>()
   );
+
+  _packet_registry->RegisterHandler(
+    PacketType::ENTITY_SPAWN_WITH_HITBOX,
+    std::make_unique<EntitySpawnWithHitboxHandler>(factory)
+  );
 }
 
-void Server::Run()
+void Server::BroadcastSnapshot(Scene* scene)
 {
-  auto last_tick = std::chrono::high_resolution_clock::now();
-  auto last_snapshot = std::chrono::high_resolution_clock::now();
-  const float tick_interval = 1.0f / _conf.tick_rate;
-  const float snapshot_interval = 1.0f / 60.0f;
-  
-  while (true) {
-    auto now = std::chrono::high_resolution_clock::now();
-    float dt = std::chrono::duration<float>(now - last_tick).count();
-    float snapshot_dt = std::chrono::duration<float>(now - last_snapshot).count();
-    
-    AcceptNewClients();
-    
-    ProcessClientPackets();
-    
-    if (dt >= tick_interval) {
-      last_tick = now;
-      _logic->OnUpdate(_scene, dt);
-      _scene->Update(dt);
-    }
-    
-    if (snapshot_dt >= snapshot_interval) {
-      last_snapshot = now;
-      WorldSnapshot snapshot = _scene->CreateWorldSnapshot();
-      NetworkPacket packet = snapshot.SnapshotToPacket();
-      BroadcastToAll(packet);
-    }
-    
-    usleep(1000); 
-  }
+  WorldSnapshot snapshot = scene->CreateWorldSnapshot();
+  NetworkPacket packet = snapshot.SnapshotToPacket();
+  BroadcastToAll(packet);
 }
 
 void Server::AcceptNewClients()

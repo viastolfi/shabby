@@ -91,7 +91,7 @@ void Entity::SetHitboxCreationFunction(std::function<Hitbox*()> func)
   _hitbox_creation_function = func;
 }
   
-const std::function<Hitbox*()> Entity::GetHitboxCreateFuncion() const
+const std::function<Hitbox*()> Entity::GetHitboxCreateFunction() const
 {
   return _hitbox_creation_function;
 }

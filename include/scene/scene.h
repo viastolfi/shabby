@@ -38,6 +38,11 @@ public:
   Entity* AddEntity(
       std::unique_ptr<IEntityController> controller,
       int texture_id);
+
+  Entity* AddEntity(
+    std::unique_ptr<IEntityController> controller,
+    int texture_id,
+    float x, float y, float width, float height);
   
   void AddEntity(
       uint64_t id,

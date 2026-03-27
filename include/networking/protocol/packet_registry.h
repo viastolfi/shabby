@@ -25,7 +25,6 @@ public:
       Scene* scene);
   
   bool HasHandler(PacketType type) const;
-  
 private:
   std::unordered_map<PacketType, std::unique_ptr<IPacketHandler>> _handlers;
 };
