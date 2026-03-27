@@ -12,6 +12,7 @@ public:
   void RegisterCustomPackets(engine::PacketRegistry* registry) override;
   void OnClientConnect(int client_id, engine::Scene* scene) override;
   void OnClientDisconnect(int client_id, engine::Scene* scene) override;
+  std::unique_ptr<engine::IEntityController> CreateControllerFor(int texture_id) override;
 };
 
 #endif // EXAMPLE_LOGIC_H

@@ -9,7 +9,7 @@ namespace engine {
 class IPacketHandler {
 public:
   virtual ~IPacketHandler() = default;
-  
+ 
   virtual NetworkPacket* HandleFromClient(
       int client_id,
       NetworkPacket& packet,

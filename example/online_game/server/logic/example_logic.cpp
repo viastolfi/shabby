@@ -1,6 +1,7 @@
 #include "server/logic/example_logic.h"
 #include "entities/controllers/entity_controller.h"
 #include "networking/server.h"
+#include "actors/player_controller_base.h"
 
 class AIController : public engine::IEntityController {
 public:
@@ -17,9 +18,16 @@ private:
   float _time = 0.0f;
 };
 
+class ServerPlayerController : public PlayerControllerBase {
+};
+
 void ExampleLogic::OnStart(engine::Scene* scene, engine::Scheduler* scheduler, engine::Server* server) 
 {
   std::cout << "[ExampleLogic] Server started" << std::endl;
+  (void)scene;
+  (void)scheduler;
+  (void)server;
+  /*
   scheduler->Every(5.0f, [scene, server]() {
     std::cout << "[ExampleLogic] Spawning entity..." << std::endl;
     auto* entity = scene->AddEntity(std::make_unique<AIController>(), 1);
@@ -31,6 +39,7 @@ void ExampleLogic::OnStart(engine::Scene* scene, engine::Scheduler* scheduler, e
     server->BroadcastToAll(packet);
     std::cout << "[ExampleLogic] Broadcasted entity " << entity->_id << " to all clients" << std::endl;
   });
+  */
 }
 
 void ExampleLogic::OnUpdate(engine::Scene* scene, float dt)
@@ -55,4 +64,11 @@ void ExampleLogic::OnClientDisconnect(
 {
   std::cout << "[ExampleLogic] Client " << client_id << " left the game" << std::endl;
   (void)scene;
+}
+
+std::unique_ptr<engine::IEntityController> ExampleLogic::CreateControllerFor(
+    int texture_id)
+{
+  (void)texture_id;
+  return std::make_unique<ServerPlayerController>();
 }

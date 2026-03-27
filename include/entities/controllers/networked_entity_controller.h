@@ -1,6 +1,7 @@
 #ifndef NETWORKED_ENTITY_CONTROLLER_H
 #define NETWORKED_ENTITY_CONTROLLER_H
 
+#include "utils/raylog.h"
 #include "entities/controllers/entity_controller.h"
 #include "networking/protocol/network_packet.h"
 #include "networking/client.h"

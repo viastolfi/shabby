@@ -18,8 +18,11 @@ NetworkPacket* PacketRegistry::RouteFromClient(
   if (it != _handlers.end()) {
     return it->second->HandleFromClient(client_id, packet, scene);
   } else {
+    Raylog::GetInstance().Log(LOG_DEBUG, "NO PACKET FIND");
     // TODO: add exception handling
   }
+
+  return nullptr;
 }
 
 void PacketRegistry::RouteFromServer(

@@ -46,6 +46,16 @@ Entity* Scene::AddEntity(
   return _entity_manager->AddEntity(std::move(controller), texture_id);
 }
 
+Entity* Scene::AddEntity(
+    std::unique_ptr<IEntityController> controller,
+    int texture_id,
+    float x, float y, float width, float height)
+{
+  return _entity_manager->AddEntity(
+      std::move(controller), 
+      texture_id, x, y, width, height);
+}
+
 void Scene::AddEntity(
       uint64_t id,
       int texture_id,
