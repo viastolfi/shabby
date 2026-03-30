@@ -40,7 +40,9 @@ SHABBY_LIB_SRC = \
   $(SRC_DIR)/physics/hitbox/rectangle_hitbox.cpp \
   $(SRC_DIR)/physics/hitbox/hitbox.cpp \
   $(SRC_DIR)/physics/collision/collision_system.cpp \
-  $(SRC_DIR)/networking/handlers/entity_spawn_with_hitbox_handler.cpp
+  $(SRC_DIR)/networking/handlers/entity_spawn_with_hitbox_handler.cpp \
+  $(SRC_DIR)/core/animation/animation.cpp \
+  $(SRC_DIR)/core/animation/animation_player.cpp
 
 EXAMPLE_ONLINE_SRC = \
   $(ONLINE_EXAMPLE_DIR)/main.cpp \
@@ -80,7 +82,9 @@ SHABBY_LIB_OBJ = \
   $(BUILD_DIR)/physics/hitbox/rectangle_hitbox.o \
   $(BUILD_DIR)/physics/hitbox/hitbox.o \
   $(BUILD_DIR)/physics/collision/collision_system.o \
-  $(BUILD_DIR)/networking/handlers/entity_spawn_with_hitbox_handler.o
+  $(BUILD_DIR)/networking/handlers/entity_spawn_with_hitbox_handler.o \
+  $(BUILD_DIR)/core/animation/animation.o \
+  $(BUILD_DIR)/core/animation/animation_player.o
 
 ONLINE_EXAMPLE_OBJ = \
   $(ONLINE_EXAMPLE_BUILD_DIR)/main.o \

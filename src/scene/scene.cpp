@@ -64,6 +64,14 @@ void Scene::AddEntity(
   _entity_manager->AddEntity(id, texture_id, position);
 }
 
+void Scene::AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap)
+{
+  _entity_manager->AddEntity(std::move(controller), std::move(ap)); 
+}
+  
+
 void Scene::RemoveEntity(uint64_t id)
 {
   _entity_manager->RemoveEntity(id);

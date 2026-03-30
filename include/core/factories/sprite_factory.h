@@ -17,7 +17,7 @@ public:
 
   ~SpriteFactory() = default;
   
-  std::unique_ptr<Sprite> CreateSprite(int texture_id) const 
+  std::shared_ptr<Sprite> CreateSprite(int texture_id) const 
   {
     if (!_assets_registry || texture_id < 0)
       return nullptr;
@@ -25,17 +25,17 @@ public:
     try {
       TextureDesc desc = _assets_registry->GetTextureDesc(texture_id);    
       if (desc.rows == -1) {
-        auto sprite = std::make_unique<Sprite>(
+        auto sprite = std::make_shared<Sprite>(
             desc.texture, texture_id, desc.path);
         sprite->SetOwnsTexture(false);
         return sprite;
       } else {
-        auto sprite = std::make_unique<AnimatedSprite>(
+        auto sprite = std::make_shared<AnimatedSprite>(
             desc.texture, 
             texture_id, 
             desc.path, 
             desc.cols, 
-            desc.rows, 3.0f);
+            desc.rows);
         sprite->SetOwnsTexture(false);
         return sprite;
       }

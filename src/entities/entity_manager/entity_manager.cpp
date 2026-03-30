@@ -70,6 +70,19 @@ void EntityManager::AddEntity(
   _entities.push_back(e);
 }
 
+
+void EntityManager::AddEntity(
+    std::unique_ptr<IEntityController> controller,
+    std::unique_ptr<AnimationPlayer> ap)
+{
+  Entity* e = _entity_factory->CreateEntity(
+      std::move(controller), std::move(ap));
+  e->_id = GenerateEntityId();
+  e->Init();
+
+  _entities.push_back(e);
+}
+
 void EntityManager::RemoveEntity(uint64_t id)
 {
   for (auto it = _entities.begin(); it != _entities.end(); ++it) {

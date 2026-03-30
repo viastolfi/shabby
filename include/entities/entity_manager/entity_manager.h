@@ -39,6 +39,10 @@ public:
       int texture_id,
       Vector2 position);
 
+  void AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap);
+
   void RemoveEntity(uint64_t id);
 
   void UpdateAll(float dt);

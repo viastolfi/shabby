@@ -27,10 +27,10 @@ public:
   Sprite(Sprite&& other) noexcept;
   Sprite& operator=(Sprite&& other) noexcept;
   
-  virtual void Load();
   virtual void Draw(float x, float y) const;
   virtual void Draw(Vector2 pos) const;  
   virtual void Draw(Rectangle frame_rec, Vector2 pos) const;
+  virtual void Draw(Vector2 pos, int col, int row) const;
 
   const char* GetPath() const;
   int GetTextureId() const;

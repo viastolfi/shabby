@@ -18,11 +18,21 @@ public:
       std::unique_ptr<IEntityController> controller,
       int texture_id)
   {
-    std::unique_ptr<Sprite> sprite = 
+    std::shared_ptr<Sprite> sprite = 
       _sprite_factory->CreateSprite(texture_id);
     Entity* e = new Entity();
     e->SetSprite(std::move(sprite));
     e->SetController(std::move(controller));
+    return e;
+  }
+
+  Entity* CreateEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap)
+  {
+    Entity* e = new Entity();
+    e->SetController(std::move(controller));
+    e->SetAnimationPlayer(std::move(ap));
     return e;
   }
 private:

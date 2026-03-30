@@ -43,6 +43,10 @@ public:
     std::unique_ptr<IEntityController> controller,
     int texture_id,
     float x, float y, float width, float height);
+
+  void AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap);
   
   void AddEntity(
       uint64_t id,
