@@ -130,6 +130,7 @@ void Entity::AddAnimation(Animation& a)
 void Entity::SetAnimationPlayer(std::unique_ptr<AnimationPlayer> ap)
 {
   _animation_player = std::move(ap);
+  _sprite.reset();
 }
 
 } // namespace engine

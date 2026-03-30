@@ -19,6 +19,18 @@ void PlayerController::OnUpdate(engine::Entity* entity, float dt)
   if (IsKeyDown(KEY_W)) dir.y -= 1;
   if (IsKeyDown(KEY_S)) dir.y += 1;
 
+  if (dir.x == 0 && dir.y == 0) {
+    entity->PlayAnimation(0);
+  } else if (dir.y > 0) {
+    entity->PlayAnimation(1);
+  } else if (dir.y < 0) {
+    entity->PlayAnimation(2);
+  } else if (dir.x < 0) {
+    entity->PlayAnimation(3);
+  } else if (dir.x > 0) {
+    entity->PlayAnimation(4);
+  }
+
   Vector2 normalized = Vector2Normalize(dir);
   Vector2 velocity = Vector2Scale(normalized, 200);
   Vector2 movement = velocity * dt;

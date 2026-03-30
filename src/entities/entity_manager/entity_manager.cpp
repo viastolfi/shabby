@@ -57,7 +57,7 @@ Entity* EntityManager::AddEntity(
   return e;
 }
 
-void EntityManager::AddEntity(
+Entity* EntityManager::AddEntity(
     uint64_t id,
     int texture_id,
     Vector2 position)
@@ -68,6 +68,7 @@ void EntityManager::AddEntity(
   e->_texture_id = texture_id;
 
   _entities.push_back(e);
+  return e;
 }
 
 

@@ -34,7 +34,7 @@ public:
       int texture_id,
       float x, float y, float width, float height);
 
-  void AddEntity(
+  Entity* AddEntity(
       uint64_t id,
       int texture_id,
       Vector2 position);
