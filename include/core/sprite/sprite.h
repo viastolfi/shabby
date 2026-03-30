@@ -6,7 +6,7 @@
 #include "core/assets/assets_registry.h"
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 class Sprite {
 public:
@@ -44,6 +44,6 @@ private:
   const char* _path;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SPRITE_H

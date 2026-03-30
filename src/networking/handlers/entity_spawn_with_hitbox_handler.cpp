@@ -1,6 +1,6 @@
 #include "networking/handlers/entity_spawn_with_hitbox_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 EntitySpawnWithHitboxHandler::EntitySpawnWithHitboxHandler(
     ControllerFactory factory)
@@ -54,4 +54,4 @@ void EntitySpawnWithHitboxHandler::HandleFromServer(
   (void)scene;
 } 
 
-} // namespace engine
+} // namespace Shabby

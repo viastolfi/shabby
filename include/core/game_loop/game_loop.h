@@ -10,7 +10,7 @@
 #include <chrono>
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 struct GameLoopConfig {
   float target_fps = 60.0f;
@@ -40,6 +40,6 @@ private:
   std::unique_ptr<CollisionSystem> _collision_system;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // GAME_LOOP_H

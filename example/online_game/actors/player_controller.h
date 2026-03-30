@@ -8,14 +8,14 @@
 
 class PlayerController : public PlayerControllerBase {
 public:
-  explicit PlayerController(engine::Client* client);
+  explicit PlayerController(Shabby::Client* client);
   ~PlayerController() = default;
 
-  void OnInit(engine::Entity* entity) override;
-  void OnUpdate(engine::Entity* entity, float dt) override;
+  void OnInit(Shabby::Entity* entity) override;
+  void OnUpdate(Shabby::Entity* entity, float dt) override;
 
 private:
-  std::unique_ptr<engine::NetworkedEntityController> _network;
+  std::unique_ptr<Shabby::NetworkedEntityController> _network;
 };
 
 #endif // PLAYER_CONTROLLER_H

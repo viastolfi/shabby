@@ -1,7 +1,7 @@
 #include "core/game_loop/game_loop.h"
 #include <thread>
 
-namespace engine {
+namespace Shabby {
 
 GameLoop::GameLoop(const GameLoopConfig& config)
   : _config(config),
@@ -72,4 +72,4 @@ void GameLoop::SetCollisionSystem(std::unique_ptr<CollisionSystem> cs)
   _collision_system = std::move(cs);
 }
 
-} // namespace engine
+} // namespace Shabby

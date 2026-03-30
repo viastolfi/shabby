@@ -16,13 +16,13 @@ enum class TextureId
   Monk
 };
 
-class RemoteAnimController : public engine::IEntityController {
+class RemoteAnimController : public Shabby::IEntityController {
 public:
   ~RemoteAnimController() override = default;
-  void OnInit(engine::Entity* entity) override { 
+  void OnInit(Shabby::Entity* entity) override { 
     _prev_pos = entity->_pos;
   }
-  void OnUpdate(engine::Entity* entity, float dt) override {
+  void OnUpdate(Shabby::Entity* entity, float dt) override {
     (void)dt;
     float dx = entity->_pos.x - _prev_pos.x;
     float dy = entity->_pos.y - _prev_pos.y;
@@ -46,62 +46,62 @@ private:
 
 void RunServerEngine()
 {
-  engine::ServerConf conf{8080, 2};
-  std::unique_ptr<engine::ServerLogic> logic = 
+  Shabby::ServerConf conf{8080, 2};
+  std::unique_ptr<Shabby::ServerLogic> logic = 
     std::make_unique<ExampleLogic>();
-  engine::Engine engine(conf, std::move(logic));
+  Shabby::Engine engine(conf, std::move(logic));
   engine.Run();
 }
 
 void RunClientEngine() 
 {
-  engine::EngineConfig config{
+  Shabby::EngineConfig config{
     800,
     450,
     "shabby",
-    engine::CLIENT,
+    Shabby::CLIENT,
   };  
 
-  engine::Engine engine(config);
+  Shabby::Engine engine(config);
   auto& registry = engine.GetAssetRegistry();
   registry.LoadAll(
-    engine::AssetDesc { 
+    Shabby::AssetDesc { 
       static_cast<int>(TextureId::MonkeyIdle), 
       "assets/actors/monkey/Idle.png",
       4, 1},
-    engine::AssetDesc {
+    Shabby::AssetDesc {
       static_cast<int>(TextureId::MonkeyWalk),
       "assets/actors/monkey/Walk.png",
       4, 4},
-    engine::AssetDesc { 
+    Shabby::AssetDesc { 
       static_cast<int>(TextureId::Monk), 
       "assets/actors/monk/Idle.png",
       6, 1}
   );
   
-  auto scene = std::make_unique<engine::Scene>(&registry);
+  auto scene = std::make_unique<Shabby::Scene>(&registry);
 
   int idle_tid = static_cast<int>(TextureId::MonkeyIdle);
-  auto idle_sprite = std::make_shared<engine::AnimatedSprite>(
+  auto idle_sprite = std::make_shared<Shabby::AnimatedSprite>(
       registry.GetTexture(idle_tid), idle_tid,
       registry.GetTexturePath(idle_tid),
       registry.GetTextureCols(idle_tid),
       registry.GetTextureRows(idle_tid));
 
   int walk_tid = static_cast<int>(TextureId::MonkeyWalk);
-  auto walk_sprite = std::make_shared<engine::AnimatedSprite>(
+  auto walk_sprite = std::make_shared<Shabby::AnimatedSprite>(
       registry.GetTexture(walk_tid), walk_tid,
       registry.GetTexturePath(walk_tid),
       registry.GetTextureCols(walk_tid),
       registry.GetTextureRows(walk_tid));
 
-  auto* idle  = new engine::Animation(idle_sprite, 0, 3, 0, 0, 3.0f);
-  auto* down  = new engine::Animation(walk_sprite, 0, 0, 0, 3, 5.0f);
-  auto* up    = new engine::Animation(walk_sprite, 1, 1, 0, 3, 5.0f);
-  auto* left  = new engine::Animation(walk_sprite, 2, 2, 0, 3, 5.0f);
-  auto* right = new engine::Animation(walk_sprite, 3, 3, 0, 3, 5.0f);
+  auto* idle  = new Shabby::Animation(idle_sprite, 0, 3, 0, 0, 3.0f);
+  auto* down  = new Shabby::Animation(walk_sprite, 0, 0, 0, 3, 5.0f);
+  auto* up    = new Shabby::Animation(walk_sprite, 1, 1, 0, 3, 5.0f);
+  auto* left  = new Shabby::Animation(walk_sprite, 2, 2, 0, 3, 5.0f);
+  auto* right = new Shabby::Animation(walk_sprite, 3, 3, 0, 3, 5.0f);
 
-  auto ap = std::make_unique<engine::AnimationPlayer>();
+  auto ap = std::make_unique<Shabby::AnimationPlayer>();
   ap->RegisterAnimation(*idle);
   ap->RegisterAnimation(*down);
   ap->RegisterAnimation(*up);
@@ -118,14 +118,14 @@ void RunClientEngine()
   std::cout << "[Main] Created local entity with temp id=" << local_entity->_id << std::endl;
 
   scene->SetRemoteEntitySetup(
-      [idle_sprite, walk_sprite](engine::Entity* e) {
-    auto* r_idle  = new engine::Animation(idle_sprite, 0, 3, 0, 0, 3.0f);
-    auto* r_down  = new engine::Animation(walk_sprite, 0, 0, 0, 3, 5.0f);
-    auto* r_up    = new engine::Animation(walk_sprite, 1, 1, 0, 3, 5.0f);
-    auto* r_left  = new engine::Animation(walk_sprite, 2, 2, 0, 3, 5.0f);
-    auto* r_right = new engine::Animation(walk_sprite, 3, 3, 0, 3, 5.0f);
+      [idle_sprite, walk_sprite](Shabby::Entity* e) {
+    auto* r_idle  = new Shabby::Animation(idle_sprite, 0, 3, 0, 0, 3.0f);
+    auto* r_down  = new Shabby::Animation(walk_sprite, 0, 0, 0, 3, 5.0f);
+    auto* r_up    = new Shabby::Animation(walk_sprite, 1, 1, 0, 3, 5.0f);
+    auto* r_left  = new Shabby::Animation(walk_sprite, 2, 2, 0, 3, 5.0f);
+    auto* r_right = new Shabby::Animation(walk_sprite, 3, 3, 0, 3, 5.0f);
 
-    auto rap = std::make_unique<engine::AnimationPlayer>();
+    auto rap = std::make_unique<Shabby::AnimationPlayer>();
     rap->RegisterAnimation(*r_idle);
     rap->RegisterAnimation(*r_down);
     rap->RegisterAnimation(*r_up);

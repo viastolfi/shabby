@@ -12,31 +12,31 @@
 int main() 
 {
   Raylog::GetInstance(1).Log(1, "Logger set");
-  engine::EngineConfig config{
+  Shabby::EngineConfig config{
     800,
     450,
     "shabby",
-    engine::STANDALONE,
+    Shabby::STANDALONE,
   };  
 
-  engine::Engine engine(config);
+  Shabby::Engine engine(config);
   auto& registry = engine.GetAssetRegistry();
   registry.LoadAll(
-    engine::AssetDesc { 
+    Shabby::AssetDesc { 
       static_cast<int>(TextureId::MonkeyIdle), 
       "assets/actors/monkey/Idle.png",
       4, 1},
-    engine::AssetDesc {
+    Shabby::AssetDesc {
       static_cast<int>(TextureId::MonkeyWalk),
       "assets/actors/monkey/Walk.png",
       4, 4}
   );
   
-  auto scene = std::make_unique<engine::Scene>(&registry);
+  auto scene = std::make_unique<Shabby::Scene>(&registry);
 
   int idle_tid = static_cast<int>(TextureId::MonkeyIdle);
-  std::shared_ptr<engine::AnimatedSprite> idle_sprite = 
-    std::make_shared<engine::AnimatedSprite>(
+  std::shared_ptr<Shabby::AnimatedSprite> idle_sprite = 
+    std::make_shared<Shabby::AnimatedSprite>(
         registry.GetTexture(idle_tid), 
         idle_tid,
         registry.GetTexturePath(idle_tid),
@@ -44,27 +44,27 @@ int main()
         registry.GetTextureRows(idle_tid));
 
   int walk_tid = static_cast<int>(TextureId::MonkeyWalk);
-  std::shared_ptr<engine::AnimatedSprite> walk_sprite = 
-    std::make_shared<engine::AnimatedSprite>(
+  std::shared_ptr<Shabby::AnimatedSprite> walk_sprite = 
+    std::make_shared<Shabby::AnimatedSprite>(
         registry.GetTexture(walk_tid), 
         walk_tid,
         registry.GetTexturePath(walk_tid),
         registry.GetTextureCols(walk_tid),
         registry.GetTextureRows(walk_tid));
 
-  engine::Animation* idle_anim = new engine::Animation(
+  Shabby::Animation* idle_anim = new Shabby::Animation(
       idle_sprite, 0, 3, 0, 0, 3.0f);
-  engine::Animation* walk_down  = new engine::Animation(
+  Shabby::Animation* walk_down  = new Shabby::Animation(
       walk_sprite, 0, 0, 0, 3, 5.0f);
-  engine::Animation* walk_up    = new engine::Animation(
+  Shabby::Animation* walk_up    = new Shabby::Animation(
       walk_sprite, 1, 1, 0, 3, 5.0f);
-  engine::Animation* walk_left  = new engine::Animation(
+  Shabby::Animation* walk_left  = new Shabby::Animation(
       walk_sprite, 2, 2, 0, 3, 5.0f);
-  engine::Animation* walk_right = new engine::Animation(
+  Shabby::Animation* walk_right = new Shabby::Animation(
       walk_sprite, 3, 3, 0, 3, 5.0f);
 
-  std::unique_ptr<engine::AnimationPlayer> ap = 
-    std::make_unique<engine::AnimationPlayer>();
+  std::unique_ptr<Shabby::AnimationPlayer> ap = 
+    std::make_unique<Shabby::AnimationPlayer>();
 
   ap->RegisterAnimation(*idle_anim);
   ap->RegisterAnimation(*walk_down);
@@ -73,8 +73,8 @@ int main()
   ap->RegisterAnimation(*walk_right);
   ap->Play(0);
 
-  std::unique_ptr<engine::AnimationPlayer> ape =
-    std::make_unique<engine::AnimationPlayer>();
+  std::unique_ptr<Shabby::AnimationPlayer> ape =
+    std::make_unique<Shabby::AnimationPlayer>();
 
   ape->RegisterAnimation(*idle_anim);
   ape->RegisterAnimation(*walk_down);
@@ -87,11 +87,11 @@ int main()
       std::make_unique<PlayerController>(),
       std::move(ap));
 
-   auto ape_shared = std::make_shared<std::unique_ptr<engine::AnimationPlayer>>(
+   auto ape_shared = std::make_shared<std::unique_ptr<Shabby::AnimationPlayer>>(
        std::move(ape));
 
    scene->ScheduleTaskAfter(
-       1.f, [ape_shared](engine::Scene* s) {
+       1.f, [ape_shared](Shabby::Scene* s) {
           s->AddEntity(
             std::make_unique<EnnemyController>(),
             std::move(*ape_shared)); 

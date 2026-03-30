@@ -10,14 +10,14 @@
 #include "raylib.h"
 #include "asset_ids.h"
 
-class PlayerController : public engine::IEntityController {
+class PlayerController : public Shabby::IEntityController {
 public:
   ~PlayerController() = default;
 
-  void OnInit(engine::Entity* entity) override;
-  void OnUpdate(engine::Entity* entity, float dt) override;
-  void OnHitboxEntered(engine::Hitbox* enter, engine::Hitbox* from) override;
-  void OnHitboxExited(engine::Hitbox* enter, engine::Hitbox* from) override;
+  void OnInit(Shabby::Entity* entity) override;
+  void OnUpdate(Shabby::Entity* entity, float dt) override;
+  void OnHitboxEntered(Shabby::Hitbox* enter, Shabby::Hitbox* from) override;
+  void OnHitboxExited(Shabby::Hitbox* enter, Shabby::Hitbox* from) override;
 };
 
 #endif // PLAYER_CONTROLLER_H

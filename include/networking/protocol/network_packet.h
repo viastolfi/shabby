@@ -8,7 +8,7 @@
 #include <cstring>
 #include <algorithm>
 
-namespace engine {
+namespace Shabby {
 
 class NetworkPacket {
 public:
@@ -52,6 +52,6 @@ private:
   void EnsureCapacity(size_t additional);
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // NETWORK_PACKET_H

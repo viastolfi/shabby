@@ -1,6 +1,6 @@
 #include "networking/handlers/entity_spawn_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 EntitySpawnHandler::EntitySpawnHandler(ControllerFactory factory)
   : _controller_factory(std::move(factory))
@@ -64,4 +64,4 @@ void EntitySpawnHandler::HandleFromServer(
   }
 }
 
-} // namespace engine
+} // namespace Shabby

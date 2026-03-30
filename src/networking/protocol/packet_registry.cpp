@@ -1,6 +1,6 @@
 #include "networking/protocol/packet_registry.h"
 
-namespace engine {
+namespace Shabby {
 
 void PacketRegistry::RegisterHandler(
     PacketType type,
@@ -42,4 +42,4 @@ bool PacketRegistry::HasHandler(PacketType type) const
   return _handlers.find(type) != _handlers.end();
 }
 
-} // namespace engine
+} // namespace Shabby

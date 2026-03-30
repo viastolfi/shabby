@@ -7,12 +7,12 @@
 #include "physics/hitbox/rectangle_hitbox.h"
 #include "raymath.h"
 
-class EnnemyController : public engine::IEntityController {
+class EnnemyController : public Shabby::IEntityController {
 public:
   ~EnnemyController() = default;
 
-  void OnInit(engine::Entity* entity) override;
-  void OnUpdate(engine::Entity* entity, float dt) override;
+  void OnInit(Shabby::Entity* entity) override;
+  void OnUpdate(Shabby::Entity* entity, float dt) override;
 };
 
 

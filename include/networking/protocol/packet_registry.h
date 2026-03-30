@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <memory>
 
-namespace engine {
+namespace Shabby {
 
 class PacketRegistry {
 public:
@@ -29,6 +29,6 @@ private:
   std::unordered_map<PacketType, std::unique_ptr<IPacketHandler>> _handlers;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // PACKET_REGISTRY_H

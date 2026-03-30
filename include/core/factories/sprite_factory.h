@@ -7,7 +7,7 @@
 #include "core/sprite/sprite.h"
 #include "core/assets/assets_registry.h"
 
-namespace engine {
+namespace Shabby {
 
 class SpriteFactory {
 public:
@@ -47,6 +47,6 @@ private:
   AssetRegistry* _assets_registry;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SPRITE_FACTORY_H

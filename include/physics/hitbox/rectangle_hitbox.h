@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "physics/hitbox/hitbox.h"
 
-namespace engine {
+namespace Shabby {
 
 class RectangleHitbox : public Hitbox {
 public:
@@ -20,6 +20,6 @@ private:
   Rectangle _shape;
 }; 
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // RECTANGLE_HITBOX_h

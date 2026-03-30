@@ -5,7 +5,7 @@
 #include "core/sprite/sprite.h"
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 class AnimatedSprite : public Sprite {
 public: 
@@ -32,6 +32,6 @@ private:
   float _frame_height; 
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ANIMATED_SPRITE_H

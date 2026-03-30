@@ -6,7 +6,7 @@
 #include "core/sprite/animated_sprite.h"
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 class Animation {
 public:
@@ -32,6 +32,6 @@ private:
   int _current_row = 0;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ANIMATION_H

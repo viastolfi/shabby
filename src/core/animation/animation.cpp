@@ -1,6 +1,6 @@
 #include "core/animation/animation.h"
 
-namespace engine {
+namespace Shabby {
 
 Animation::Animation(std::shared_ptr<AnimatedSprite> sp)
   :_sprite_sheet(std::move(sp))
@@ -44,4 +44,4 @@ void Animation::Draw(Vector2 pos)
   _sprite_sheet->Draw(pos, _current_col, _current_row);
 }
 
-} // namespace engine
+} // namespace Shabby

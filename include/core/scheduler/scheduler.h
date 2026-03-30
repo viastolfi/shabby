@@ -3,7 +3,7 @@
 
 #include <functional>
 
-namespace engine {
+namespace Shabby {
 
 struct ScheduledTask;
 
@@ -25,6 +25,6 @@ struct ScheduledTask {
   Scheduler::Task task;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SCHEDULER_H

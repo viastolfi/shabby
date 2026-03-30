@@ -1,6 +1,6 @@
 #include "networking/handlers/entity_destroy_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 NetworkPacket* EntityDestroyHandler::HandleFromClient(
     int client_id,
@@ -23,4 +23,4 @@ void EntityDestroyHandler::HandleFromServer(
   scene->RemoveEntity(entity_id);
 }
 
-} // namespace engine
+} // namespace Shabby

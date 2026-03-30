@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace engine {
+namespace Shabby {
 
 enum class PacketType : uint8_t {
   CONNECT_REQUEST = 0,
@@ -24,6 +24,6 @@ enum class PacketType : uint8_t {
   NONE = 255
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // PACKET_TYPE_H

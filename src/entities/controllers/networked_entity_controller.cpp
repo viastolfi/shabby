@@ -1,6 +1,6 @@
 #include "entities/controllers/networked_entity_controller.h"
 
-namespace engine {
+namespace Shabby {
 
 void NetworkedEntityController::OnInit(Entity* entity)
 {
@@ -31,4 +31,4 @@ void NetworkedEntityController::OnUpdate(Entity* entity, float dt)
   (void)dt;
 }
 
-};
+} // namespace Shabby

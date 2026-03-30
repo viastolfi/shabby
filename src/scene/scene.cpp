@@ -1,6 +1,6 @@
 #include "scene/scene.h"
 
-namespace engine {
+namespace Shabby {
 
 Scene::Scene(AssetRegistry* assets_registry)
   : _task_scheduler(std::make_unique<Scheduler>()),
@@ -128,4 +128,4 @@ void Scene::ApplyWorldSnapshot(WorldSnapshot& snapshot)
   }
 }
  
-} // namespace engine
+} // namespace Shabby

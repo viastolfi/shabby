@@ -3,7 +3,7 @@
 
 #include "networking/protocol/ipacket_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 class InputCommandHandler : public IPacketHandler {
 public:
@@ -17,6 +17,6 @@ public:
       Scene* scene) override;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // INPUT_COMMAND_HANDLER_H

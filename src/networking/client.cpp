@@ -1,6 +1,6 @@
 #include "networking/client.h"
 
-namespace engine {
+namespace Shabby {
 
 Client::Client(const ClientConfig& config)
   : _config(config), _connected(false)
@@ -123,4 +123,4 @@ NetworkPacket Client::ReceiveNonBlocking()
   return packet;
 }
 
-} // namespace engine
+} // namespace Shabby

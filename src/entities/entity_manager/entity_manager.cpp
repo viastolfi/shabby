@@ -1,6 +1,6 @@
 #include "entities/entity_manager/entity_manager.h"
 
-namespace engine {
+namespace Shabby {
 
 EntityManager::EntityManager()
 {
@@ -120,4 +120,4 @@ size_t EntityManager::GenerateEntityId()
   return _next_entity_id++;
 }
 
-} // namespace engine
+} // namespace Shabby

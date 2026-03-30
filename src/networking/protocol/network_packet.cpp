@@ -1,6 +1,6 @@
 #include "networking/protocol/network_packet.h"
 
-namespace engine {
+namespace Shabby {
 
 void NetworkPacket::EnsureCapacity(size_t additional) {
   if (_write_pos + additional > _data.size()) {
@@ -89,4 +89,4 @@ void NetworkPacket::Read(Vector2& vec) {
   Read(vec.y);
 }
 
-} // namespace engine
+} // namespace Shabby

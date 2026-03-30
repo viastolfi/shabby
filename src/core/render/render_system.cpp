@@ -1,6 +1,6 @@
 #include "core/render/render_system.h"
 
-namespace engine {
+namespace Shabby {
 
 RenderSystem::RenderSystem(const RenderConfig& config)
   : _config(config),
@@ -46,4 +46,4 @@ float RenderSystem::GetDeltaTime() const
   return GetFrameTime();
 }
 
-} // namespace engine
+} // namespace Shabby

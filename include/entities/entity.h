@@ -12,7 +12,7 @@
 #include "utils/raylog.h"
 #include "core/animation/animation_player.h"
 
-namespace engine {
+namespace Shabby {
 
 class Entity {
 public:
@@ -63,6 +63,6 @@ private:
   std::function<Hitbox*()> _hitbox_creation_function;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITIES_H

@@ -1,6 +1,6 @@
 #include "replication/snapshot/entity_snapshot.h"
 
-namespace engine {
+namespace Shabby {
 
 EntitySnapshot::EntitySnapshot(
     size_t id, Vector2 direction, int texture_id)
@@ -35,4 +35,4 @@ int EntitySnapshot::GetTextureId() const
   return _texture_id;
 }
 
-} // namesapce engine
+} // namespace Shabby

@@ -1,6 +1,6 @@
 #include "entities/controllers/entity_controller.h"
 
-namespace engine {
+namespace Shabby {
 
 IEntityController::~IEntityController() {}
 
@@ -16,4 +16,4 @@ void IEntityController::OnHitboxExited(Hitbox* enter, Hitbox* from)
   (void)from;
 }
 
-} // namespace engine
+} // namespace Shabby

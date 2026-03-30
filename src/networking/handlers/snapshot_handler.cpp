@@ -1,6 +1,6 @@
 #include "networking/handlers/snapshot_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 NetworkPacket* SnapshotHandler::HandleFromClient(
     int client_id,
@@ -21,4 +21,4 @@ void SnapshotHandler::HandleFromServer(
   scene->ApplyWorldSnapshot(snapshot);
 }
 
-} // namespace engine
+} // namespace Shabby

@@ -5,7 +5,7 @@
 #include "entities/entity.h"
 #include <vector>
 
-namespace engine {
+namespace Shabby {
 
 class WorldSnapshot : public Snapshot {
 public:
@@ -29,6 +29,6 @@ private:
   std::vector<EntityData> _entities;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // WORLD_SNAPSHOT_H

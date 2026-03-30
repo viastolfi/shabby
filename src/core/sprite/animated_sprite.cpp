@@ -1,6 +1,6 @@
 #include "core/sprite/animated_sprite.h"
 
-namespace engine {
+namespace Shabby {
 
 AnimatedSprite::AnimatedSprite(
       Texture2D texture,
@@ -42,4 +42,4 @@ Rectangle AnimatedSprite::GetSpriteRectangle()
   return (Rectangle) {0.0f, 0.0f, _frame_width, _frame_height};
 }
 
-} // namespace engine
+} // namespace Shabby

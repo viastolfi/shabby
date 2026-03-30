@@ -3,7 +3,7 @@
 
 #include "networking/protocol/network_packet.h"
 
-namespace engine {
+namespace Shabby {
 
 class Snapshot {
 public:
@@ -12,6 +12,6 @@ public:
   virtual NetworkPacket SnapshotToPacket() = 0;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SNAPSHOT_H

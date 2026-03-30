@@ -7,7 +7,7 @@
 #include "networking/client.h"
 #include "entities/entity.h"
 
-namespace engine {
+namespace Shabby {
 
 class NetworkedEntityController : public IEntityController {
 public:
@@ -20,7 +20,7 @@ private:
   Client* _client;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // NETWORKED_ENTITY_CONTROLLER_H
 

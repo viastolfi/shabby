@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-namespace engine {
+namespace Shabby {
 
 using ControllerFactory = std::function<std::unique_ptr<IEntityController>(int)>;
 
@@ -30,6 +30,6 @@ private:
   ControllerFactory _controller_factory;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITY_SPAWN_WITH_HITBOX_H

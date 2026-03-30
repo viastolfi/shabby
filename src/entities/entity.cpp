@@ -1,6 +1,6 @@
 #include "entities/entity.h"
 
-namespace engine {
+namespace Shabby {
 
 Entity::Entity()
 {}
@@ -133,4 +133,4 @@ void Entity::SetAnimationPlayer(std::unique_ptr<AnimationPlayer> ap)
   _sprite.reset();
 }
 
-} // namespace engine
+} // namespace Shabby

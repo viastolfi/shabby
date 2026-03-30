@@ -1,6 +1,6 @@
 #include "core/scheduler/scheduler.h"
 
-namespace engine {
+namespace Shabby {
 
 void Scheduler::Every(float seconds, Task task)
 {
@@ -30,4 +30,4 @@ void Scheduler::Update(float dt)
   }  
 }
 
-} // namespace engine
+} // namespace Shabby

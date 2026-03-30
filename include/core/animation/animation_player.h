@@ -6,7 +6,7 @@
 #include "core/animation/animation.h"
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 class AnimationPlayer {
 public:
@@ -24,6 +24,6 @@ private:
   Animation* _current_animation = NULL;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ANIMATION_PLAYER_H

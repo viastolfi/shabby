@@ -5,7 +5,7 @@
 #include "networking/protocol/ipacket_handler.h"
 #include "scene/scene.h"
 
-namespace engine {
+namespace Shabby {
 
 class EntityDestroyHandler : public IPacketHandler {
 public:
@@ -19,6 +19,6 @@ public:
       Scene* scene) override;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITY_DESTROY_HANDLER_H

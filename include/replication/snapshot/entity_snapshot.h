@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "replication/snapshot/snapshot.h"
 
-namespace engine {
+namespace Shabby {
 
 class EntitySnapshot : public Snapshot {
 public:
@@ -23,6 +23,6 @@ private:
   int _texture_id;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITY_SNAPSHOT_H

@@ -1,8 +1,8 @@
 #include "physics/hitbox/hitbox.h"
 
-namespace engine {
+namespace Shabby {
 
 Hitbox::~Hitbox()
 {}
 
-} // namespace engine
+} // namespace Shabby

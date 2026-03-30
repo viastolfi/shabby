@@ -5,7 +5,7 @@
 #include "scene/scene.h"
 #include "core/factories/sprite_factory.h"
 
-namespace engine {
+namespace Shabby {
 
 class PacketHandler {
 public:
@@ -23,6 +23,6 @@ private:
   void HandleEntityCreateResponse(NetworkPacket& packet);
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // PACKET_HANDLER_H

@@ -1,6 +1,6 @@
 #include "core/sprite/sprite.h"
 
-namespace engine {
+namespace Shabby {
 
 Sprite::Sprite(
       Texture2D texture,
@@ -92,4 +92,4 @@ int Sprite::GetTextureId() const
   return _texture_id;
 }
 
-} // namespace engine
+} // namespace Shabby 

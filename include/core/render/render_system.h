@@ -4,7 +4,7 @@
 #include "scene/scene.h"
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 struct RenderConfig {
   int width = 800;
@@ -33,6 +33,6 @@ private:
   bool _initialized;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // RENDER_SYSTEM_H

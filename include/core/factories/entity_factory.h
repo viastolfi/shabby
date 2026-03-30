@@ -6,7 +6,7 @@
 #include "entities/controllers/entity_controller.h"
 #include "entities/entity.h"
 
-namespace engine {
+namespace Shabby {
 
 class EntityFactory {
 public:
@@ -39,6 +39,6 @@ private:
   std::unique_ptr<SpriteFactory> _sprite_factory;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITY_FACTORY_H

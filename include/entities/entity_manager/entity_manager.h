@@ -10,7 +10,7 @@
 #include <memory>
 #include <iostream>
 
-namespace engine {
+namespace Shabby {
 
 class EntityManager {
 public:
@@ -64,6 +64,6 @@ private:
   size_t _next_entity_id = 1;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITY_MANAGER_H

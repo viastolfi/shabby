@@ -1,6 +1,6 @@
 #include "core/engine/engine.h"
 
-namespace engine {
+namespace Shabby {
 
 Engine::Engine(const EngineConfig& config) 
   : _config(config), 
@@ -130,4 +130,4 @@ void Engine::Run()
   }
 }
 
-} // namespace engine
+} // namespace Shabby

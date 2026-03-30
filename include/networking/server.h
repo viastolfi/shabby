@@ -20,7 +20,7 @@
 #include <chrono>
 #include <iostream>
 
-namespace engine {
+namespace Shabby {
 
 struct ServerConf {
   int port;
@@ -62,6 +62,6 @@ private:
   std::unique_ptr<PacketRegistry> _packet_registry;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SERVER_H

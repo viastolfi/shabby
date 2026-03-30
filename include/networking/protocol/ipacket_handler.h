@@ -4,7 +4,7 @@
 #include "networking/protocol/network_packet.h"
 #include "scene/scene.h"
 
-namespace engine {
+namespace Shabby {
 
 class IPacketHandler {
 public:
@@ -20,6 +20,6 @@ public:
       Scene* scene) = 0;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // IPACKET_HANDLER_H

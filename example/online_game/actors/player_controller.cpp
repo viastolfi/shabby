@@ -1,16 +1,16 @@
 #include "actors/player_controller.h"
 
-PlayerController::PlayerController(engine::Client* client)
-  : _network(std::make_unique<engine::NetworkedEntityController>(client))
+PlayerController::PlayerController(Shabby::Client* client)
+  : _network(std::make_unique<Shabby::NetworkedEntityController>(client))
 {}
 
-void PlayerController::OnInit(engine::Entity* entity)
+void PlayerController::OnInit(Shabby::Entity* entity)
 {
   PlayerControllerBase::OnInit(entity);
   _network->OnInit(entity);
 }
 
-void PlayerController::OnUpdate(engine::Entity* entity, float dt) 
+void PlayerController::OnUpdate(Shabby::Entity* entity, float dt) 
 {
   Vector2 dir = {0, 0};
 

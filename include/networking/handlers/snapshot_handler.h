@@ -4,7 +4,7 @@
 #include "networking/protocol/ipacket_handler.h"
 #include "replication/snapshot/world_snapshot.h"
 
-namespace engine {
+namespace Shabby {
 
 class SnapshotHandler : public IPacketHandler {
 public:
@@ -18,6 +18,6 @@ public:
       Scene* scene) override;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SNAPSHOT_HANDLER_H

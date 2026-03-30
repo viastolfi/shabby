@@ -1,6 +1,6 @@
 #include "replication/snapshot/snapshot.h"
 
-namespace engine {
+namespace Shabby {
 
 Snapshot::Snapshot()
 {}
@@ -8,4 +8,4 @@ Snapshot::Snapshot()
 Snapshot::~Snapshot()
 {}
 
-} // namespace engine
+} // namespace Shabby

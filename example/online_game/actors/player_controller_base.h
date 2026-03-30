@@ -6,14 +6,14 @@
 #include "entities/controllers/entity_controller.h"
 #include "entities/entity.h"
 
-class PlayerControllerBase : public engine::IEntityController {
+class PlayerControllerBase : public Shabby::IEntityController {
 public:
   ~PlayerControllerBase() override = default;
 
-  void OnInit(engine::Entity* entity) override;
-  void OnUpdate(engine::Entity* entity, float dt) override;
-  void OnHitboxEntered(engine::Hitbox* enter, engine::Hitbox* from) override;
-  void OnHitboxExited(engine::Hitbox* enter, engine::Hitbox* from) override;
+  void OnInit(Shabby::Entity* entity) override;
+  void OnUpdate(Shabby::Entity* entity, float dt) override;
+  void OnHitboxEntered(Shabby::Hitbox* enter, Shabby::Hitbox* from) override;
+  void OnHitboxExited(Shabby::Hitbox* enter, Shabby::Hitbox* from) override;
 
 protected:
   static constexpr float HITBOX_WIDTH = 16.f;

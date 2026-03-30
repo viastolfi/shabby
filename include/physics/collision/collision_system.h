@@ -7,7 +7,7 @@
 #include "entities/entity.h"
 #include "utils/vector2.h"
 
-namespace engine {
+namespace Shabby {
 
 class CollisionSystem {
 public:
@@ -25,6 +25,6 @@ private:
   double _window_height;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // COLLISION_SYSTEM_H

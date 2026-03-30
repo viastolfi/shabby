@@ -16,7 +16,7 @@
 #include "core/factories/entity_factory.h"
 #include "core/scheduler/scheduler.h"
 
-namespace engine {
+namespace Shabby {
 
 class Scene {
 public:
@@ -71,6 +71,6 @@ private:
   std::function<void(Entity*)> _remote_entity_setup;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // SCENE_H

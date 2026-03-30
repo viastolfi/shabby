@@ -1,6 +1,6 @@
 #include "core/animation/animation_player.h"
 
-namespace engine {
+namespace Shabby {
 
 void AnimationPlayer::Play(int index) 
 {
@@ -33,4 +33,4 @@ void AnimationPlayer::RegisterAnimation(Animation& a)
   _animations.push_back(&a);
 }
 
-} // namespace engine
+} // namespace Shabby

@@ -1,6 +1,6 @@
 #include "networking/handlers/input_command_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 NetworkPacket* InputCommandHandler::HandleFromClient(
     int client_id,
@@ -32,4 +32,4 @@ void InputCommandHandler::HandleFromServer(
   (void)scene;
 }
 
-} // namespace engine
+} // namespace Shabby

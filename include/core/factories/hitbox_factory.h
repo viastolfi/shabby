@@ -8,7 +8,7 @@
 #include "physics/hitbox/hitbox.h"
 #include "physics/hitbox/rectangle_hitbox.h"
 
-namespace engine {
+namespace Shabby {
 
 class HitboxFactory {
 public:
@@ -38,6 +38,6 @@ private:
   uint64_t _id_counter = 0;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // HITBOX_FACTORY_H

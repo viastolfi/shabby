@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace engine {
+namespace Shabby {
 
 struct ClientConfig {
   const char* server_address = "127.0.0.1";
@@ -34,6 +34,6 @@ private:
   bool _connected = false;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // CLIENT_H

@@ -3,7 +3,7 @@
 
 #include "physics/hitbox/hitbox.h"
 
-namespace engine {
+namespace Shabby {
 
 class Entity;
 
@@ -16,7 +16,7 @@ public:
   virtual void OnHitboxExited(Hitbox* enter, Hitbox* from);
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENTITY_CONTROLLER_H
 

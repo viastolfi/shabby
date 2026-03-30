@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <memory>
 
-namespace engine {
+namespace Shabby {
 
 class Server;
 
@@ -34,6 +34,6 @@ public:
       int texture_id) { (void)texture_id; return nullptr; };
 };
 
-} // namespace engine
+} // namespace Shabby 
 
 #endif // SERVER_LOGIC_H

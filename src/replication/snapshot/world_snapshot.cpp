@@ -1,6 +1,6 @@
 #include "replication/snapshot/world_snapshot.h"
 
-namespace engine {
+namespace Shabby {
 
 WorldSnapshot::WorldSnapshot() {}
 
@@ -47,4 +47,4 @@ WorldSnapshot WorldSnapshot::FromPacket(NetworkPacket& packet)
   return snapshot;
 }
 
-} // namespace engine
+} // namespace Shabby

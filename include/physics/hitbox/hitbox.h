@@ -4,7 +4,7 @@
 #include <cstdint>
 #include "raylib.h"
 
-namespace engine {
+namespace Shabby {
 
 class Hitbox {
 public:
@@ -20,6 +20,6 @@ public:
   bool _is_entered = false;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // HITBOX_H

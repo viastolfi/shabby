@@ -1,13 +1,13 @@
 #include "actors/player_controller.h"
 
-void PlayerController::OnInit(engine::Entity* entity)
+void PlayerController::OnInit(Shabby::Entity* entity)
 {
   entity->_pos = {100.f, 100.f};
   entity->SetVelocity(10);
   entity->SetHitboxCreationFunction([entity]() {
     auto r = entity->GetSpriteRectangle();
 
-    engine::Hitbox* h = new engine::RectangleHitbox(
+    Shabby::Hitbox* h = new Shabby::RectangleHitbox(
         {entity->_pos.x, entity->_pos.y, 
          static_cast<float>(r.width), 
          static_cast<float>(r.height)});
@@ -15,7 +15,7 @@ void PlayerController::OnInit(engine::Entity* entity)
   });
 }
 
-void PlayerController::OnUpdate(engine::Entity* entity, float dt)
+void PlayerController::OnUpdate(Shabby::Entity* entity, float dt)
 {
   Vector2 dir = {0, 0};
 
@@ -44,13 +44,13 @@ void PlayerController::OnUpdate(engine::Entity* entity, float dt)
 }
 
 void PlayerController::OnHitboxEntered(
-    engine::Hitbox* enter, engine::Hitbox* from)
+    Shabby::Hitbox* enter, Shabby::Hitbox* from)
 {
   Raylog::GetInstance().Log(3, "Hitbox %d entered %d", from->_id, enter->_id);  
 }
 
 void PlayerController::OnHitboxExited(
-    engine::Hitbox* enter, engine::Hitbox* from)
+    Shabby::Hitbox* enter, Shabby::Hitbox* from)
 {
   Raylog::GetInstance().Log(3, "Hitbox %d exited %d", from->_id, enter->_id);
 }

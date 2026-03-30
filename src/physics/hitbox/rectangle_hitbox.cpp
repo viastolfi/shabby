@@ -1,6 +1,6 @@
 #include "physics/hitbox/rectangle_hitbox.h"
 
-namespace engine {
+namespace Shabby {
 
 RectangleHitbox::RectangleHitbox(Rectangle shape)
   : _shape(shape)
@@ -28,4 +28,4 @@ const Rectangle RectangleHitbox::GetShape() const
   return _shape;
 }
 
-} // namespace engine
+} // namespace Shabby

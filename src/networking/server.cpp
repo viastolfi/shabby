@@ -1,6 +1,6 @@
 #include "networking/server.h"
 
-namespace engine {
+namespace Shabby {
 
 Server::Server(
     ServerConf conf,
@@ -229,4 +229,4 @@ void Server::BroadcastToAllExcept(int except_client, const NetworkPacket& packet
   }
 }
 
-} // namespace engine
+} // namespace Shabby

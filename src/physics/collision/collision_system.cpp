@@ -1,6 +1,6 @@
 #include "physics/collision/collision_system.h"
 
-namespace engine {
+namespace Shabby {
 
 CollisionSystem::CollisionSystem(double w, double h)
   :_window_width(w), _window_height(h)
@@ -64,4 +64,4 @@ void CollisionSystem::NarrowPhase()
   }
 }
 
-} // namespace engine
+} // namespace Shabby

@@ -1,6 +1,6 @@
 #include "networking/packet_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 PacketHandler::PacketHandler(
     Scene* scene, 
@@ -35,4 +35,4 @@ void PacketHandler::HandleEntityCreateResponse(NetworkPacket& packet)
   (void)packet;
 }
 
-} // namespace engine
+} // namespace Shabby

@@ -15,7 +15,7 @@
 #include "networking/handlers/entity_destroy_handler.h"
 #include "networking/handlers/snapshot_handler.h"
 
-namespace engine {
+namespace Shabby {
 
 enum EngineMode {
   STANDALONE,
@@ -70,6 +70,6 @@ public:
   bool _initialized;
 };
 
-} // namespace engine
+} // namespace Shabby
 
 #endif // ENGINE_H

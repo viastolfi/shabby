@@ -3,13 +3,13 @@
 #include "networking/server.h"
 #include "actors/player_controller_base.h"
 
-class AIController : public engine::IEntityController {
+class AIController : public Shabby::IEntityController {
 public:
-  void OnInit(engine::Entity* entity) override {
+  void OnInit(Shabby::Entity* entity) override {
     entity->_pos = {300.f, 200.f};
     entity->SetVelocity(50);
   }
-  void OnUpdate(engine::Entity* entity, float dt) override {
+  void OnUpdate(Shabby::Entity* entity, float dt) override {
     _time += dt;
     entity->_pos.x = 300.f + 100.f * cosf(_time);
     entity->_pos.y = 200.f + 100.f * sinf(_time);
@@ -21,7 +21,7 @@ private:
 class ServerPlayerController : public PlayerControllerBase {
 };
 
-void ExampleLogic::OnStart(engine::Scene* scene, engine::Scheduler* scheduler, engine::Server* server) 
+void ExampleLogic::OnStart(Shabby::Scene* scene, Shabby::Scheduler* scheduler, Shabby::Server* server) 
 {
   std::cout << "[ExampleLogic] Server started" << std::endl;
   (void)scene;
@@ -32,7 +32,7 @@ void ExampleLogic::OnStart(engine::Scene* scene, engine::Scheduler* scheduler, e
     std::cout << "[ExampleLogic] Spawning entity..." << std::endl;
     auto* entity = scene->AddEntity(std::make_unique<AIController>(), 1);
     
-    engine::NetworkPacket packet(engine::PacketType::ENTITY_SPAWN);
+    Shabby::NetworkPacket packet(Shabby::PacketType::ENTITY_SPAWN);
     packet.Write(static_cast<uint64_t>(entity->_id));
     packet.Write(entity->_pos);
     packet.Write(static_cast<uint32_t>(1));
@@ -42,31 +42,31 @@ void ExampleLogic::OnStart(engine::Scene* scene, engine::Scheduler* scheduler, e
   */
 }
 
-void ExampleLogic::OnUpdate(engine::Scene* scene, float dt)
+void ExampleLogic::OnUpdate(Shabby::Scene* scene, float dt)
 {
   (void)scene;
   (void)dt;
 }
 
-void ExampleLogic::RegisterCustomPackets(engine::PacketRegistry* registry)
+void ExampleLogic::RegisterCustomPackets(Shabby::PacketRegistry* registry)
 {
   (void)registry;
 }
 
-void ExampleLogic::OnClientConnect(int client_id, engine::Scene* scene)
+void ExampleLogic::OnClientConnect(int client_id, Shabby::Scene* scene)
 {
   std::cout << "[ExampleLogic] Client " << client_id << " joined the game" << std::endl;
   (void)scene;
 }
 
 void ExampleLogic::OnClientDisconnect(
-    int client_id, engine::Scene* scene)
+    int client_id, Shabby::Scene* scene)
 {
   std::cout << "[ExampleLogic] Client " << client_id << " left the game" << std::endl;
   (void)scene;
 }
 
-std::unique_ptr<engine::IEntityController> ExampleLogic::CreateControllerFor(
+std::unique_ptr<Shabby::IEntityController> ExampleLogic::CreateControllerFor(
     int texture_id)
 {
   (void)texture_id;
