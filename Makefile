@@ -131,9 +131,11 @@ CXX := g++
 CXXFLAGS := -Wall -Wextra -g -I$(INCLUDE_DIR) -I$(RAYLIB_DIR)/include
 RAYLIB_INC := -isystem $(RAYLIB_DIR)/include
 
-.PHONY: all clean clean-complete check-platform clean-raylib examples
+.PHONY: all clean clean-complete check-platform clean-raylib examples install-dependencies
 
 all: check-raylib $(STATIC_LIB_TARGET)
+
+installed-dependencies: check-raylib
 
 $(OFFLINE_EXAMPLE_BUILD_DIR)/%.o: $(OFFLINE_EXAMPLE_DIR)/%.cpp
 	@mkdir -p $(dir $@)
