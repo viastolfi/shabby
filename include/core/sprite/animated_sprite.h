@@ -14,28 +14,22 @@ public:
       int texture_id,
       const char* path,
       int cols,
-      int rows,
-      float frame_speed);
+      int rows);
 
   explicit AnimatedSprite(
       int texture_id,
       int cols,
-      int rows,
-      float frame_speed);
+      int rows);
 
-  void Load() override;
-  void Draw(Vector2 pos) const override;
+  void Draw(Vector2 pos, int col, int row) const override;
 
-  int GetFrameCounter() const;
-  int GetCurrentFrame() const;
-  const Rectangle& GetCurrentFrameRec() const;
+  Rectangle GetSpriteRectangle();
 private:
   int _cols;
   int _rows;
-  float _frame_speed;
-  mutable int _frame_counter = 0;
-  mutable int _current_frame = 0;
-  mutable Rectangle _frame_rec = {0.0f, 0.0f, 0.0f, 0.0f};
+
+  float _frame_width;
+  float _frame_height; 
 };
 
 } // namespace engine

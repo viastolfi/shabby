@@ -61,8 +61,23 @@ void Scene::AddEntity(
       int texture_id,
       Vector2 position)
 {
-  _entity_manager->AddEntity(id, texture_id, position);
+  Entity* e = _entity_manager->AddEntity(id, texture_id, position);
+  if (_remote_entity_setup && e)
+    _remote_entity_setup(e);
 }
+
+void Scene::SetRemoteEntitySetup(std::function<void(Entity*)> setup)
+{
+  _remote_entity_setup = std::move(setup);
+}
+
+void Scene::AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap)
+{
+  _entity_manager->AddEntity(std::move(controller), std::move(ap)); 
+}
+  
 
 void Scene::RemoveEntity(uint64_t id)
 {

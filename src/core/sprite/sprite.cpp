@@ -52,18 +52,6 @@ Sprite& Sprite::operator=(Sprite&& other) noexcept
   return *this;
 }
 
-void Sprite::Load()
-{
-  if (_loaded) {
-    return;
-  }
-  if (_path == nullptr) {
-    return;
-  }
-  _texture = LoadTexture(_path);
-  _loaded = true;
-}
-
 void Sprite::Draw(float x, float y) const 
 {
   if (_loaded) 
@@ -84,6 +72,14 @@ void Sprite::Draw(Rectangle frame_rec, Vector2 pos) const
 {
   if (_loaded)
     DrawTextureRec(_texture, frame_rec, pos, WHITE);
+}
+
+
+void Sprite::Draw(Vector2 pos, int col, int row) const
+{
+  (void)pos;
+  (void)col;
+  (void)row;
 }
 
 const char* Sprite::GetPath() const

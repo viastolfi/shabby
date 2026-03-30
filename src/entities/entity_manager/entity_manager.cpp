@@ -57,7 +57,7 @@ Entity* EntityManager::AddEntity(
   return e;
 }
 
-void EntityManager::AddEntity(
+Entity* EntityManager::AddEntity(
     uint64_t id,
     int texture_id,
     Vector2 position)
@@ -66,6 +66,20 @@ void EntityManager::AddEntity(
   e->_id = id;
   e->_pos = position;
   e->_texture_id = texture_id;
+
+  _entities.push_back(e);
+  return e;
+}
+
+
+void EntityManager::AddEntity(
+    std::unique_ptr<IEntityController> controller,
+    std::unique_ptr<AnimationPlayer> ap)
+{
+  Entity* e = _entity_factory->CreateEntity(
+      std::move(controller), std::move(ap));
+  e->_id = GenerateEntityId();
+  e->Init();
 
   _entities.push_back(e);
 }

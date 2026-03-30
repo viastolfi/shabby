@@ -5,8 +5,7 @@ void PlayerController::OnInit(engine::Entity* entity)
   entity->_pos = {100.f, 100.f};
   entity->SetVelocity(10);
   entity->SetHitboxCreationFunction([entity]() {
-    auto rOpt = entity->GetFrameRec();
-    const Rectangle& r = rOpt->get();
+    auto r = entity->GetSpriteRectangle();
 
     engine::Hitbox* h = new engine::RectangleHitbox(
         {entity->_pos.x, entity->_pos.y, 
@@ -24,6 +23,18 @@ void PlayerController::OnUpdate(engine::Entity* entity, float dt)
   if (IsKeyDown(KEY_D)) dir.x += 1;
   if (IsKeyDown(KEY_W)) dir.y -= 1;
   if (IsKeyDown(KEY_S)) dir.y += 1;
+
+  if (dir.x == 0 && dir.y == 0) {
+    entity->PlayAnimation(0); 
+  } else if (dir.y > 0) {
+    entity->PlayAnimation(1);
+  } else if (dir.y < 0) {
+    entity->PlayAnimation(2);
+  } else if (dir.x < 0) {
+    entity->PlayAnimation(3);
+  } else if (dir.x > 0) {
+    entity->PlayAnimation(4);
+  }
 
   Vector2 normalized = Vector2Normalize(dir);
   Vector2 velocity = Vector2Scale(normalized, 200);

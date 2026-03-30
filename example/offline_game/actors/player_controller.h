@@ -8,6 +8,7 @@
 #include "utils/raylog.h"
 #include "raymath.h"
 #include "raylib.h"
+#include "asset_ids.h"
 
 class PlayerController : public engine::IEntityController {
 public:

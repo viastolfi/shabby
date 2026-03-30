@@ -34,10 +34,14 @@ public:
       int texture_id,
       float x, float y, float width, float height);
 
-  void AddEntity(
+  Entity* AddEntity(
       uint64_t id,
       int texture_id,
       Vector2 position);
+
+  void AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap);
 
   void RemoveEntity(uint64_t id);
 

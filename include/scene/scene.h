@@ -43,6 +43,10 @@ public:
     std::unique_ptr<IEntityController> controller,
     int texture_id,
     float x, float y, float width, float height);
+
+  void AddEntity(
+      std::unique_ptr<IEntityController> controller,
+      std::unique_ptr<AnimationPlayer> ap);
   
   void AddEntity(
       uint64_t id,
@@ -50,6 +54,8 @@ public:
       Vector2 position);
   
   void RemoveEntity(uint64_t id);
+
+  void SetRemoteEntitySetup(std::function<void(Entity*)> setup);
   
   void ScheduleTaskAfter(float seconds, std::function<void(Scene*)> task);
   void ScheduleTaskEvery(float seconds, std::function<void(Scene*)> task);
@@ -62,6 +68,7 @@ public:
 private:
   std::unique_ptr<Scheduler> _task_scheduler;
   std::unique_ptr<EntityManager> _entity_manager;
+  std::function<void(Entity*)> _remote_entity_setup;
 };
 
 } // namespace engine

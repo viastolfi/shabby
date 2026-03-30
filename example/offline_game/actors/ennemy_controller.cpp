@@ -5,8 +5,7 @@ void EnnemyController::OnInit(engine::Entity* entity)
   entity->_pos = {100.f, 100.f};
   entity->SetVelocity(10);
   entity->SetHitboxCreationFunction([entity]() {
-    auto rOpt = entity->GetFrameRec();
-    const Rectangle& r = rOpt->get();
+    auto r = entity->GetSpriteRectangle();
 
     engine::Hitbox* h = new engine::RectangleHitbox(
         {entity->_pos.x, entity->_pos.y, 
@@ -14,6 +13,8 @@ void EnnemyController::OnInit(engine::Entity* entity)
          static_cast<float>(r.height)});
     return h;
   });
+
+   
 }
 
 void EnnemyController::OnUpdate(engine::Entity* entity, float dt)

@@ -7,71 +7,39 @@ AnimatedSprite::AnimatedSprite(
       int texture_id,
       const char* path,
       int cols,
-      int rows,
-      float frame_speed)
+      int rows)
   : Sprite(texture, texture_id, path),
     _cols(cols),
-    _rows(rows),
-    _frame_speed(frame_speed)
+    _rows(rows)
 {
-  _frame_rec.width = static_cast<float>(texture.width) / _cols;
-  _frame_rec.height = static_cast<float>(texture.height);
-  _frame_rec.x = 0;
-  _frame_rec.y = 0;
+  _frame_width = static_cast<double>(texture.width) / _cols;
+  _frame_height = static_cast<double>(texture.height) / _rows;
 }
 
 AnimatedSprite::AnimatedSprite(
       int texture_id,
       int cols,
-      int rows,
-      float frame_speed)
+      int rows)
   : Sprite(texture_id),
     _cols(cols),
-    _rows(rows),
-    _frame_speed(frame_speed)
+    _rows(rows)
 {}
 
-
-void AnimatedSprite::Load()
+void AnimatedSprite::Draw(Vector2 pos, int col, int row) const
 {
-  Sprite::Load();
-  
-  _frame_rec.width = static_cast<float>(GetTexture()->width) / _cols;
-  _frame_rec.height = static_cast<float>(GetTexture()->height);
+  Rectangle frame_rec = {
+    col * _frame_width,
+    row * _frame_height,
+    _frame_width,
+    _frame_height
+  };
+
+  Sprite::Draw(frame_rec, pos);
 }
 
-int AnimatedSprite::GetFrameCounter() const
+Rectangle AnimatedSprite::GetSpriteRectangle() 
 {
-  return _frame_counter;
-}
-
-int AnimatedSprite::GetCurrentFrame() const
-{
-  return _current_frame; 
-}
-
-void AnimatedSprite::Draw(Vector2 pos) const
-{
-  _frame_counter++;
-
-  if (_frame_counter >= (60/_frame_speed)) {
-    _frame_counter = 0;
-    _current_frame++;
-
-    if (_current_frame > _cols - 1)
-      _current_frame = 0;
-
-    _frame_rec.x = 
-      static_cast<float>(_current_frame) *
-      static_cast<float>(GetTexture()->width) / _cols;
-  }
-
-  Sprite::Draw(_frame_rec, pos);
-}
-
-const Rectangle& AnimatedSprite::GetCurrentFrameRec() const 
-{
-  return _frame_rec;
+  return (Rectangle) {0.0f, 0.0f, _frame_width, _frame_height};
 }
 
 } // namespace engine
