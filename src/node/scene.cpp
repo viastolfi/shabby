@@ -1,0 +1,23 @@
+#include "node/scene.h"
+
+namespace Shabby::Node {
+
+// TODO: not sure if this is safe
+// keep an eye on that
+Scene::Scene()
+  :INode((Vector2){-1, -1})
+{}
+
+void Scene::Draw() 
+{
+  for (auto c : _childs)
+    c->Draw();
+}
+
+void Scene::Update(float dt)
+{
+  // TODO: implement this
+  (void)dt;
+} 
+
+}

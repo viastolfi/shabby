@@ -1,13 +1,16 @@
 #include "core/render/render_system.h"
 
-namespace Shabby {
+namespace Shabby::Core {
 
-RenderSystem::RenderSystem(const RenderConfig& config)
-  : _config(config),
-    _initialized(false)
+RenderSystem::RenderSystem()
+  : _initialized(false)
 {
-  InitWindow(_config.width, _config.height, _config.title);
-  SetTargetFPS(_config.target_fps);
+  // SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+  // SetConfigFlags(FLAG_WINDOW_TOPMOST);
+
+  // TODO: make this the choice of the dev
+  InitWindow(800, 600, "test");
+  SetTargetFPS(60);
   _initialized = true;
 }
 
@@ -29,10 +32,11 @@ void RenderSystem::EndFrame()
   EndDrawing();
 }
 
-void RenderSystem::RenderScene(const Scene* scene) const
+void RenderSystem::RenderTree(
+    const std::shared_ptr<Node::INode> root_node) const
 {
-  if (scene) {
-    scene->Draw();
+  if (root_node) {
+    root_node->Draw();
   }
 }
 
@@ -46,4 +50,4 @@ float RenderSystem::GetDeltaTime() const
   return GetFrameTime();
 }
 
-} // namespace Shabby
+} // namespace Shabby::Core

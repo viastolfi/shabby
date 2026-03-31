@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <type_traits>
 
-namespace Shabby {
+namespace Shabby::Core {
 
 struct AssetDesc {
   int id;
@@ -70,6 +70,6 @@ private:
   }
 };
 
-} // namespace Shabby
+} // namespace Shabby::Core
 
 #endif // ASSETS_REGISTRY_H
