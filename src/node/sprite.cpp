@@ -11,4 +11,10 @@ void Sprite::Draw()
   DrawTextureV(_texture, _pos, WHITE);
 }
 
+void Sprite::Update(float dt)
+{
+  (void)dt;
+  _pos = _parent->GetPos();
+}
+
 } 

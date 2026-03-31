@@ -8,14 +8,16 @@ RigidBody::RigidBody(Vector2 pos)
 
 void RigidBody::Update(float dt) 
 {
-  // TODO: check if we really need dt
-  (void)dt;
-  _pos += _dir;
+  _physics_process(dt);
+  _pos = Vector2Add(_pos, Vector2Scale(_dir, dt));
+
+  for (auto& c : _childs)
+    c->Update(dt);
 }
 
 void RigidBody::Draw() 
 {
-  for (auto c : _childs)
+  for (auto& c : _childs)
     c->Draw();
 }
 

@@ -17,9 +17,12 @@ public:
   virtual void Draw() = 0;
 
   void AddChild(std::shared_ptr<INode> c);
+
+  const Vector2 GetPos() const;
 protected:
   std::vector<std::shared_ptr<INode>> _childs;
   Vector2 _pos;
+  INode* _parent = nullptr;
 };
 
 } // namespace Shabby::Node

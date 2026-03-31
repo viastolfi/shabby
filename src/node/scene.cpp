@@ -10,14 +10,14 @@ Scene::Scene()
 
 void Scene::Draw() 
 {
-  for (auto c : _childs)
+  for (auto& c : _childs)
     c->Draw();
 }
 
 void Scene::Update(float dt)
 {
-  // TODO: implement this
-  (void)dt;
+  for (auto& c : _childs)
+    c->Update(dt);
 } 
 
 }

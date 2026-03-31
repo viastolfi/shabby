@@ -11,7 +11,8 @@ public:
   Sprite(Vector2 pos, Texture2D texture);
   ~Sprite() = default;
 
-  void Draw() override;
+  void Draw() override final;
+  void Update(float dt) override final;
 private:
   Texture2D _texture;
 };
