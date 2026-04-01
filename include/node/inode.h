@@ -17,10 +17,12 @@ public:
   virtual void Draw() = 0;
 
   void AddChild(std::shared_ptr<INode> c);
+  void AddChildDeffered(std::shared_ptr<INode> c);
 
   const Vector2 GetPos() const;
 protected:
   std::vector<std::shared_ptr<INode>> _childs;
+  std::vector<std::shared_ptr<INode>> _pending_add;
   Vector2 _pos;
   INode* _parent = nullptr;
 };

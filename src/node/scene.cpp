@@ -18,6 +18,11 @@ void Scene::Update(float dt)
 {
   for (auto& c : _childs)
     c->Update(dt);
+
+  for (auto& pa : _pending_add)
+    _childs.push_back(pa);
+
+  _pending_add.clear();
 } 
 
 }
