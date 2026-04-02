@@ -1,7 +1,7 @@
 #ifndef ENNEMY_H
 #define ENNEMY_H
 
-#include "node/rigid_body.h"
+#include "node/collision_shape/rigid_body.h"
 #include <cmath>
 
 class Ennemy : public Shabby::Node::RigidBody {

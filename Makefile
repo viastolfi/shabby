@@ -18,13 +18,13 @@ STATIC_LIB_TARGET      := $(LIB_DIR)/libshabby.a
 
 SHABBY_LIB_SRC = \
  	$(SRC_DIR)/node/inode.cpp \
-  $(SRC_DIR)/node/sprite.cpp \
-  $(SRC_DIR)/node/rigid_body.cpp \
+  $(SRC_DIR)/node/sprite/sprite.cpp \
+  $(SRC_DIR)/node/collision_shape/rigid_body.cpp \
 	$(SRC_DIR)/core/engine/engine.cpp \
 	$(SRC_DIR)/core/game_loop/game_loop.cpp \
 	$(SRC_DIR)/core/render/render_system.cpp \
 	$(SRC_DIR)/node/timer.cpp \
-	$(SRC_DIR)/node/animated_sprite.cpp
+	$(SRC_DIR)/node/sprite/animated_sprite.cpp
 
 EXAMPLE_ONLINE_SRC = \
   $(ONLINE_EXAMPLE_DIR)/main.cpp \
@@ -42,13 +42,13 @@ NODE_EXAMPLE_SRC = \
 
 SHABBY_LIB_OBJ = \
   $(BUILD_DIR)/node/inode.o \
-  $(BUILD_DIR)/node/sprite.o \
-  $(BUILD_DIR)/node/rigid_body.o \
+  $(BUILD_DIR)/node/sprite/sprite.o \
+  $(BUILD_DIR)/node/collision_shape/rigid_body.o \
 	$(BUILD_DIR)/core/engine/engine.o \
 	$(BUILD_DIR)/core/game_loop/game_loop.o \
 	$(BUILD_DIR)/core/render/render_system.o \
 	$(BUILD_DIR)/node/timer.o \
-	$(BUILD_DIR)/node/animated_sprite.o
+	$(BUILD_DIR)/node/sprite/animated_sprite.o
 
 ONLINE_EXAMPLE_OBJ = \
   $(ONLINE_EXAMPLE_BUILD_DIR)/main.o \

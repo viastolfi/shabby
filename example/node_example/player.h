@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "node/rigid_body.h"
+#include "node/collision_shape/rigid_body.h"
 
 class Player : public Shabby::Node::RigidBody {
 public:

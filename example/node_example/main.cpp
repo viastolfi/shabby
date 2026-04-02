@@ -1,8 +1,8 @@
 #include <memory>
 
 #include "core/engine/engine.h"
-#include "node/sprite.h"
-#include "node/animated_sprite.h"
+#include "node/sprite/sprite.h"
+#include "node/sprite/animated_sprite.h"
 #include "utils/raylog.h"
 #include "node/timer.h"
 

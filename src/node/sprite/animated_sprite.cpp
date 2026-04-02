@@ -1,4 +1,4 @@
-#include "node/animated_sprite.h"
+#include "node/sprite/animated_sprite.h"
 
 namespace Shabby::Node {
 

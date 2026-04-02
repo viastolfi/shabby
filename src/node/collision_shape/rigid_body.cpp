@@ -1,4 +1,4 @@
-#include "node/rigid_body.h"
+#include "node/collision_shape/rigid_body.h"
 
 namespace Shabby::Node {
 
