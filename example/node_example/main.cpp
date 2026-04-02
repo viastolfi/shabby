@@ -2,6 +2,7 @@
 
 #include "core/engine/engine.h"
 #include "node/sprite.h"
+#include "node/animated_sprite.h"
 #include "utils/raylog.h"
 #include "node/timer.h"
 
@@ -10,7 +11,8 @@
 #include "ennemy.h"
 
 enum class AssetId {
-  BEAF = 0
+  BEAF = 0,
+  MONKEY_IDLE
 };
 
 int main(void)
@@ -28,6 +30,10 @@ int main(void)
     Shabby::Core::AssetDesc{
       static_cast<int>(AssetId::BEAF),
       "assets/Beaf.png" 
+    },
+    Shabby::Core::AssetDesc{
+      static_cast<int>(AssetId::MONKEY_IDLE),
+      "assets/actors/monkey/Idle.png" 
     }
   );
 
@@ -36,9 +42,10 @@ int main(void)
   auto p = std::make_shared<Player>((Vector2){100, 100});
 
   auto s =
-    std::make_shared<Shabby::Node::Sprite>(
+    std::make_shared<Shabby::Node::AnimatedSprite>(
       (Vector2){100, 100}, 
-      assets_registry->GetTexture(static_cast<int>(AssetId::BEAF))
+      assets_registry->GetTexture(static_cast<int>(AssetId::MONKEY_IDLE)),
+      0, 3, 0, 0, 3.0f
     );
   render_system->Register(s.get());
 
