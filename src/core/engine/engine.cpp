@@ -30,4 +30,9 @@ void Engine::Run()
   );
 }
 
+std::shared_ptr<RenderSystem> Engine::GetRenderSystem() const
+{
+  return _render_system;
+}
+
 } // namespace Shabby::Core

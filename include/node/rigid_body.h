@@ -14,7 +14,6 @@ public:
   ~RigidBody() = default;
 
   void Update(float dt) override final;
-  void Draw() override final;
 
   virtual void _physics_process(float dt) = 0;
 protected:

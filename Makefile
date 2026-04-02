@@ -17,8 +17,7 @@ NODE_EXAMPLE_TARGET    := $(BUILD_DIR)/node_example
 STATIC_LIB_TARGET      := $(LIB_DIR)/libshabby.a
 
 SHABBY_LIB_SRC = \
- $(SRC_DIR)/node/inode.cpp \
-  $(SRC_DIR)/node/scene.cpp \
+ 	$(SRC_DIR)/node/inode.cpp \
   $(SRC_DIR)/node/sprite.cpp \
   $(SRC_DIR)/node/rigid_body.cpp \
 	$(SRC_DIR)/core/engine/engine.cpp \
@@ -42,7 +41,6 @@ NODE_EXAMPLE_SRC = \
 
 SHABBY_LIB_OBJ = \
   $(BUILD_DIR)/node/inode.o \
-  $(BUILD_DIR)/node/scene.o \
   $(BUILD_DIR)/node/sprite.o \
   $(BUILD_DIR)/node/rigid_body.o \
 	$(BUILD_DIR)/core/engine/engine.o \

@@ -10,21 +10,21 @@ namespace Shabby::Node {
 
 class INode {
 public:
+  INode() = default;
   INode(Vector2 pos);
   virtual ~INode() = default;
 
   virtual void Update(float dt);
-  virtual void Draw() = 0;
+
+  const Vector2 GetPos() const;
 
   void AddChild(std::shared_ptr<INode> c);
   void AddChildDeffered(std::shared_ptr<INode> c);
-
-  const Vector2 GetPos() const;
 protected:
   std::vector<std::shared_ptr<INode>> _childs;
   std::vector<std::shared_ptr<INode>> _pending_add;
-  Vector2 _pos;
   INode* _parent = nullptr;
+  Vector2 _pos = {-1, -1};
 };
 
 } // namespace Shabby::Node

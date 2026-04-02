@@ -18,6 +18,8 @@ void Timer::Update(float dt)
     if (!_run_once)
       Start();
   }
+
+  INode::Update(dt);
 }
 
 void Timer::Start() 
@@ -25,8 +27,5 @@ void Timer::Start()
   _running = true;
   _time_left = _duration;
 }
-
-void Timer::Draw() 
-{}
 
 } // namespace Shabby::Node

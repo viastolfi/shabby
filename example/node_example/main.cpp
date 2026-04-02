@@ -17,10 +17,11 @@ int main(void)
 {
   Raylog::GetInstance(1).Log(1, "Logger Set");
 
-  std::unique_ptr<Shabby::Core::Engine> engine =
-    std::make_unique<Shabby::Core::Engine>();
+  auto engine = std::make_unique<Shabby::Core::Engine>();
 
-  std::unique_ptr<Shabby::Core::AssetRegistry> assets_registry =
+  auto render_system = engine->GetRenderSystem();
+
+  auto assets_registry = 
     std::make_unique<Shabby::Core::AssetRegistry>();
 
   assets_registry->LoadAll(
@@ -30,31 +31,31 @@ int main(void)
     }
   );
 
-  std::shared_ptr<Shabby::Node::INode> ms = 
-    std::make_shared<MainScene>();
+  auto ms = std::make_shared<MainScene>();
 
-  std::shared_ptr<Shabby::Node::INode> p = 
-    std::make_shared<Player>((Vector2){100, 100});
+  auto p = std::make_shared<Player>((Vector2){100, 100});
 
-  std::shared_ptr<Shabby::Node::INode> s =
+  auto s =
     std::make_shared<Shabby::Node::Sprite>(
       (Vector2){100, 100}, 
       assets_registry->GetTexture(static_cast<int>(AssetId::BEAF))
     );
+  render_system->Register(s.get());
 
   auto timer =
     std::make_shared<Shabby::Node::Timer>(.1f);
 
-  timer->timeout.connect([assets_registry = assets_registry.get(), ms]() {
+  timer->timeout.connect([assets_registry = assets_registry.get(), ms, render_system]() {
       std::shared_ptr<Shabby::Node::INode> e =
       std::make_shared<Ennemy>((Vector2){200, 200});
   
-    std::shared_ptr<Shabby::Node::INode> es =
+    auto es =
       std::make_shared<Shabby::Node::Sprite>(
         (Vector2){200, 200},
         assets_registry->GetTexture(static_cast<int>(AssetId::BEAF))
       );
 
+    render_system->Register(es.get());
     e->AddChild(es);
     ms->AddChildDeffered(e);
   });

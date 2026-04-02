@@ -32,12 +32,15 @@ void RenderSystem::EndFrame()
   EndDrawing();
 }
 
-void RenderSystem::RenderTree(
-    const std::shared_ptr<Node::INode> root_node) const
+void RenderSystem::DrawAll()
 {
-  if (root_node) {
-    root_node->Draw();
-  }
+  for (auto& d : _drawables)
+    d->Draw();
+}
+
+void RenderSystem::Register(IDrawable* d)
+{
+  _drawables.push_back(d);
 }
 
 bool RenderSystem::ShouldClose() const

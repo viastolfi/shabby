@@ -19,6 +19,8 @@ public:
   void SetAssetRegistry(std::unique_ptr<AssetRegistry> as);
 
   void Run();
+
+  std::shared_ptr<RenderSystem> GetRenderSystem() const;
 private:
   std::unique_ptr<AssetRegistry> _asset_registry;
   std::unique_ptr<GameLoop> _game_loop;

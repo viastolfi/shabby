@@ -44,7 +44,7 @@ void GameLoop::Run(
     
     if (render_system) {
       render_system->BeginFrame();
-      render_system->RenderTree(root_node);
+      render_system->DrawAll();
       render_system->EndFrame();
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(1));

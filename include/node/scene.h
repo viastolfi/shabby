@@ -7,11 +7,8 @@ namespace Shabby::Node {
 
 class Scene : public INode {
 public:
-  Scene();
+  Scene() = default;
   ~Scene() = default;
-
-  void Draw() override;
-  void Update(float dt) override;
 };
 
 } // namespace Shabby::Node

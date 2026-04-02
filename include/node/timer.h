@@ -13,7 +13,6 @@ public:
   Timer(float duration);
   ~Timer() = default;
 
-  void Draw() override;
   void Update(float dt) override;
   void Start();
 private:

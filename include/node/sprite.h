@@ -2,11 +2,12 @@
 #define SPRITE_H
 
 #include "node/inode.h"
+#include "core/drawable/idrawable.h"
 #include "raylib.h"
 
 namespace Shabby::Node {
 
-class Sprite : public INode {
+class Sprite : public INode, public Core::IDrawable {
 public:
   Sprite(Vector2 pos, Texture2D texture);
   ~Sprite() = default;

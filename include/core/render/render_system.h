@@ -2,6 +2,7 @@
 #define RENDER_SYSTEM_H
 
 #include "node/inode.h"
+#include "core/drawable/idrawable.h"
 #include "raylib.h"
 
 namespace Shabby::Core {
@@ -13,13 +14,15 @@ public:
   
   void BeginFrame();
   void EndFrame();
-  void RenderTree(const std::shared_ptr<Node::INode> root_node) const;
+  void Register(IDrawable* d);
+  void DrawAll();
   
   bool ShouldClose() const;
   float GetDeltaTime() const;
   
 private:
   bool _initialized;
+  std::vector<IDrawable*> _drawables;
 };
 
 } // namespace Shabby::Core
