@@ -14,10 +14,12 @@ public:
       Vector2 pos,
       Texture2D texture,
       int sc, int ec, int sr, int er,
+      int total_cols, int total_rows,
       float fs);
   ~AnimatedSprite() = default;
 
   void Draw() override final;
+  void Draw(Vector2 pos) override final;
   void Update(float dt) override final;
 private:
   Texture _texture;

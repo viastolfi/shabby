@@ -24,7 +24,8 @@ SHABBY_LIB_SRC = \
 	$(SRC_DIR)/core/game_loop/game_loop.cpp \
 	$(SRC_DIR)/core/render/render_system.cpp \
 	$(SRC_DIR)/node/timer.cpp \
-	$(SRC_DIR)/node/sprite/animated_sprite.cpp
+	$(SRC_DIR)/node/sprite/animated_sprite.cpp \
+	$(SRC_DIR)/node/sprite/animation_player.cpp
 
 EXAMPLE_ONLINE_SRC = \
   $(ONLINE_EXAMPLE_DIR)/main.cpp \
@@ -48,7 +49,8 @@ SHABBY_LIB_OBJ = \
 	$(BUILD_DIR)/core/game_loop/game_loop.o \
 	$(BUILD_DIR)/core/render/render_system.o \
 	$(BUILD_DIR)/node/timer.o \
-	$(BUILD_DIR)/node/sprite/animated_sprite.o
+	$(BUILD_DIR)/node/sprite/animated_sprite.o \
+	$(BUILD_DIR)/node/sprite/animation_player.o
 
 ONLINE_EXAMPLE_OBJ = \
   $(ONLINE_EXAMPLE_BUILD_DIR)/main.o \

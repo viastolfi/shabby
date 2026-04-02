@@ -6,6 +6,7 @@ AnimatedSprite::AnimatedSprite(
     Vector2 pos,
     Texture2D texture,
     int sc, int ec, int sr, int er,
+    int total_cols, int total_rows,
     float fs)
   :INode(pos), _texture(texture), _start_col(sc),
    _end_col(ec), _start_row(sr), _end_row(er),
@@ -13,8 +14,8 @@ AnimatedSprite::AnimatedSprite(
 {
   _current_col = _start_col;
   _current_row = _start_row;
-  _frame_width = _texture.width / (_end_col - _start_col + 1); 
-  _frame_height = _texture.height / (_end_row - _start_row + 1);
+  _frame_width = _texture.width / total_cols;
+  _frame_height = _texture.height / total_rows;
   _frame_rec = Rectangle{
     static_cast<float>(_start_col * _frame_width),
     static_cast<float>(_start_row * _frame_height),
@@ -25,9 +26,6 @@ AnimatedSprite::AnimatedSprite(
 
 void AnimatedSprite::Update(float dt)
 {
-  if (auto parent = _parent.lock())
-    _pos = parent->GetPos();
-
   _frame_counter += dt;
 
   float time_per_frame = 1.0f / _frame_speed;  
@@ -50,7 +48,15 @@ void AnimatedSprite::Update(float dt)
 
 void AnimatedSprite::Draw() 
 {
+  if (auto parent = _parent.lock())
+    _pos = parent->GetPos();
+
   DrawTextureRec(_texture, _frame_rec, _pos, WHITE);
+}
+
+void AnimatedSprite::Draw(Vector2 pos) 
+{
+  DrawTextureRec(_texture, _frame_rec, pos, WHITE);
 }
 
 } // namespace Shabby::Node
