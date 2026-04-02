@@ -14,7 +14,8 @@ void Sprite::Draw()
 void Sprite::Update(float dt)
 {
   (void)dt;
-  _pos = _parent->GetPos();
+  if (auto parent = _parent.lock())
+    _pos = parent->GetPos();
 }
 
 } 

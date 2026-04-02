@@ -8,13 +8,13 @@ INode::INode(Vector2 pos)
 
 void INode::AddChild(std::shared_ptr<INode> c) 
 {
-  c->_parent = this;
+  c->_parent = shared_from_this();
   _childs.push_back(c);
 }
 
 void INode::AddChildDeffered(std::shared_ptr<INode> c)
 {
-  c->_parent = this;
+  c->_parent = shared_from_this();
   _pending_add.push_back(c);
 }
 

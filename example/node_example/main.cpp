@@ -61,6 +61,7 @@ int main(void)
   });
 
   p->AddChild(s);
+  auto c = p->GetChildOfType<Shabby::Node::Sprite>();
 
   ms->AddChild(timer);
   ms->AddChild(p);
