@@ -5,6 +5,7 @@
 
 #include "core/assets/assets_registry.h"
 #include "node/inode.h"
+#include "core/physics/collision_system.h"
 #include "core/game_loop/game_loop.h"
 
 namespace Shabby::Core {
@@ -21,10 +22,12 @@ public:
   void Run();
 
   std::shared_ptr<RenderSystem> GetRenderSystem() const;
+  std::shared_ptr<CollisionSystem> GetCollisionSystem() const;
 private:
   std::unique_ptr<AssetRegistry> _asset_registry;
   std::unique_ptr<GameLoop> _game_loop;
   std::shared_ptr<RenderSystem> _render_system;
+  std::shared_ptr<CollisionSystem> _collision_system;
 
   std::shared_ptr<Node::INode> _root_tree;
 };

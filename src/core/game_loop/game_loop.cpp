@@ -6,6 +6,7 @@ namespace Shabby::Core {
 void GameLoop::Run(
     std::shared_ptr<Node::INode> root_node,
     std::shared_ptr<RenderSystem> render_system,
+    std::shared_ptr<CollisionSystem> collision_system,
     std::function<bool()> should_continue,
     std::function<void()> on_frame_start,
     std::function<void(float)> on_tick)
@@ -35,12 +36,10 @@ void GameLoop::Run(
     }
     root_node->Update(frame_dt);
     
-    /*
-    if (_collision_system) {
-      _collision_system->BroadPhase(scene);
-      _collision_system->NarrowPhase();
+    if (collision_system) {
+      collision_system->BroadPhase();
+      collision_system->NarrowPhase();
     }
-    */
     
     if (render_system) {
       render_system->BeginFrame();
@@ -51,12 +50,5 @@ void GameLoop::Run(
     }
   }
 }
-
-/*
-void GameLoop::SetCollisionSystem(std::unique_ptr<CollisionSystem> cs)
-{
-  _collision_system = std::move(cs);
-}
-*/
 
 } // namespace Shabby::Core

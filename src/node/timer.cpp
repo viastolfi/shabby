@@ -17,6 +17,8 @@ void Timer::Update(float dt)
     timeout.emit();
     if (!_run_once)
       Start();
+    else
+      _running = false;
   }
 
   INode::Update(dt);

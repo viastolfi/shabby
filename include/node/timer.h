@@ -15,11 +15,12 @@ public:
 
   void Update(float dt) override;
   void Start();
+
+  bool _run_once = false;
 private:
   float _duration;
   float _time_left;
   bool _running = false;
-  bool _run_once = false;
 };
 
 } // namespace Shabby::Node

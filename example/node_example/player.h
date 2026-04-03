@@ -2,6 +2,8 @@
 #define PLAYER_H
 
 #include "node/collision_shape/rigid_body.h"
+#include "node/hitbox/rectangle_hitbox.h"
+#include "core/physics/icollider.h"
 
 class Player : public Shabby::Node::RigidBody {
 public:
@@ -33,6 +35,24 @@ public:
       animation_player->Play("walk_left");
     else if (_dir.x > 0)
       animation_player->Play("walk_right");    
+  }
+
+  void _on_hitbox_entered(
+      Shabby::Node::RectangleHitbox* hit, 
+      Shabby::Core::ICollider* from) override 
+  {
+    (void)hit;
+    (void)from;
+    Raylog::GetInstance().Log(1, "HITBOX ENTERED"); 
+  }
+
+  void _on_hitbox_exited(
+      Shabby::Node::RectangleHitbox* hit,
+      Shabby::Core::ICollider* from) override
+  {
+    (void)hit;
+    (void)from; 
+    Raylog::GetInstance().Log(1, "HITBOX EXITED");
   }
 
   ~Player() = default;

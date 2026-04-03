@@ -9,6 +9,8 @@ class Scene : public INode {
 public:
   Scene() = default;
   ~Scene() = default;
+
+  void Update(float dt) override;
 };
 
 } // namespace Shabby::Node

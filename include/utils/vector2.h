@@ -19,6 +19,11 @@ inline Vector2& operator+=(Vector2& v1, const Vector2& v2)
   return v1;
 }
 
+inline bool operator==(const Vector2& a, const Vector2& b)
+{
+  return a.x == b.x && a.y == b.y;
+}
+
 } // namespace Shabby
 
 namespace std {
@@ -33,6 +38,7 @@ struct hash<Vector2>
     return hx ^ (hy << 1);
   }
 };
+
 }
 
 #endif // VECTOR2_H
