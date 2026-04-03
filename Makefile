@@ -36,11 +36,6 @@ EXAMPLE_ONLINE_SRC = \
   $(ONLINE_EXAMPLE_DIR)/actors/player_controller_base.cpp \
   $(ONLINE_EXAMPLE_DIR)/server/logic/example_logic.cpp
 
-EXAMPLE_OFFLINE_SRC = \
-  $(OFFLINE_EXAMPLE_DIR)/main.cpp \
-  $(OFFLINE_EXAMPLE_DIR)/actors/player_controller.cpp \
-  $(OFFLINE_EXAMPLE_DIR)/actors/ennemy_controller.cpp
-
 NODE_EXAMPLE_SRC = \
 	$(NODE_EXAMPLE_DIR)/main.cpp	 
 
@@ -63,11 +58,6 @@ ONLINE_EXAMPLE_OBJ = \
   $(ONLINE_EXAMPLE_BUILD_DIR)/actors/player_controller.o \
   $(ONLINE_EXAMPLE_BUILD_DIR)/actors/player_controller_base.o \
   $(ONLINE_EXAMPLE_BUILD_DIR)/server/logic/example_logic.o
-
-OFFLINE_EXAMPLE_OBJ = \
-  $(OFFLINE_EXAMPLE_BUILD_DIR)/main.o \
-  $(OFFLINE_EXAMPLE_BUILD_DIR)/actors/player_controller.o \
-  $(OFFLINE_EXAMPLE_BUILD_DIR)/actors/ennemy_controller.o
 
 NODE_EXAMPLE_OBJ = \
 	$(NODE_EXAMPLE_BUILD_DIR)/main.o
