@@ -2,10 +2,13 @@
 
 namespace Shabby::Core {
 
-Engine::Engine() 
+Engine::Engine(EngineMode mode) 
+  :_mode(mode)
 {
+  if (_mode != EngineMode::SERVER)
+    _render_system = std::make_shared<RenderSystem>();
+
   _game_loop = std::make_unique<GameLoop>();
-  _render_system = std::make_shared<RenderSystem>();
   _collision_system = std::make_shared<CollisionSystem>();
 }
 
@@ -22,14 +25,23 @@ void Engine::SetAssetRegistry(std::unique_ptr<AssetRegistry> as)
 
 void Engine::Run() 
 {
-  _game_loop->Run(
-    _root_tree, 
-    _render_system,
-    _collision_system,
-    [this]() { 
-      return _render_system && !_render_system->ShouldClose(); 
-    }
-  );
+  if (_mode == EngineMode::STADALONE) {
+    _game_loop->Run(
+        _root_tree, 
+        _render_system,
+        _collision_system,
+        [this]() { 
+        return _render_system && !_render_system->ShouldClose(); 
+        }
+    );
+  }
+  else if (_mode == EngineMode::SERVER) {
+    _game_loop->Run(
+      _root_tree,
+      nullptr,
+      _collision_system
+    );
+  }
 }
 
 std::shared_ptr<RenderSystem> Engine::GetRenderSystem() const

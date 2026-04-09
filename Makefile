@@ -3,18 +3,15 @@ BUILD_DIR   := build
 INCLUDE_DIR := include
 LIB_DIR     := lib
 
-ONLINE_EXAMPLE_DIR  := example/online_game
-OFFLINE_EXAMPLE_DIR := example/offline_game
-NODE_EXAMPLE_DIR    := example/node_example
+NODE_EXAMPLE_DIR        := example/node_example
+ONLINE_NODE_EXAMPLE_DIR := example/online_node_example
 
-ONLINE_EXAMPLE_BUILD_DIR  := build/online_game
-OFFLINE_EXAMPLE_BUILD_DIR := build/offline_game
-NODE_EXAMPLE_BUILD_DIR    := build/node_game
+NODE_EXAMPLE_BUILD_DIR        := build/node_game
+ONLINE_NODE_EXAMPLE_BUILD_DIR := build/online_node_game
 
-ONLINE_EXAMPLE_TARGET  := $(BUILD_DIR)/online_example
-OFFLINE_EXAMPLE_TARGET := $(BUILD_DIR)/offline_example
-NODE_EXAMPLE_TARGET    := $(BUILD_DIR)/node_example
-STATIC_LIB_TARGET      := $(LIB_DIR)/libshabby.a
+NODE_EXAMPLE_TARGET        := $(BUILD_DIR)/node_example
+ONLINE_NODE_EXAMPLE_TARGET := $(BUILD_DIR)/online_node_example
+STATIC_LIB_TARGET          := $(LIB_DIR)/libshabby.a
 
 SHABBY_LIB_SRC = \
  	$(SRC_DIR)/node/inode.cpp \
@@ -30,14 +27,11 @@ SHABBY_LIB_SRC = \
 	$(SRC_DIR)/core/physics/collision_system.cpp \
 	$(SRC_DIR)/node/scene/scene.cpp
 
-EXAMPLE_ONLINE_SRC = \
-  $(ONLINE_EXAMPLE_DIR)/main.cpp \
-  $(ONLINE_EXAMPLE_DIR)/actors/player_controller.cpp \
-  $(ONLINE_EXAMPLE_DIR)/actors/player_controller_base.cpp \
-  $(ONLINE_EXAMPLE_DIR)/server/logic/example_logic.cpp
-
 NODE_EXAMPLE_SRC = \
 	$(NODE_EXAMPLE_DIR)/main.cpp	 
+
+ONLINE_NODE_EXAMPLE_SRC = \
+	$(ONLINE_NODE_EXAMPLE_DIR)/main.cpp
 
 SHABBY_LIB_OBJ = \
   $(BUILD_DIR)/node/inode.o \
@@ -53,14 +47,11 @@ SHABBY_LIB_OBJ = \
 	$(BUILD_DIR)/core/physics/collision_system.o \
 	$(BUILD_DIR)/node/scene/scene.o
 
-ONLINE_EXAMPLE_OBJ = \
-  $(ONLINE_EXAMPLE_BUILD_DIR)/main.o \
-  $(ONLINE_EXAMPLE_BUILD_DIR)/actors/player_controller.o \
-  $(ONLINE_EXAMPLE_BUILD_DIR)/actors/player_controller_base.o \
-  $(ONLINE_EXAMPLE_BUILD_DIR)/server/logic/example_logic.o
-
 NODE_EXAMPLE_OBJ = \
 	$(NODE_EXAMPLE_BUILD_DIR)/main.o
+
+ONLINE_NODE_EXAMPLE_OBJ = \
+	$(ONLINE_NODE_EXAMPLE_BUILD_DIR)/main.o
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
@@ -102,17 +93,13 @@ all: check-raylib $(STATIC_LIB_TARGET)
 
 installed-dependencies: check-raylib
 
-$(OFFLINE_EXAMPLE_BUILD_DIR)/%.o: $(OFFLINE_EXAMPLE_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I$(OFFLINE_EXAMPLE_DIR) $(RAYLIB_INC) -c $< -o $@
-
-$(ONLINE_EXAMPLE_BUILD_DIR)/%.o: $(ONLINE_EXAMPLE_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I$(ONLINE_EXAMPLE_DIR) $(RAYLIB_INC) -c $< -o $@
-
 $(NODE_EXAMPLE_BUILD_DIR)/%.o: $(NODE_EXAMPLE_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I$(NODE_EXAMPLE_DIR) $(RAYLIB_INC) -c $< -o $@
+
+$(ONLINE_NODE_EXAMPLE_BUILD_DIR)/%.o: $(ONLINE_NODE_EXAMPLE_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I$(ONLINE_NODE_EXAMPLE_DIR) $(RAYLIB_INC) -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
@@ -122,19 +109,15 @@ $(STATIC_LIB_TARGET): $(SHABBY_LIB_OBJ)
 	@mkdir -p $(LIB_DIR)
 	ar -rcs $@ $^
 
-examples: $(NODE_EXAMPLE_TARGET)
+examples: $(NODE_EXAMPLE_TARGET) $(ONLINE_NODE_EXAMPLE_TARGET)
 
 $(NODE_EXAMPLE_TARGET): $(NODE_EXAMPLE_OBJ) $(STATIC_LIB_TARGET)
 	@mkdir -p $(dir $@)
 	$(CXX) -o $@ $(NODE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
 
-$(OFFLINE_EXAMPLE_TARGET): $(OFFLINE_EXAMPLE_OBJ) $(STATIC_LIB_TARGET)
+$(ONLINE_NODE_EXAMPLE_TARGET): $(ONLINE_NODE_EXAMPLE_OBJ) $(STATIC_LIB_TARGET)
 	@mkdir -p $(dir $@)
-	$(CXX) -o $@ $(OFFLINE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
-
-$(ONLINE_EXAMPLE_TARGET): $(ONLINE_EXAMPLE_OBJ) $(STATIC_LIB_TARGET)
-	@mkdir -p $(dir $@)
-	$(CXX) -o $@ $(ONLINE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
+	$(CXX) -o $@ $(ONLINE_NODE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
 
 check-raylib:
 	@if [ -d "$(RAYLIB_DIR)" ]; then \

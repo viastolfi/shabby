@@ -10,9 +10,15 @@
 
 namespace Shabby::Core {
 
+enum class EngineMode {
+  SERVER,
+  CLIENT,
+  STADALONE
+};
+
 class Engine {
 public:
-  Engine();
+  Engine(EngineMode mode = EngineMode::STADALONE);
   ~Engine() = default;
 
   void LoadTree(std::shared_ptr<Node::INode> root);
@@ -30,6 +36,8 @@ private:
   std::shared_ptr<CollisionSystem> _collision_system;
 
   std::shared_ptr<Node::INode> _root_tree;
+
+  EngineMode _mode = EngineMode::STADALONE;
 };
 
 } // namespace Shabby::Core
