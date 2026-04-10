@@ -25,7 +25,8 @@ SHABBY_LIB_SRC = \
 	$(SRC_DIR)/node/sprite/animation_player.cpp \
 	$(SRC_DIR)/node/hitbox/rectangle_hitbox.cpp \
 	$(SRC_DIR)/core/physics/collision_system.cpp \
-	$(SRC_DIR)/node/scene/scene.cpp
+	$(SRC_DIR)/node/scene/scene.cpp \
+	$(SRC_DIR)/node/networking/server.cpp
 
 NODE_EXAMPLE_SRC = \
 	$(NODE_EXAMPLE_DIR)/main.cpp	 
@@ -45,7 +46,8 @@ SHABBY_LIB_OBJ = \
 	$(BUILD_DIR)/node/sprite/animation_player.o \
 	$(BUILD_DIR)/node/hitbox/rectangle_hitbox.o \
 	$(BUILD_DIR)/core/physics/collision_system.o \
-	$(BUILD_DIR)/node/scene/scene.o
+	$(BUILD_DIR)/node/scene/scene.o \
+	$(BUILD_DIR)/node/networking/server.o
 
 NODE_EXAMPLE_OBJ = \
 	$(NODE_EXAMPLE_BUILD_DIR)/main.o

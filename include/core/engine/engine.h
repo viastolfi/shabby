@@ -5,6 +5,7 @@
 
 #include "core/assets/assets_registry.h"
 #include "node/inode.h"
+#include "node/networking/server.h"
 #include "core/physics/collision_system.h"
 #include "core/game_loop/game_loop.h"
 
