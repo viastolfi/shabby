@@ -1,27 +1,21 @@
 #include "core/game_loop/game_loop.h"
 #include <thread>
 
-namespace Shabby {
-
-GameLoop::GameLoop(const GameLoopConfig& config)
-  : _config(config),
-    _accumulator(0.0f)
-{}
+namespace Shabby::Core {
 
 void GameLoop::Run(
-    Scene* scene,
-    RenderSystem* render_system,
-    std::function<bool()> should_continue,
+    std::shared_ptr<Node::INode> root_node,
+    std::shared_ptr<RenderSystem> render_system,
+    std::shared_ptr<CollisionSystem> collision_system,
+    std::shared_ptr<ILoopController> loop_controller,
     std::function<void()> on_frame_start,
     std::function<void(float)> on_tick)
 {
-  if (!scene) return;
-  
-  auto default_continue = []() { return true; };
-  auto continue_check = should_continue ? should_continue : default_continue;
+  if (!root_node) return;
+
   auto last_time = std::chrono::high_resolution_clock::now();
   
-  while (continue_check()) {
+  while (loop_controller->ShouldContinue()) {
     if (on_frame_start) {
       on_frame_start();
     }
@@ -34,32 +28,20 @@ void GameLoop::Run(
       frame_dt = std::chrono::duration<float>(now - last_time).count();
       last_time = now;
     }
-    
-    if (_config.fixed_timestep) {
-      _accumulator += frame_dt;
-      
-      while (_accumulator >= _config.fixed_dt) {
-        if (on_tick) {
-          on_tick(_config.fixed_dt);
-        }
-        scene->Update(_config.fixed_dt);
-        _accumulator -= _config.fixed_dt;
-      }
-    } else {
-      if (on_tick) {
-        on_tick(frame_dt);
-      }
-      scene->Update(frame_dt);
+
+    if (on_tick) {
+      on_tick(frame_dt);
     }
+    root_node->Update(frame_dt);
     
-    if (_collision_system) {
-      _collision_system->BroadPhase(scene);
-      _collision_system->NarrowPhase();
+    if (collision_system) {
+      collision_system->BroadPhase();
+      collision_system->NarrowPhase();
     }
     
     if (render_system) {
       render_system->BeginFrame();
-      render_system->RenderScene(scene);
+      render_system->DrawAll();
       render_system->EndFrame();
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -67,9 +49,4 @@ void GameLoop::Run(
   }
 }
 
-void GameLoop::SetCollisionSystem(std::unique_ptr<CollisionSystem> cs)
-{
-  _collision_system = std::move(cs);
-}
-
-} // namespace Shabby
+} // namespace Shabby::Core

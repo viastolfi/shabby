@@ -1,38 +1,33 @@
 #ifndef RENDER_SYSTEM_H
 #define RENDER_SYSTEM_H
 
-#include "scene/scene.h"
+#include <algorithm>
+
+#include "node/inode.h"
+#include "core/drawable/idrawable.h"
 #include "raylib.h"
 
-namespace Shabby {
-
-struct RenderConfig {
-  int width = 800;
-  int height = 450;
-  const char* title = "Game";
-  int target_fps = 60;
-};
+namespace Shabby::Core {
 
 class RenderSystem {
 public:
-  explicit RenderSystem(const RenderConfig& config);
+  RenderSystem();
   ~RenderSystem();
-  
-  RenderSystem(const RenderSystem&) = delete;
-  RenderSystem& operator=(const RenderSystem&) = delete;
   
   void BeginFrame();
   void EndFrame();
-  void RenderScene(const Scene* scene) const;
+  void Register(IDrawable* d);
+  void Unregister(IDrawable* d);
+  void DrawAll();
   
   bool ShouldClose() const;
   float GetDeltaTime() const;
   
 private:
-  RenderConfig _config;
   bool _initialized;
+  std::vector<IDrawable*> _drawables;
 };
 
-} // namespace Shabby
+} // namespace Shabby::Core
 
 #endif // RENDER_SYSTEM_H
