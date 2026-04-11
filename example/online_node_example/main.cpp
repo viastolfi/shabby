@@ -5,7 +5,6 @@
 #include "utils/raylog.h"
 #include "core/engine/engine.h"
 #include "core/assets/assets_registry.h"
-#include "node/networking/network_node.h"
 
 #include "game_server.h"
 #include "game_client.h"
@@ -32,42 +31,37 @@ int main(int argc, char** argv)
 
   if (is_server) {
     auto engine = std::make_unique<Shabby::Core::Engine>(Shabby::Core::EngineMode::SERVER);
+    auto collision = engine->GetCollisionSystem();
 
-    auto server = std::make_shared<GameServer>();
-    server->CreateServer(7777);
+    auto scene = std::make_shared<GameServer>(collision.get());
+    scene->CreateServer(7777);
 
     Raylog::GetInstance().Log(1, "Server started on port 7777");
 
-    engine->LoadTree(server);
+    engine->LoadTree(scene);
     engine->Run();
   } else {
     auto engine = std::make_unique<Shabby::Core::Engine>(Shabby::Core::EngineMode::CLIENT);
-    auto render_system = engine->GetRenderSystem();
-    auto collision_system = engine->GetCollisionSystem();
+    auto render = engine->GetRenderSystem();
 
     auto assets = std::make_unique<Shabby::Core::AssetRegistry>();
     assets->LoadAll(
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::BEAF),
-          "assets/Beaf.png"},
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::MONKEY_IDLE),
-          "assets/actors/monkey/Idle.png"},
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::MONKEY_WALK),
-          "assets/actors/monkey/Walk.png"}
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::BEAF), "assets/Beaf.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::MONKEY_IDLE), "assets/actors/monkey/Idle.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::MONKEY_WALK), "assets/actors/monkey/Walk.png"}
     );
 
-    auto client = std::make_shared<GameClient>(
-        render_system.get(),
-        collision_system.get(),
+    auto scene = std::make_shared<GameClient>(
+        render.get(),
         assets->GetTexture(static_cast<int>(AssetId::BEAF)),
         assets->GetTexture(static_cast<int>(AssetId::MONKEY_IDLE)),
         assets->GetTexture(static_cast<int>(AssetId::MONKEY_WALK)));
 
-    client->ConnectToServer(ip, 7777);
-
+    scene->ConnectToServer(ip, 7777);
     Raylog::GetInstance().Log(1, "Connecting to %s:7777", ip.c_str());
 
     engine->SetAssetRegistry(std::move(assets));
-    engine->LoadTree(client);
+    engine->LoadTree(scene);
     engine->Run();
   }
 

@@ -2,15 +2,16 @@
 #define GAME_CLIENT_H
 
 #include "node/networking/network_node.h"
-#include "node/collision_shape/remote_body.h"
 #include "node/sprite/sprite.h"
 #include "node/sprite/animated_sprite.h"
 #include "node/sprite/animation_player.h"
 #include "node/hitbox/rectangle_hitbox.h"
 #include "core/render/render_system.h"
-#include "core/physics/collision_system.h"
 #include "core/drawable/idrawable.h"
 #include "utils/raylog.h"
+
+#include "player.h"
+#include "enemy.h"
 
 #include "raylib.h"
 
@@ -21,19 +22,6 @@
 #include <cstdlib>
 #include <vector>
 #include <memory>
-
-struct PlayerNodes {
-  std::shared_ptr<Shabby::Node::RemoteBody> body;
-  std::shared_ptr<Shabby::Node::AnimationPlayer> anim_player;
-  std::shared_ptr<Shabby::Node::RectangleHitbox> hitbox;
-  float dx = 0, dy = 0;
-};
-
-struct EnemyNodes {
-  std::shared_ptr<Shabby::Node::RemoteBody> body;
-  std::shared_ptr<Shabby::Node::Sprite> sprite;
-  std::shared_ptr<Shabby::Node::RectangleHitbox> hitbox;
-};
 
 class HudDrawable : public Shabby::Core::IDrawable {
 public:
@@ -52,18 +40,17 @@ public:
 
 class GameClient : public Shabby::Node::NetworkNode {
 public:
+  static constexpr float ENTITY_SIZE = 16.0f;
+
   GameClient(
-      Shabby::Core::RenderSystem* render_system,
-      Shabby::Core::CollisionSystem* collision_system,
+      Shabby::Core::RenderSystem* render,
       Texture2D beaf,
       Texture2D monkey_idle,
       Texture2D monkey_walk)
-    :_render_system(render_system),
-     _collision_system(collision_system),
-     _beaf(beaf), _idle(monkey_idle), _walk(monkey_walk)
+    :_render(render), _beaf(beaf), _idle(monkey_idle), _walk(monkey_walk)
   {
     _hud = std::make_shared<HudDrawable>();
-    _render_system->Register(_hud.get());
+    _render->Register(_hud.get());
   }
 
   ~GameClient() = default;
@@ -72,7 +59,6 @@ public:
   {
     NetworkNode::Update(dt);
     SendInput();
-    UpdateAnimations();
 
     _hud->player_count = static_cast<int>(_players.size());
     _hud->enemy_count = static_cast<int>(_enemies.size());
@@ -102,13 +88,23 @@ protected:
   }
 
 private:
-  Shabby::Core::RenderSystem* _render_system;
-  Shabby::Core::CollisionSystem* _collision_system;
-  Texture2D _beaf, _idle, _walk;
+  struct PlayerEntry {
+    std::shared_ptr<Player> body;
+    std::shared_ptr<Shabby::Node::AnimationPlayer> anim;
+    std::shared_ptr<Shabby::Node::RectangleHitbox> hitbox;
+  };
 
+  struct EnemyEntry {
+    std::shared_ptr<Enemy> body;
+    std::shared_ptr<Shabby::Node::Sprite> sprite;
+    std::shared_ptr<Shabby::Node::RectangleHitbox> hitbox;
+  };
+
+  Shabby::Core::RenderSystem* _render;
+  Texture2D _beaf, _idle, _walk;
   int _local_id = -1;
-  std::unordered_map<int, PlayerNodes> _players;
-  std::unordered_map<int, EnemyNodes> _enemies;
+  std::unordered_map<int, PlayerEntry> _players;
+  std::unordered_map<int, EnemyEntry> _enemies;
   std::shared_ptr<HudDrawable> _hud;
 
   void SendInput()
@@ -124,14 +120,12 @@ private:
     Send("input", buf);
   }
 
-  PlayerNodes& EnsurePlayer(int id, float x, float y)
+  PlayerEntry& EnsurePlayer(int id, float x, float y)
   {
     auto it = _players.find(id);
-    if (it != _players.end())
-      return it->second;
+    if (it != _players.end()) return it->second;
 
-    PlayerNodes pn;
-    pn.body = std::make_shared<Shabby::Node::RemoteBody>(Vector2{x, y});
+    auto body = std::make_shared<Player>(Vector2{x, y}, false);
 
     auto idle = std::make_shared<Shabby::Node::AnimatedSprite>(
         Vector2{x, y}, _idle, 0, 3, 0, 0, 4, 1, 3.0f);
@@ -144,28 +138,25 @@ private:
     auto walk_right = std::make_shared<Shabby::Node::AnimatedSprite>(
         Vector2{x, y}, _walk, 3, 3, 0, 3, 4, 4, 3.0f);
 
-    pn.anim_player = std::make_shared<Shabby::Node::AnimationPlayer>();
-    pn.anim_player->Register("idle", idle);
-    pn.anim_player->Register("walk_down", walk_down);
-    pn.anim_player->Register("walk_up", walk_up);
-    pn.anim_player->Register("walk_left", walk_left);
-    pn.anim_player->Register("walk_right", walk_right);
-    pn.anim_player->Play("idle");
+    auto anim = std::make_shared<Shabby::Node::AnimationPlayer>();
+    anim->Register("idle", idle);
+    anim->Register("walk_down", walk_down);
+    anim->Register("walk_up", walk_up);
+    anim->Register("walk_left", walk_left);
+    anim->Register("walk_right", walk_right);
+    anim->Play("idle");
 
-    pn.hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
-        Rectangle{x, y, 16, 16});
+    auto hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
+        Rectangle{x, y, ENTITY_SIZE, ENTITY_SIZE});
 
-    _render_system->Register(pn.anim_player.get());
-    _render_system->Register(pn.hitbox.get());
+    _render->Register(anim.get());
+    _render->Register(hitbox.get());
 
-    if (_collision_system)
-      _collision_system->Register(pn.hitbox.get());
+    body->AddChild(anim);
+    body->AddChild(hitbox);
+    AddChild(body);
 
-    pn.body->AddChild(pn.anim_player);
-    pn.body->AddChild(pn.hitbox);
-    AddChild(pn.body);
-
-    _players[id] = pn;
+    _players[id] = {body, anim, hitbox};
     return _players[id];
   }
 
@@ -173,34 +164,30 @@ private:
   {
     auto it = _players.find(id);
     if (it == _players.end()) return;
-
-    _render_system->Unregister(it->second.anim_player.get());
-    _render_system->Unregister(it->second.hitbox.get());
-    _collision_system->Unregister(it->second.hitbox.get());
+    _render->Unregister(it->second.anim.get());
+    _render->Unregister(it->second.hitbox.get());
     RemoveChild(it->second.body);
     _players.erase(it);
   }
 
-  EnemyNodes& EnsureEnemy(int id, float x, float y)
+  EnemyEntry& EnsureEnemy(int id, float x, float y)
   {
     auto it = _enemies.find(id);
-    if (it != _enemies.end())
-      return it->second;
+    if (it != _enemies.end()) return it->second;
 
-    EnemyNodes en;
-    en.body = std::make_shared<Shabby::Node::RemoteBody>(Vector2{x, y});
-    en.sprite = std::make_shared<Shabby::Node::Sprite>(Vector2{x, y}, _beaf);
-    en.hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
-        Rectangle{x, y, 16, 16});
+    auto body = std::make_shared<Enemy>(Vector2{x, y}, false);
+    auto sprite = std::make_shared<Shabby::Node::Sprite>(Vector2{x, y}, _beaf);
+    auto hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
+        Rectangle{x, y, ENTITY_SIZE, ENTITY_SIZE});
 
-    _render_system->Register(en.sprite.get());
-    _render_system->Register(en.hitbox.get());
+    _render->Register(sprite.get());
+    _render->Register(hitbox.get());
 
-    en.body->AddChild(en.sprite);
-    en.body->AddChild(en.hitbox);
-    AddChild(en.body);
+    body->AddChild(sprite);
+    body->AddChild(hitbox);
+    AddChild(body);
 
-    _enemies[id] = en;
+    _enemies[id] = {body, sprite, hitbox};
     return _enemies[id];
   }
 
@@ -208,28 +195,10 @@ private:
   {
     auto it = _enemies.find(id);
     if (it == _enemies.end()) return;
-
-    _render_system->Unregister(it->second.sprite.get());
-    _render_system->Unregister(it->second.hitbox.get());
-    _render_system->Unregister(it->second.hitbox.get());
+    _render->Unregister(it->second.sprite.get());
+    _render->Unregister(it->second.hitbox.get());
     RemoveChild(it->second.body);
     _enemies.erase(it);
-  }
-
-  void UpdateAnimations()
-  {
-    for (auto& [id, pn] : _players) {
-      if (pn.dx == 0 && pn.dy == 0)
-        pn.anim_player->Play("idle");
-      else if (pn.dy > 0)
-        pn.anim_player->Play("walk_down");
-      else if (pn.dy < 0)
-        pn.anim_player->Play("walk_up");
-      else if (pn.dx < 0)
-        pn.anim_player->Play("walk_left");
-      else
-        pn.anim_player->Play("walk_right");
-    }
   }
 
   void ParseState(const std::string& msg)
@@ -238,57 +207,52 @@ private:
     std::string players_part = (sep != std::string::npos) ? msg.substr(0, sep) : msg;
     std::string enemies_part = (sep != std::string::npos) ? msg.substr(sep + 1) : "";
 
-    std::vector<int> active_player_ids;
+    std::vector<int> active_players;
     if (!players_part.empty()) {
-      std::istringstream pstream(players_part);
+      std::istringstream ps(players_part);
       std::string entry;
-      while (std::getline(pstream, entry, ';')) {
+      while (std::getline(ps, entry, ';')) {
         int id;
         float x, y, dx, dy;
         if (std::sscanf(entry.c_str(), "P%d,%f,%f,%f,%f", &id, &x, &y, &dx, &dy) == 5) {
-          auto& pn = EnsurePlayer(id, x, y);
-          pn.body->SetPos(Vector2{x, y});
-          pn.dx = dx;
-          pn.dy = dy;
-          active_player_ids.push_back(id);
+          auto& pe = EnsurePlayer(id, x, y);
+          pe.body->SetPos(Vector2{x, y});
+          pe.body->SetInput(dx, dy);
+          active_players.push_back(id);
         }
       }
     }
 
-    std::vector<int> to_remove_p;
-    for (auto& [id, pn] : _players) {
+    std::vector<int> remove_p;
+    for (auto& [id, pe] : _players) {
       bool found = false;
-      for (int aid : active_player_ids)
-        if (aid == id) { found = true; break; }
-      if (!found) to_remove_p.push_back(id);
+      for (int aid : active_players) if (aid == id) { found = true; break; }
+      if (!found) remove_p.push_back(id);
     }
-    for (int id : to_remove_p)
-      RemovePlayer(id);
+    for (int id : remove_p) RemovePlayer(id);
 
-    std::vector<int> active_enemy_ids;
+    std::vector<int> active_enemies;
     if (!enemies_part.empty()) {
-      std::istringstream estream(enemies_part);
+      std::istringstream es(enemies_part);
       std::string entry;
-      while (std::getline(estream, entry, ';')) {
+      while (std::getline(es, entry, ';')) {
         int id;
         float x, y;
         if (std::sscanf(entry.c_str(), "E%d,%f,%f", &id, &x, &y) == 3) {
-          auto& en = EnsureEnemy(id, x, y);
-          en.body->SetPos(Vector2{x, y});
-          active_enemy_ids.push_back(id);
+          auto& ee = EnsureEnemy(id, x, y);
+          ee.body->SetPos(Vector2{x, y});
+          active_enemies.push_back(id);
         }
       }
     }
 
-    std::vector<int> to_remove_e;
-    for (auto& [id, en] : _enemies) {
+    std::vector<int> remove_e;
+    for (auto& [id, ee] : _enemies) {
       bool found = false;
-      for (int aid : active_enemy_ids)
-        if (aid == id) { found = true; break; }
-      if (!found) to_remove_e.push_back(id);
+      for (int aid : active_enemies) if (aid == id) { found = true; break; }
+      if (!found) remove_e.push_back(id);
     }
-    for (int id : to_remove_e)
-      RemoveEnemy(id);
+    for (int id : remove_e) RemoveEnemy(id);
   }
 };
 
