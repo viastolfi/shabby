@@ -34,4 +34,16 @@ const Vector2 INode::GetPos() const
   return _pos;
 }
 
+void INode::SetPos(Vector2 pos)
+{
+  _pos = pos;
+}
+
+void INode::RemoveChild(std::shared_ptr<INode> c)
+{
+  _childs.erase(
+    std::remove(_childs.begin(), _childs.end(), c),
+    _childs.end());
+}
+
 } // namespace Shabby::Node

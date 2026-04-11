@@ -1,6 +1,7 @@
 #ifndef COLLISION_SYSTEM_H
 #define COLLISION_SYSTEM_H
 
+#include <algorithm>
 #include <vector>
 #include <unordered_map>
 
@@ -16,6 +17,7 @@ public:
   ~CollisionSystem() = default;
 
   void Register(ICollider* c);
+  void Unregister(ICollider* c);
 
   void BroadPhase();
   void NarrowPhase();

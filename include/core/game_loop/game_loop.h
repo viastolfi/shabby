@@ -3,7 +3,9 @@
 
 #include <functional>
 #include <chrono>
+#include <thread>
 
+#include "core/game_loop/iloop_controller.h"
 #include "core/render/render_system.h"
 #include "core/physics/collision_system.h"
 
@@ -22,7 +24,7 @@ public:
       std::shared_ptr<Node::INode> root_node,
       std::shared_ptr<RenderSystem> render_system = nullptr,
       std::shared_ptr<CollisionSystem> collision_system = nullptr,
-      std::function<bool()> should_continue = nullptr,
+      std::shared_ptr<ILoopController> loop_controller = nullptr,
       std::function<void()> on_frame_start = nullptr,
       std::function<void(float)> on_tick = nullptr);
 private:

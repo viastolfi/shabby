@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
+#include <algorithm>
 
 #include "raylib.h"
 
@@ -18,6 +19,7 @@ public:
   virtual void Update(float dt);
 
   const Vector2 GetPos() const;
+  void SetPos(Vector2 pos);
 
   template<typename T>
   std::vector<std::shared_ptr<T>> GetChildOfType()
@@ -38,6 +40,7 @@ public:
 
   void AddChild(std::shared_ptr<INode> c);
   void AddChildDeffered(std::shared_ptr<INode> c);
+  void RemoveChild(std::shared_ptr<INode> c);
 protected:
   std::vector<std::shared_ptr<INode>> _childs;
   std::vector<std::shared_ptr<INode>> _pending_add;

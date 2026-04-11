@@ -62,4 +62,11 @@ void CollisionSystem::NarrowPhase()
   }
 }
 
+void CollisionSystem::Unregister(ICollider* d)
+{
+  _colliders.erase(
+    std::remove(_colliders.begin(), _colliders.end(), d),
+    _colliders.end());
+}
+
 } // namespace Shabby::Core

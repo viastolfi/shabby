@@ -1,6 +1,8 @@
 #ifndef RENDER_SYSTEM_H
 #define RENDER_SYSTEM_H
 
+#include <algorithm>
+
 #include "node/inode.h"
 #include "core/drawable/idrawable.h"
 #include "raylib.h"
@@ -15,6 +17,7 @@ public:
   void BeginFrame();
   void EndFrame();
   void Register(IDrawable* d);
+  void Unregister(IDrawable* d);
   void DrawAll();
   
   bool ShouldClose() const;

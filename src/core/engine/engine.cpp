@@ -5,8 +5,13 @@ namespace Shabby::Core {
 Engine::Engine(EngineMode mode) 
   :_mode(mode)
 {
-  if (_mode != EngineMode::SERVER)
+  if (_mode != EngineMode::SERVER) {
     _render_system = std::make_shared<RenderSystem>();
+    _loop_controller = std::make_shared<StandaloneLoopController>(
+        _render_system); 
+ } else {
+    _loop_controller = std::make_shared<ServerLoopController>(); 
+ }
 
   _game_loop = std::make_unique<GameLoop>();
   _collision_system = std::make_shared<CollisionSystem>();
@@ -18,9 +23,9 @@ void Engine::LoadTree(std::shared_ptr<Node::INode> root)
     throw std::invalid_argument("root cannot be null");
 
   if (_mode == EngineMode::SERVER) {
-    auto r = std::dynamic_pointer_cast<Node::Server>(root); 
+    auto r = std::dynamic_pointer_cast<Node::NetworkNode>(root); 
     if (r == nullptr)
-      throw std::runtime_error("Root must be a Server node in SERVER mode");
+      throw std::runtime_error("Root must be a NetworkNode in SERVER mode");
   }
 
   _root_tree = root;
@@ -36,26 +41,15 @@ void Engine::Run()
   if (_root_tree == nullptr)
     throw std::runtime_error("Root tree must be setted before running engine");
 
-  if (_mode == EngineMode::STADALONE) {
-    _game_loop->Run(
-        _root_tree, 
-        _render_system,
-        _collision_system,
-        [this]() { 
-          return _render_system && !_render_system->ShouldClose(); 
-        }
-    );
-  }
-  else if (_mode == EngineMode::SERVER) {
-    _game_loop->Run(
-      _root_tree,
-      nullptr,
+  if (_loop_controller == nullptr)
+    throw std::runtime_error("Loop controller must be setted before running engine");
+
+  _game_loop->Run(
+      _root_tree, 
+      _render_system,
       _collision_system,
-      [this]() {
-        return true; 
-      }
-    );
-  }
+      _loop_controller
+  );
 }
 
 std::shared_ptr<RenderSystem> Engine::GetRenderSystem() const

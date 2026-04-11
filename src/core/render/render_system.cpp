@@ -43,6 +43,13 @@ void RenderSystem::Register(IDrawable* d)
   _drawables.push_back(d);
 }
 
+void RenderSystem::Unregister(IDrawable* d)
+{
+  _drawables.erase(
+    std::remove(_drawables.begin(), _drawables.end(), d),
+    _drawables.end());
+}
+
 bool RenderSystem::ShouldClose() const
 {
   return WindowShouldClose();

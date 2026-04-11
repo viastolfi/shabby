@@ -7,17 +7,15 @@ void GameLoop::Run(
     std::shared_ptr<Node::INode> root_node,
     std::shared_ptr<RenderSystem> render_system,
     std::shared_ptr<CollisionSystem> collision_system,
-    std::function<bool()> should_continue,
+    std::shared_ptr<ILoopController> loop_controller,
     std::function<void()> on_frame_start,
     std::function<void(float)> on_tick)
 {
   if (!root_node) return;
 
-  auto default_continue = []() { return true; };
-  auto continue_check = should_continue ? should_continue : default_continue;
   auto last_time = std::chrono::high_resolution_clock::now();
   
-  while (continue_check()) {
+  while (loop_controller->ShouldContinue()) {
     if (on_frame_start) {
       on_frame_start();
     }

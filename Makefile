@@ -17,6 +17,7 @@ SHABBY_LIB_SRC = \
  	$(SRC_DIR)/node/inode.cpp \
   $(SRC_DIR)/node/sprite/sprite.cpp \
   $(SRC_DIR)/node/collision_shape/rigid_body.cpp \
+  $(SRC_DIR)/node/collision_shape/remote_body.cpp \
 	$(SRC_DIR)/core/engine/engine.cpp \
 	$(SRC_DIR)/core/game_loop/game_loop.cpp \
 	$(SRC_DIR)/core/render/render_system.cpp \
@@ -26,7 +27,12 @@ SHABBY_LIB_SRC = \
 	$(SRC_DIR)/node/hitbox/rectangle_hitbox.cpp \
 	$(SRC_DIR)/core/physics/collision_system.cpp \
 	$(SRC_DIR)/node/scene/scene.cpp \
-	$(SRC_DIR)/node/networking/server.cpp
+	$(SRC_DIR)/node/networking/server.cpp \
+	$(SRC_DIR)/node/networking/client.cpp \
+	$(SRC_DIR)/node/networking/network_node.cpp \
+	$(SRC_DIR)/node/networking/networked_node.cpp \
+	$(SRC_DIR)/core/game_loop/standalone_loop_controller.cpp \
+	$(SRC_DIR)/core/game_loop/server_loop_controller.cpp
 
 NODE_EXAMPLE_SRC = \
 	$(NODE_EXAMPLE_DIR)/main.cpp	 
@@ -38,6 +44,7 @@ SHABBY_LIB_OBJ = \
   $(BUILD_DIR)/node/inode.o \
   $(BUILD_DIR)/node/sprite/sprite.o \
   $(BUILD_DIR)/node/collision_shape/rigid_body.o \
+  $(BUILD_DIR)/node/collision_shape/remote_body.o \
 	$(BUILD_DIR)/core/engine/engine.o \
 	$(BUILD_DIR)/core/game_loop/game_loop.o \
 	$(BUILD_DIR)/core/render/render_system.o \
@@ -47,7 +54,12 @@ SHABBY_LIB_OBJ = \
 	$(BUILD_DIR)/node/hitbox/rectangle_hitbox.o \
 	$(BUILD_DIR)/core/physics/collision_system.o \
 	$(BUILD_DIR)/node/scene/scene.o \
-	$(BUILD_DIR)/node/networking/server.o
+	$(BUILD_DIR)/node/networking/server.o \
+	$(BUILD_DIR)/node/networking/client.o \
+	$(BUILD_DIR)/node/networking/network_node.o \
+	$(BUILD_DIR)/node/networking/networked_node.o \
+	$(BUILD_DIR)/core/game_loop/standalone_loop_controller.o \
+	$(BUILD_DIR)/core/game_loop/server_loop_controller.o
 
 NODE_EXAMPLE_OBJ = \
 	$(NODE_EXAMPLE_BUILD_DIR)/main.o
@@ -86,7 +98,7 @@ else
 endif
 
 CXX := g++
-CXXFLAGS := -Wall -Wextra -g -I$(INCLUDE_DIR) -I$(RAYLIB_DIR)/include
+CXXFLAGS := -Wall -Wextra -g -pthread -I$(INCLUDE_DIR) -I$(RAYLIB_DIR)/include
 RAYLIB_INC := -isystem $(RAYLIB_DIR)/include
 
 .PHONY: all clean clean-complete check-platform clean-raylib examples install-dependencies
@@ -115,11 +127,11 @@ examples: $(NODE_EXAMPLE_TARGET) $(ONLINE_NODE_EXAMPLE_TARGET)
 
 $(NODE_EXAMPLE_TARGET): $(NODE_EXAMPLE_OBJ) $(STATIC_LIB_TARGET)
 	@mkdir -p $(dir $@)
-	$(CXX) -o $@ $(NODE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
+	$(CXX) -pthread -o $@ $(NODE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
 
 $(ONLINE_NODE_EXAMPLE_TARGET): $(ONLINE_NODE_EXAMPLE_OBJ) $(STATIC_LIB_TARGET)
 	@mkdir -p $(dir $@)
-	$(CXX) -o $@ $(ONLINE_NODE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
+	$(CXX) -pthread -o $@ $(ONLINE_NODE_EXAMPLE_OBJ) -L$(LIB_DIR) -lshabby $(LDFLAGS)
 
 check-raylib:
 	@if [ -d "$(RAYLIB_DIR)" ]; then \

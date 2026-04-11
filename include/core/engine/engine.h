@@ -3,9 +3,12 @@
 
 #include <memory>
 
+#include "core/game_loop/server_loop_controller.h"
+#include "core/game_loop/standalone_loop_controller.h"
+#include "core/game_loop/iloop_controller.h"
 #include "core/assets/assets_registry.h"
 #include "node/inode.h"
-#include "node/networking/server.h"
+#include "node/networking/network_node.h"
 #include "core/physics/collision_system.h"
 #include "core/game_loop/game_loop.h"
 
@@ -33,6 +36,7 @@ public:
 private:
   std::unique_ptr<AssetRegistry> _asset_registry;
   std::unique_ptr<GameLoop> _game_loop;
+  std::shared_ptr<ILoopController> _loop_controller;
   std::shared_ptr<RenderSystem> _render_system;
   std::shared_ptr<CollisionSystem> _collision_system;
 
