@@ -22,12 +22,6 @@ void Engine::LoadTree(std::shared_ptr<Node::INode> root)
   if (!root) 
     throw std::invalid_argument("root cannot be null");
 
-  if (_mode == EngineMode::SERVER) {
-    auto r = std::dynamic_pointer_cast<Node::NetworkNode>(root); 
-    if (r == nullptr)
-      throw std::runtime_error("Root must be a NetworkNode in SERVER mode");
-  }
-
   _root_tree = root;
 }
 

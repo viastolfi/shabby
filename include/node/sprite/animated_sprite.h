@@ -3,12 +3,13 @@
 
 #include "node/inode.h"
 #include "core/drawable/idrawable.h"
+#include "core/drawable/ibounded.h"
 
 #include "raylib.h"
 
 namespace Shabby::Node {
 
-class AnimatedSprite : public INode, public Core::IDrawable {
+class AnimatedSprite : public INode, public Core::IDrawable, public Core::IBounded {
 public:
   AnimatedSprite(
       Vector2 pos,
@@ -21,6 +22,11 @@ public:
   void Draw() override final;
   void Draw(Vector2 pos) override final;
   void Update(float dt) override final;
+  Rectangle GetBounds() const override;
+
+  float GetFrameWidth()  const { return _frame_width;  }
+  float GetFrameHeight() const { return _frame_height; }
+
 private:
   Texture _texture;
   int _start_col;

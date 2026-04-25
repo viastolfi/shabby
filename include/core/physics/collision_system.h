@@ -2,6 +2,8 @@
 #define COLLISION_SYSTEM_H
 
 #include <algorithm>
+#include <set>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 
@@ -21,9 +23,18 @@ public:
 
   void BroadPhase();
   void NarrowPhase();
+
 private:
+  using ColliderPair = std::pair<ICollider*, ICollider*>;
+
+  static ColliderPair MakePair(ICollider* a, ICollider* b)
+  {
+    return { std::min(a, b), std::max(a, b) };
+  }
+
   std::unordered_map<Vector2, std::vector<ICollider*>> _grid;
-  std::vector<ICollider*> _colliders;
+  std::vector<ICollider*>  _colliders;
+  std::set<ColliderPair>   _active_pairs;
 };
 
 } // namespace Shabby::Core

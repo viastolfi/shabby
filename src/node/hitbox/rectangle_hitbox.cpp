@@ -8,8 +8,8 @@ RectangleHitbox::RectangleHitbox(Rectangle s)
 
 void RectangleHitbox::Draw()
 {
-  if (Raylog::GetInstance().GetLogLevel() >= 1) 
-  DrawRectangleLinesEx(_shape, 1, BLUE);
+  if (Raylog::GetInstance().GetLogLevel() >= 1)
+    DrawRectangleLinesEx(_shape, 1, BLUE);
 }
 
 void RectangleHitbox::Update(float dt)
@@ -27,26 +27,22 @@ Rectangle RectangleHitbox::GetShape() const
   return _shape;
 }
 
-bool RectangleHitbox::GetIsEnteredState() const
+Rectangle RectangleHitbox::GetBounds() const
 {
-  return _is_entered;
+  return GetShape();
 }
 
-void RectangleHitbox::OnEnter(Core::ICollider* other) 
+void RectangleHitbox::OnEnter(Core::ICollider* other)
 {
-  _is_entered = true;
-
   entered.emit(this, other);
 }
 
 void RectangleHitbox::OnExit(Core::ICollider* other)
 {
-  _is_entered = false;
-
   exited.emit(this, other);
 }
 
-const Vector2 RectangleHitbox::GetPosition() const 
+const Vector2 RectangleHitbox::GetPosition() const
 {
   return _pos;
 }

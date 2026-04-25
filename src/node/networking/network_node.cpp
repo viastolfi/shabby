@@ -7,16 +7,16 @@ void NetworkNode::CreateServer(int port)
   _mode = NetworkMode::SERVER;
   _server = std::make_unique<Server>();
 
-  _server->OnClientConnected = [this](int client_id) {
-    _on_client_connected(client_id);
+  _server->OnClientConnected = [this](int id) {
+    client_connected.emit(id);
   };
 
-  _server->OnClientDisconnected = [this](int client_id) {
-    _on_client_disconnected(client_id);
+  _server->OnClientDisconnected = [this](int id) {
+    client_disconnected.emit(id);
   };
 
-  _server->OnMessage = [this](int client_id, const std::string& topic, const std::string& message) {
-    _on_receive_message(client_id, topic, message);
+  _server->OnMessage = [this](int cid, const std::string& topic, const std::string& msg) {
+    server_message.emit(cid, topic, msg);
   };
 
   _server->Start(port);
@@ -28,15 +28,15 @@ void NetworkNode::ConnectToServer(const std::string& ip, int port)
   _client = std::make_unique<Client>();
 
   _client->OnConnected = [this]() {
-    _on_connected();
+    connected.emit();
   };
 
   _client->OnDisconnected = [this]() {
-    _on_disconnected();
+    disconnected.emit();
   };
 
-  _client->OnMessage = [this](const std::string& topic, const std::string& message) {
-    _on_receive_message(topic, message);
+  _client->OnMessage = [this](const std::string& topic, const std::string& msg) {
+    client_message.emit(topic, msg);
   };
 
   _client->Connect(ip, port);
@@ -52,6 +52,12 @@ void NetworkNode::Broadcast(const std::string& topic, const std::string& msg)
 {
   if (_mode == NetworkMode::SERVER && _server)
     _server->Broadcast(topic, msg);
+}
+
+void NetworkNode::SendToClient(int client_id, const std::string& topic, const std::string& msg)
+{
+  if (_mode == NetworkMode::SERVER && _server)
+    _server->SendToClient(client_id, topic, msg);
 }
 
 void NetworkNode::Update(float dt)
@@ -72,43 +78,6 @@ bool NetworkNode::ShouldClose()
 NetworkMode NetworkNode::GetMode() const
 {
   return _mode;
-}
-
-void NetworkNode::_on_receive_message(const std::string& topic, const std::string& message)
-{
-  (void)topic;
-  (void)message;
-}
-
-void NetworkNode::_on_receive_message(int client_id, const std::string& topic, const std::string& message)
-{
-  (void)client_id;
-  (void)topic;
-  (void)message;
-}
-
-void NetworkNode::_on_client_connected(int client_id)
-{
-  (void)client_id;
-}
-
-void NetworkNode::_on_client_disconnected(int client_id)
-{
-  (void)client_id;
-}
-
-void NetworkNode::_on_connected() {}
-
-void NetworkNode::_on_disconnected() {}
-
-Server& NetworkNode::GetServer()
-{
-  return *_server;
-}
-
-Client& NetworkNode::GetClient()
-{
-  return *_client;
 }
 
 } // namespace Shabby::Node
