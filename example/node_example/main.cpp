@@ -13,6 +13,7 @@
 #include "background.h"
 #include "player.h"
 #include "ennemy.h"
+#include "static_entity.h"
 
 enum class AssetId {
   BEAF = 0,
@@ -72,6 +73,9 @@ int main(void)
       p->_on_hitbox_exited(hit, from); 
     }
   );
+  player_hitbox->SetCollisionLayer(1);
+  player_hitbox->AddMaskLayer(2);
+  player_hitbox->AddMaskLayer(3);
   collision_system->Register(player_hitbox.get());
 
   // --- Animations ---
@@ -109,9 +113,37 @@ int main(void)
   animation_player->Register("walk_right", walk_right);
   animation_player->Play("idle");
 
-  // --- Background (must be registered first → drawn behind everything) ---
   auto bg = std::make_shared<Background>();
+  bg->SetRenderLayer(-10);
   render_system->Register(bg.get());
+
+  auto static_behind = std::make_shared<StaticEntity>(
+    Vector2{ 80.f, 80.f }, Vector2{ 60.f, 60.f }, ORANGE
+  );
+  static_behind->SetRenderLayer(-1);
+
+  auto static_front = std::make_shared<StaticEntity>(
+    Vector2{ 140.f, 80.f }, Vector2{ 60.f, 60.f }, SKYBLUE
+  );
+  static_front->SetRenderLayer(1);
+
+  auto static_obstacle = std::make_shared<StaticEntity>(
+    Vector2{ 300.f, 90.f }, Vector2{ 32.f, 32.f }, RED
+  );
+  auto obstacle_hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
+    Rectangle{ 300.f, 90.f, 32.f, 32.f }
+  );
+  obstacle_hitbox->SetCollisionLayer(2);
+  collision_system->Register(obstacle_hitbox.get());
+  render_system->Register(obstacle_hitbox.get());
+  static_obstacle->AddChild(obstacle_hitbox);
+
+  p->SetCollisionSystem(collision_system.get());
+  p->AddSolidMaskLayer(2);
+
+  render_system->Register(static_behind.get());
+  render_system->Register(static_obstacle.get());
+  render_system->Register(static_front.get());
 
   render_system->Register(animation_player.get());
   render_system->Register(player_hitbox.get());
@@ -138,6 +170,7 @@ int main(void)
           spawn.x, spawn.y, 16, 16
         }));
 
+      ennemy_hitbox->SetCollisionLayer(3);
       render_system->Register(es.get());
       render_system->Register(ennemy_hitbox.get());
       collision_system->Register(ennemy_hitbox.get());
@@ -156,6 +189,9 @@ int main(void)
 
   ms->AddChild(timer);
   ms->AddChild(p);
+  ms->AddChild(static_behind);
+  ms->AddChild(static_obstacle);
+  ms->AddChild(static_front);
 
   // --- Run ---
   timer->Start();
