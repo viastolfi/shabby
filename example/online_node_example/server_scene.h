@@ -101,6 +101,13 @@ private:
     auto hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
         Rectangle{x, y, ENTITY_SIZE, ENTITY_SIZE});
 
+    hitbox->SetCollisionLayer(1);
+    hitbox->AddMaskLayer(1);
+    hitbox->AddMaskLayer(2);
+
+    body->SetCollisionSystem(_collision);
+    body->AddSolidMaskLayer(1);
+
     hitbox->entered.connect(
       [this](Shabby::Node::RectangleHitbox*, Shabby::Core::ICollider* from) {
         auto it = _hitbox_to_enemy.find(from);
@@ -137,6 +144,8 @@ private:
     _collision->Register(hitbox.get());
     body->AddChild(hitbox);
     AddChild(body);
+
+    hitbox->SetCollisionLayer(2);
 
     _enemies[id] = {body, hitbox};
     _hitbox_to_enemy[hitbox.get()] = id;

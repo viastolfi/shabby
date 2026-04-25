@@ -46,7 +46,6 @@ void CollisionSystem::BroadPhase()
 
 void CollisionSystem::NarrowPhase()
 {
-  // Build the set of pairs that are colliding this frame.
   std::set<ColliderPair> new_pairs;
 
   for (auto& [cell, colliders] : _grid) {
@@ -57,25 +56,37 @@ void CollisionSystem::NarrowPhase()
         ICollider* a = colliders[i];
         ICollider* b = colliders[j];
 
+        uint32_t aBit = 1u << (a->GetCollisionLayer() - 1);
+        uint32_t bBit = 1u << (b->GetCollisionLayer() - 1);
+
+        bool aDetectsB = (a->GetCollisionMask() & bBit) != 0;
+        bool bDetectsA = (b->GetCollisionMask() & aBit) != 0;
+
+        if (!aDetectsB && !bDetectsA) continue;
+
         if (CheckCollisionRecs(a->GetShape(), b->GetShape()))
           new_pairs.insert(MakePair(a, b));
       }
     }
   }
 
-  // Pairs that just started — fire OnEnter on both sides.
   for (auto& [a, b] : new_pairs) {
     if (_active_pairs.find({a, b}) == _active_pairs.end()) {
-      a->OnEnter(b);
-      b->OnEnter(a);
+      uint32_t aBit = 1u << (a->GetCollisionLayer() - 1);
+      uint32_t bBit = 1u << (b->GetCollisionLayer() - 1);
+
+      if (a->GetCollisionMask() & bBit) a->OnEnter(b);
+      if (b->GetCollisionMask() & aBit) b->OnEnter(a);
     }
   }
 
-  // Pairs that just ended — fire OnExit on both sides.
   for (auto& [a, b] : _active_pairs) {
     if (new_pairs.find({a, b}) == new_pairs.end()) {
-      a->OnExit(b);
-      b->OnExit(a);
+      uint32_t aBit = 1u << (a->GetCollisionLayer() - 1);
+      uint32_t bBit = 1u << (b->GetCollisionLayer() - 1);
+
+      if (a->GetCollisionMask() & bBit) a->OnExit(b);
+      if (b->GetCollisionMask() & aBit) b->OnExit(a);
     }
   }
 

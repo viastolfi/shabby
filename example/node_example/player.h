@@ -7,10 +7,10 @@
 
 class Player : public Shabby::Node::RigidBody {
 public:
-  const float SPEED = 200.0f;
+  static constexpr float SPEED = 200.0f;
 
   Player(Vector2 pos)
-    :Shabby::Node::RigidBody(pos)
+    : Shabby::Node::RigidBody(pos)
   {}
 
   void _physics_process(float dt) override
@@ -20,10 +20,10 @@ public:
 
     auto animation_player = GetChildOfType<Shabby::Node::AnimationPlayer>().front();
 
-    if (IsKeyDown(KEY_A)) _dir.x -= 1 * SPEED;
-    if (IsKeyDown(KEY_D)) _dir.x += 1 * SPEED;
-    if (IsKeyDown(KEY_W)) _dir.y -= 1 * SPEED;
-    if (IsKeyDown(KEY_S)) _dir.y += 1 * SPEED;
+    if (IsKeyDown(KEY_A)) _dir.x -= SPEED;
+    if (IsKeyDown(KEY_D)) _dir.x += SPEED;
+    if (IsKeyDown(KEY_W)) _dir.y -= SPEED;
+    if (IsKeyDown(KEY_S)) _dir.y += SPEED;
 
     if (_dir.x == 0 && _dir.y == 0)
       animation_player->Play("idle");
@@ -33,17 +33,17 @@ public:
       animation_player->Play("walk_up");
     else if (_dir.x < 0)
       animation_player->Play("walk_left");
-    else if (_dir.x > 0)
-      animation_player->Play("walk_right");    
+    else
+      animation_player->Play("walk_right");
   }
 
   void _on_hitbox_entered(
-      Shabby::Node::RectangleHitbox* hit, 
-      Shabby::Core::ICollider* from) override 
+      Shabby::Node::RectangleHitbox* hit,
+      Shabby::Core::ICollider* from) override
   {
     (void)hit;
     (void)from;
-    Raylog::GetInstance().Log(1, "HITBOX ENTERED"); 
+    Raylog::GetInstance().Log(1, "HITBOX ENTERED");
   }
 
   void _on_hitbox_exited(
@@ -51,7 +51,7 @@ public:
       Shabby::Core::ICollider* from) override
   {
     (void)hit;
-    (void)from; 
+    (void)from;
     Raylog::GetInstance().Log(1, "HITBOX EXITED");
   }
 

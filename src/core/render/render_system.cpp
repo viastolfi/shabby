@@ -81,6 +81,16 @@ Rectangle RenderSystem::GetViewport() const
 
 void RenderSystem::DrawAll()
 {
+  std::stable_sort(_drawables.begin(), _drawables.end(),
+    [](const DrawableEntry& a, const DrawableEntry& b) {
+      return a.drawable->GetRenderLayer() < b.drawable->GetRenderLayer();
+    });
+
+  std::stable_sort(_hud_drawables.begin(), _hud_drawables.end(),
+    [](const IDrawable* a, const IDrawable* b) {
+      return a->GetRenderLayer() < b->GetRenderLayer();
+    });
+
   Rectangle viewport = GetViewport();
 
   auto draw_world = [&]() {
@@ -99,7 +109,6 @@ void RenderSystem::DrawAll()
     draw_world();
   }
 
-  // HUD: screen-space drawables, never culled.
   for (auto* d : _hud_drawables)
     d->Draw();
 }

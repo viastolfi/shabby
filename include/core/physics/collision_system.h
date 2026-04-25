@@ -24,6 +24,8 @@ public:
   void BroadPhase();
   void NarrowPhase();
 
+  const std::vector<ICollider*>& GetColliders() const { return _colliders; }
+
 private:
   using ColliderPair = std::pair<ICollider*, ICollider*>;
 
