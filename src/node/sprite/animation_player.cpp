@@ -31,4 +31,14 @@ void AnimationPlayer::Draw()
     _current_animation->Draw(_pos);
 }
 
+Rectangle AnimationPlayer::GetBounds() const
+{
+  if (_current_animation) {
+    return { _pos.x, _pos.y,
+             _current_animation->GetFrameWidth(),
+             _current_animation->GetFrameHeight() };
+  }
+  return { _pos.x, _pos.y, 0.f, 0.f };
+}
+
 } // namespace Shabby::Node

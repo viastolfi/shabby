@@ -11,6 +11,11 @@ void Sprite::Draw()
   DrawTextureV(_texture, _pos, WHITE);
 }
 
+Rectangle Sprite::GetBounds() const
+{
+  return { _pos.x, _pos.y, (float)_texture.width, (float)_texture.height };
+}
+
 void Sprite::Update(float dt)
 {
   (void)dt;

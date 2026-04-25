@@ -32,7 +32,8 @@ SHABBY_LIB_SRC = \
 	$(SRC_DIR)/node/networking/network_node.cpp \
 	$(SRC_DIR)/node/networking/networked_node.cpp \
 	$(SRC_DIR)/core/game_loop/standalone_loop_controller.cpp \
-	$(SRC_DIR)/core/game_loop/server_loop_controller.cpp
+	$(SRC_DIR)/core/game_loop/server_loop_controller.cpp \
+	$(SRC_DIR)/node/camera/camera.cpp
 
 NODE_EXAMPLE_SRC = \
 	$(NODE_EXAMPLE_DIR)/main.cpp	 
@@ -59,7 +60,8 @@ SHABBY_LIB_OBJ = \
 	$(BUILD_DIR)/node/networking/network_node.o \
 	$(BUILD_DIR)/node/networking/networked_node.o \
 	$(BUILD_DIR)/core/game_loop/standalone_loop_controller.o \
-	$(BUILD_DIR)/core/game_loop/server_loop_controller.o
+	$(BUILD_DIR)/core/game_loop/server_loop_controller.o \
+	$(BUILD_DIR)/node/camera/camera.o
 
 NODE_EXAMPLE_OBJ = \
 	$(NODE_EXAMPLE_BUILD_DIR)/main.o

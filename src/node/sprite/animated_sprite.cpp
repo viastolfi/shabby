@@ -26,6 +26,10 @@ AnimatedSprite::AnimatedSprite(
 
 void AnimatedSprite::Update(float dt)
 {
+  // Sync position from parent (consistent with Sprite behaviour).
+  if (auto parent = _parent.lock())
+    _pos = parent->GetPos();
+
   _frame_counter += dt;
 
   float time_per_frame = 1.0f / _frame_speed;  
@@ -48,15 +52,17 @@ void AnimatedSprite::Update(float dt)
 
 void AnimatedSprite::Draw() 
 {
-  if (auto parent = _parent.lock())
-    _pos = parent->GetPos();
-
   DrawTextureRec(_texture, _frame_rec, _pos, WHITE);
 }
 
 void AnimatedSprite::Draw(Vector2 pos) 
 {
   DrawTextureRec(_texture, _frame_rec, pos, WHITE);
+}
+
+Rectangle AnimatedSprite::GetBounds() const
+{
+  return { _pos.x, _pos.y, _frame_width, _frame_height };
 }
 
 } // namespace Shabby::Node

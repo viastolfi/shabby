@@ -1,72 +1,85 @@
 #include "core/physics/collision_system.h"
 
+#include <cmath>
+
 namespace Shabby::Core {
+
+static constexpr float CELL_SIZE = 200.f;
 
 void CollisionSystem::Register(ICollider* c)
 {
   _colliders.push_back(c);
 }
 
+void CollisionSystem::Unregister(ICollider* c)
+{
+  _colliders.erase(
+    std::remove(_colliders.begin(), _colliders.end(), c),
+    _colliders.end());
+
+  // Drop any active pairs involving this collider (no exit event — object is leaving the scene).
+  for (auto it = _active_pairs.begin(); it != _active_pairs.end(); ) {
+    if (it->first == c || it->second == c)
+      it = _active_pairs.erase(it);
+    else
+      ++it;
+  }
+}
+
 void CollisionSystem::BroadPhase()
 {
   _grid.clear();
 
-  // TODO: make this dependant on the window / camera / dev choice
-  int cols = static_cast<int>(800 / 200);
-  int rows = static_cast<int>(600 / 200);
+  for (const auto& c : _colliders) {
+    Rectangle shape = c->GetShape();
 
-  for (int i = 0; i < cols; ++i) {
-    for (int j = 0; j < rows; ++j) {
-      _grid[Vector2{static_cast<float>(i), static_cast<float>(j)}] = {};
-    }
-  }
+    int x0 = static_cast<int>(std::floor(shape.x                  / CELL_SIZE));
+    int y0 = static_cast<int>(std::floor(shape.y                  / CELL_SIZE));
+    int x1 = static_cast<int>(std::floor((shape.x + shape.width)  / CELL_SIZE));
+    int y1 = static_cast<int>(std::floor((shape.y + shape.height) / CELL_SIZE));
 
-  for (const auto& e : _colliders) {
-    Vector2 v = {
-      static_cast<float>(static_cast<int>(e->GetPosition().x / 200)),
-      static_cast<float>(static_cast<int>(e->GetPosition().y / 200))
-    };
-
-    _grid[v].push_back(e);
+    for (int cx = x0; cx <= x1; ++cx)
+      for (int cy = y0; cy <= y1; ++cy)
+        _grid[Vector2{ (float)cx, (float)cy }].push_back(c);
   }
 }
 
 void CollisionSystem::NarrowPhase()
 {
-  int cols = static_cast<int>(800 / 200);
-  int rows = static_cast<int>(600 / 200);
+  // Build the set of pairs that are colliding this frame.
+  std::set<ColliderPair> new_pairs;
 
-  for (int i = 0; i < cols; ++i) {
-    for (int j = 0; j < rows; ++j) {
-      Vector2 v = {static_cast<float>(i), static_cast<float>(j)};
-      if (_grid[v].size() <= 1)
-       continue; 
+  for (auto& [cell, colliders] : _grid) {
+    if (colliders.size() <= 1) continue;
 
-      for (auto& e1 : _grid[v]) {
-        for (auto& e2 : _grid[v]) {
-          if (e1 == e2)
-            continue;
+    for (size_t i = 0; i < colliders.size(); ++i) {
+      for (size_t j = i + 1; j < colliders.size(); ++j) {
+        ICollider* a = colliders[i];
+        ICollider* b = colliders[j];
 
-          if (CheckCollisionRecs(
-                e1->GetShape(),
-                e2->GetShape())) {
-            if (!e1->GetIsEnteredState()) 
-              e1->OnEnter(e2);
-          } else {
-            if (e1->GetIsEnteredState()) 
-              e1->OnExit(e2);
-          }
-        } 
+        if (CheckCollisionRecs(a->GetShape(), b->GetShape()))
+          new_pairs.insert(MakePair(a, b));
       }
-    }  
+    }
   }
-}
 
-void CollisionSystem::Unregister(ICollider* d)
-{
-  _colliders.erase(
-    std::remove(_colliders.begin(), _colliders.end(), d),
-    _colliders.end());
+  // Pairs that just started — fire OnEnter on both sides.
+  for (auto& [a, b] : new_pairs) {
+    if (_active_pairs.find({a, b}) == _active_pairs.end()) {
+      a->OnEnter(b);
+      b->OnEnter(a);
+    }
+  }
+
+  // Pairs that just ended — fire OnExit on both sides.
+  for (auto& [a, b] : _active_pairs) {
+    if (new_pairs.find({a, b}) == new_pairs.end()) {
+      a->OnExit(b);
+      b->OnExit(a);
+    }
+  }
+
+  _active_pairs = std::move(new_pairs);
 }
 
 } // namespace Shabby::Core

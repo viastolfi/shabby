@@ -5,10 +5,12 @@
 #include "node/sprite/animated_sprite.h"
 #include "node/sprite/animation_player.h"
 #include "node/hitbox/rectangle_hitbox.h"
+#include "node/camera/camera.h"
 #include "node/timer.h"
 #include "utils/raylog.h"
 
 #include "main_scene.h"
+#include "background.h"
 #include "player.h"
 #include "ennemy.h"
 
@@ -17,6 +19,17 @@ enum class AssetId {
   MONKEY_IDLE,
   MONKEY_WALK
 };
+
+// Positions spread across the world, outside the initial 800x600 view
+// (player starts at {100,100}, initial viewport covers roughly {-300,-200} to {500,400})
+static const Vector2 ENNEMY_SPAWNS[] = {
+  {  800,  100 },   // far right
+  {  100,  700 },   // far below
+  { -400,  200 },   // far left
+  {  500, -300 },   // far above
+  {  900,  700 },   // bottom-right corner
+};
+static constexpr int ENNEMY_COUNT = 5;
 
 int main(void)
 {
@@ -96,39 +109,50 @@ int main(void)
   animation_player->Register("walk_right", walk_right);
   animation_player->Play("idle");
 
+  // --- Background (must be registered first → drawn behind everything) ---
+  auto bg = std::make_shared<Background>();
+  render_system->Register(bg.get());
+
   render_system->Register(animation_player.get());
   render_system->Register(player_hitbox.get());
+
+  // --- Camera (follows player) ---
+  auto camera = std::make_shared<Shabby::Node::Camera2DNode>(render_system);
 
   // --- Ennemy spawn timer ---
   auto timer = std::make_shared<Shabby::Node::Timer>(0.1f);
   timer->_run_once = true;
   timer->timeout.connect([assets_registry = assets_registry.get(), ms, render_system, collision_system]() {
-    std::shared_ptr<Shabby::Node::INode> e = std::make_shared<Ennemy>((Vector2){ 200, 200 });
+    for (int i = 0; i < ENNEMY_COUNT; ++i) {
+      Vector2 spawn = ENNEMY_SPAWNS[i];
 
-    auto es = std::make_shared<Shabby::Node::Sprite>(
-      (Vector2){ 200, 200 },
-      assets_registry->GetTexture(static_cast<int>(AssetId::BEAF))
-    );
+      auto e = std::make_shared<Ennemy>(spawn);
 
-    auto ennemy_hitbox = 
-      std::make_shared<Shabby::Node::RectangleHitbox>((Rectangle{
-        200, 200, 16, 16       
-      }));
+      auto es = std::make_shared<Shabby::Node::Sprite>(
+        spawn,
+        assets_registry->GetTexture(static_cast<int>(AssetId::BEAF))
+      );
 
-    render_system->Register(es.get());
-    render_system->Register(ennemy_hitbox.get());
+      auto ennemy_hitbox =
+        std::make_shared<Shabby::Node::RectangleHitbox>((Rectangle{
+          spawn.x, spawn.y, 16, 16
+        }));
 
-    collision_system->Register(ennemy_hitbox.get());
+      render_system->Register(es.get());
+      render_system->Register(ennemy_hitbox.get());
+      collision_system->Register(ennemy_hitbox.get());
 
-    e->AddChild(es);
-    e->AddChild(ennemy_hitbox);
+      e->AddChild(es);
+      e->AddChild(ennemy_hitbox);
 
-    ms->AddChildDeffered(e);
+      ms->AddChildDeffered(e);
+    }
   });
 
   // --- Build scene tree ---
   p->AddChild(animation_player);
   p->AddChild(player_hitbox);
+  p->AddChild(camera);
 
   ms->AddChild(timer);
   ms->AddChild(p);
