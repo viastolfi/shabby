@@ -1,94 +1,103 @@
-#ifndef GAME_SERVER_H
-#define GAME_SERVER_H
+#ifndef SERVER_SCENE_H
+#define SERVER_SCENE_H
 
+#include "node/inode.h"
 #include "node/networking/network_node.h"
 #include "node/hitbox/rectangle_hitbox.h"
 #include "core/physics/collision_system.h"
 #include "utils/raylog.h"
 
-#include "player.h"
-#include "enemy.h"
+#include "server_player.h"
+#include "server_enemy.h"
+#include "state_protocol.h"
 
 #include <unordered_map>
 #include <unordered_set>
-#include <string>
-#include <sstream>
+#include <memory>
 #include <cstdlib>
 #include <cstdio>
-#include <memory>
+#include <string>
 
-class GameServer : public Shabby::Node::NetworkNode {
+class ServerScene : public Shabby::Node::INode {
 public:
-  static constexpr float ENTITY_SIZE = 16.0f;
-  static constexpr int MAX_ENEMIES = 10;
+  static constexpr float ENTITY_SIZE    = 16.0f;
+  static constexpr int   MAX_ENEMIES    = 10;
   static constexpr float SPAWN_INTERVAL = 3.0f;
   static constexpr float BROADCAST_RATE = 1.0f / 60.0f;
 
-  GameServer(Shabby::Core::CollisionSystem* cs)
-    :_collision(cs)
-  {}
+  // net must be added as a child by the caller (main.cpp) after construction,
+  // so that shared_from_this() is valid at that point.
+  ServerScene(
+      std::shared_ptr<Shabby::Node::NetworkNode> net,
+      Shabby::Core::CollisionSystem* cs)
+    : _net(net), _collision(cs)
+  {
+    _net->client_connected.connect([this](int id) {
+      _on_client_connected(id);
+    });
 
-  ~GameServer() = default;
+    _net->client_disconnected.connect([this](int id) {
+      _players_to_remove.insert(id);
+    });
+
+    _net->server_message.connect([this](int cid, const std::string& topic, const std::string& msg) {
+      _on_message(cid, topic, msg);
+    });
+  }
 
   void Update(float dt) override
   {
     ProcessRemovals();
-    NetworkNode::Update(dt);
+    INode::Update(dt);
     SpawnTick(dt);
     BroadcastTick(dt);
   }
 
-protected:
-  void _on_client_connected(int client_id) override
-  {
-    Raylog::GetInstance().Log(1, "Client %d connected", client_id);
-    SpawnPlayer(client_id);
-    GetServer().SendToClient(client_id, "welcome", std::to_string(client_id));
-  }
-
-  void _on_client_disconnected(int client_id) override
-  {
-    Raylog::GetInstance().Log(1, "Client %d disconnected", client_id);
-    RemovePlayer(client_id);
-  }
-
-  void _on_receive_message(int client_id, const std::string& topic, const std::string& message) override
-  {
-    if (topic == "input") {
-      float dx = 0, dy = 0;
-      std::sscanf(message.c_str(), "%f,%f", &dx, &dy);
-      auto it = _players.find(client_id);
-      if (it != _players.end())
-        it->second.body->SetInput(dx, dy);
-    }
-  }
-
 private:
   struct PlayerEntry {
-    std::shared_ptr<Player> body;
+    std::shared_ptr<ServerPlayer>                  body;
     std::shared_ptr<Shabby::Node::RectangleHitbox> hitbox;
   };
 
   struct EnemyEntry {
-    std::shared_ptr<Enemy> body;
+    std::shared_ptr<ServerEnemy>                   body;
     std::shared_ptr<Shabby::Node::RectangleHitbox> hitbox;
   };
 
-  Shabby::Core::CollisionSystem* _collision;
-  std::unordered_map<int, PlayerEntry> _players;
-  std::unordered_map<int, EnemyEntry> _enemies;
+  std::shared_ptr<Shabby::Node::NetworkNode>        _net;
+  Shabby::Core::CollisionSystem*                    _collision;
+  std::unordered_map<int, PlayerEntry>              _players;
+  std::unordered_map<int, EnemyEntry>               _enemies;
   std::unordered_map<Shabby::Core::ICollider*, int> _hitbox_to_enemy;
-  std::unordered_set<int> _enemies_to_remove;
-  int _next_enemy_id = 1;
-  float _spawn_timer = 0;
-  float _bc_timer = 0;
+  std::unordered_set<int>                           _players_to_remove;
+  std::unordered_set<int>                           _enemies_to_remove;
+  int   _next_enemy_id = 1;
+  float _spawn_timer   = 0;
+  float _bc_timer      = 0;
+
+  void _on_client_connected(int client_id)
+  {
+    Raylog::GetInstance().Log(1, "Client %d connected", client_id);
+    SpawnPlayer(client_id);
+    _net->SendToClient(client_id, "welcome", std::to_string(client_id));
+  }
+
+  void _on_message(int client_id, const std::string& topic, const std::string& msg)
+  {
+    if (topic != "input") return;
+    float dx = 0, dy = 0;
+    std::sscanf(msg.c_str(), "%f,%f", &dx, &dy);
+    auto it = _players.find(client_id);
+    if (it != _players.end())
+      it->second.body->SetInput(dx, dy);
+  }
 
   void SpawnPlayer(int client_id)
   {
     float x = 100.0f + static_cast<float>(std::rand() % 600);
     float y = 100.0f + static_cast<float>(std::rand() % 400);
 
-    auto body = std::make_shared<Player>(Vector2{x, y}, true);
+    auto body   = std::make_shared<ServerPlayer>(Vector2{x, y});
     auto hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
         Rectangle{x, y, ENTITY_SIZE, ENTITY_SIZE});
 
@@ -101,12 +110,12 @@ private:
 
     _collision->Register(hitbox.get());
     body->AddChild(hitbox);
-    AddChild(body);
+    AddChildDeffered(body);
 
     _players[client_id] = {body, hitbox};
   }
 
-  void RemovePlayer(int id)
+  void DoRemovePlayer(int id)
   {
     auto it = _players.find(id);
     if (it == _players.end()) return;
@@ -121,20 +130,20 @@ private:
     float cx = 100.0f + static_cast<float>(std::rand() % 600);
     float cy = 100.0f + static_cast<float>(std::rand() % 400);
 
-    auto body = std::make_shared<Enemy>(Vector2{cx, cy}, true);
+    auto body   = std::make_shared<ServerEnemy>(Vector2{cx, cy});
     auto hitbox = std::make_shared<Shabby::Node::RectangleHitbox>(
         Rectangle{cx, cy, ENTITY_SIZE, ENTITY_SIZE});
 
     _collision->Register(hitbox.get());
     body->AddChild(hitbox);
-    AddChildDeffered(body);
+    AddChild(body);
 
     _enemies[id] = {body, hitbox};
     _hitbox_to_enemy[hitbox.get()] = id;
     Raylog::GetInstance().Log(1, "Enemy %d spawned at (%.0f, %.0f)", id, cx, cy);
   }
 
-  void RemoveEnemy(int id)
+  void DoRemoveEnemy(int id)
   {
     auto it = _enemies.find(id);
     if (it == _enemies.end()) return;
@@ -146,8 +155,12 @@ private:
 
   void ProcessRemovals()
   {
+    for (int id : _players_to_remove)
+      DoRemovePlayer(id);
+    _players_to_remove.clear();
+
     for (int id : _enemies_to_remove)
-      RemoveEnemy(id);
+      DoRemoveEnemy(id);
     _enemies_to_remove.clear();
   }
 
@@ -168,29 +181,23 @@ private:
     if (_bc_timer < BROADCAST_RATE) return;
     _bc_timer = 0;
 
-    std::ostringstream oss;
-    bool first = true;
+    std::vector<NetProtocol::PlayerState> player_states;
+    player_states.reserve(_players.size());
     for (auto& [id, pe] : _players) {
-      if (!first) oss << ';';
       Vector2 pos = pe.body->GetPos();
-      char buf[128];
-      std::snprintf(buf, sizeof(buf), "P%d,%.1f,%.1f,%.0f,%.0f",
-          id, pos.x, pos.y, pe.body->GetInputDx(), pe.body->GetInputDy());
-      oss << buf;
-      first = false;
+      player_states.push_back({id, pos.x, pos.y,
+          pe.body->GetInputDx(), pe.body->GetInputDy()});
     }
-    oss << '#';
-    first = true;
+
+    std::vector<NetProtocol::EnemyState> enemy_states;
+    enemy_states.reserve(_enemies.size());
     for (auto& [id, ee] : _enemies) {
-      if (!first) oss << ';';
       Vector2 pos = ee.body->GetPos();
-      char buf[128];
-      std::snprintf(buf, sizeof(buf), "E%d,%.1f,%.1f", id, pos.x, pos.y);
-      oss << buf;
-      first = false;
+      enemy_states.push_back({id, pos.x, pos.y});
     }
-    Broadcast("state", oss.str());
+
+    _net->Broadcast("state", NetProtocol::EncodeState(player_states, enemy_states));
   }
 };
 
-#endif // GAME_SERVER_H
+#endif // SERVER_SCENE_H
