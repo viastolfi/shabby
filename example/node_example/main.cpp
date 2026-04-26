@@ -7,6 +7,7 @@
 #include "node/hitbox/rectangle_hitbox.h"
 #include "node/camera/camera.h"
 #include "node/timer.h"
+#include "node/tilemap/tile_map_node.h"
 #include "utils/raylog.h"
 
 #include "main_scene.h"
@@ -18,7 +19,8 @@
 enum class AssetId {
   BEAF = 0,
   MONKEY_IDLE,
-  MONKEY_WALK
+  MONKEY_WALK,
+  FIELD_TILESET
 };
 
 // Positions spread across the world, outside the initial 800x600 view
@@ -43,9 +45,10 @@ int main(void)
 
   auto assets_registry = std::make_unique<Shabby::Core::AssetRegistry>();
   assets_registry->LoadAll(
-    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::BEAF),        "assets/Beaf.png" },
-    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::MONKEY_IDLE), "assets/actors/monkey/Idle.png" },
-    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::MONKEY_WALK), "assets/actors/monkey/Walk.png" }
+    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::BEAF),          "assets/Beaf.png" },
+    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::MONKEY_IDLE),   "assets/actors/monkey/Idle.png" },
+    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::MONKEY_WALK),   "assets/actors/monkey/Walk.png" },
+    Shabby::Core::AssetDesc{ static_cast<int>(AssetId::FIELD_TILESET), "assets/tilesets/TilesetField.png" }
   );
 
   // --- Scene & player ---
@@ -113,9 +116,91 @@ int main(void)
   animation_player->Register("walk_right", walk_right);
   animation_player->Play("idle");
 
+  // --- Background fill (hides transparent tile borders) ---
   auto bg = std::make_shared<Background>();
-  bg->SetRenderLayer(-10);
+  bg->SetRenderLayer(-11);
   render_system->Register(bg.get());
+
+  // --- Tilemap ---
+  // Tileset TilesetField.png: 16x16 px per tile, 5 cols x 15 rows (75 tiles)
+  // Each terrain type spans 3 rows. Col 1 of the middle row = 100% opaque fill tile:
+  //   tile  6 : sandy fill       tile 21 : light green fill
+  //   tile 36 : dark green fill  tile 51 : peach fill
+  static const int MAP_COLS = 130;
+  static const int MAP_ROWS = 90;
+  static const int TILE_W   = 16;
+  static const int TILE_H   = 16;
+
+  static const int SANDY_FILL       =  6;
+  static const int LIGHT_GRASS_FILL = 21;
+  static const int DARK_GRASS_FILL  = 36;
+  static const int FLOWER_FILL      = 51;
+
+  std::vector<int> tile_data(MAP_COLS * MAP_ROWS, DARK_GRASS_FILL);
+
+  auto fill_rect = [&](int col, int row, int w, int h, int id) {
+    for (int r = row; r < row + h && r < MAP_ROWS; ++r)
+      for (int c = col; c < col + w && c < MAP_COLS; ++c)
+        tile_data[r * MAP_COLS + c] = id;
+  };
+
+  auto fill_rect_if = [&](int col, int row, int w, int h, int id, int only_if) {
+    for (int r = row; r < row + h && r < MAP_ROWS; ++r)
+      for (int c = col; c < col + w && c < MAP_COLS; ++c)
+        if (tile_data[r * MAP_COLS + c] == only_if)
+          tile_data[r * MAP_COLS + c] = id;
+  };
+
+  // Horizontal sandy paths (3 tiles wide, slight wave)
+  for (int c = 0; c < MAP_COLS; ++c) {
+    int wave = (c / 8) % 2;
+    fill_rect(c, 20 + wave, 1, 3, SANDY_FILL);
+    fill_rect(c, 58 + wave, 1, 3, SANDY_FILL);
+  }
+  // Vertical sandy path
+  for (int r = 0; r < MAP_ROWS; ++r) {
+    int wave = (r / 7) % 2;
+    fill_rect(60 + wave, r, 3, 1, SANDY_FILL);
+  }
+
+  // Light grass patches (broader open areas)
+  fill_rect(10, 25, 18, 12, LIGHT_GRASS_FILL);
+  fill_rect(75, 10, 20, 15, LIGHT_GRASS_FILL);
+  fill_rect(40, 65, 15, 14, LIGHT_GRASS_FILL);
+  fill_rect(90, 55, 22, 18, LIGHT_GRASS_FILL);
+  fill_rect( 5, 68, 14, 10, LIGHT_GRASS_FILL);
+
+  // Dense vegetation in corners and clusters
+  fill_rect(  0,  0, 8, 7,   DARK_GRASS_FILL);
+  fill_rect(122,  0, 8, 8,   DARK_GRASS_FILL);
+  fill_rect(  0, 82, 9, 8,   DARK_GRASS_FILL);
+  fill_rect(121, 82, 9, 8,   DARK_GRASS_FILL);
+  fill_rect( 32,  8, 6, 6,   DARK_GRASS_FILL);
+  fill_rect( 95, 38, 7, 5,   DARK_GRASS_FILL);
+  fill_rect( 15, 50, 5, 7,   DARK_GRASS_FILL);
+  fill_rect( 72, 72, 8, 6,   DARK_GRASS_FILL);
+
+  // Flower patches (only on light grass or dark grass, not paths)
+  fill_rect_if( 14, 27, 4, 3, FLOWER_FILL, LIGHT_GRASS_FILL);
+  fill_rect_if( 80, 12, 5, 4, FLOWER_FILL, LIGHT_GRASS_FILL);
+  fill_rect_if( 44, 68, 4, 3, FLOWER_FILL, LIGHT_GRASS_FILL);
+  fill_rect_if( 96, 60, 5, 3, FLOWER_FILL, LIGHT_GRASS_FILL);
+  fill_rect_if(  8, 70, 3, 3, FLOWER_FILL, LIGHT_GRASS_FILL);
+  fill_rect_if( 20,  5, 3, 3, FLOWER_FILL, DARK_GRASS_FILL);
+  fill_rect_if( 50, 40, 4, 3, FLOWER_FILL, DARK_GRASS_FILL);
+  fill_rect_if(108, 28, 3, 4, FLOWER_FILL, DARK_GRASS_FILL);
+
+  Shabby::Core::Tileset tileset{
+    assets_registry->GetTexture(static_cast<int>(AssetId::FIELD_TILESET)),
+    TILE_W, TILE_H
+  };
+
+  auto tilemap = std::make_shared<Shabby::Node::TileMapNode>(
+    Vector2{ -500.f, -432.f }, tileset, MAP_COLS, MAP_ROWS
+  );
+  tilemap->LoadData(tile_data);
+  tilemap->SetRenderLayer(-10);
+  render_system->Register(tilemap.get());
 
   auto static_behind = std::make_shared<StaticEntity>(
     Vector2{ 80.f, 80.f }, Vector2{ 60.f, 60.f }, ORANGE
@@ -188,6 +273,7 @@ int main(void)
   p->AddChild(camera);
 
   ms->AddChild(timer);
+  ms->AddChild(tilemap);
   ms->AddChild(p);
   ms->AddChild(static_behind);
   ms->AddChild(static_obstacle);
