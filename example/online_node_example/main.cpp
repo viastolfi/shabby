@@ -13,10 +13,12 @@
 #include "client_scene.h"
 
 enum class AssetId {
-  BEAF = 0,
-  MONKEY_IDLE,
-  MONKEY_WALK,
-  FIELD_TILESET
+  NINJA_IDLE = 0,
+  NINJA_WALK,
+  ENERGY_BALL,
+  ONIGIRI,
+  FIELD_TILESET,
+  NATURE_TILESET
 };
 
 int main(int argc, char** argv)
@@ -52,22 +54,25 @@ int main(int argc, char** argv)
 
     auto assets = std::make_unique<Shabby::Core::AssetRegistry>();
     assets->LoadAll(
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::BEAF),          "assets/Beaf.png"},
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::MONKEY_IDLE),   "assets/actors/monkey/Idle.png"},
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::MONKEY_WALK),   "assets/actors/monkey/Walk.png"},
-      Shabby::Core::AssetDesc{static_cast<int>(AssetId::FIELD_TILESET), "assets/tilesets/TilesetField.png"}
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::NINJA_IDLE),    "assets/actors/ninja_blue/Idle.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::NINJA_WALK),    "assets/actors/ninja_blue/Walk.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::ENERGY_BALL),   "assets/fx/EnergyBall.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::ONIGIRI),       "assets/items/Onigiri.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::FIELD_TILESET), "assets/tilesets/TilesetField.png"},
+      Shabby::Core::AssetDesc{static_cast<int>(AssetId::NATURE_TILESET),"assets/tilesets/TilesetNature.png"}
     );
 
     auto net   = std::make_shared<Shabby::Node::NetworkNode>();
     auto scene = std::make_shared<ClientScene>(
         net,
         render,
-        assets->GetTexture(static_cast<int>(AssetId::BEAF)),
-        assets->GetTexture(static_cast<int>(AssetId::MONKEY_IDLE)),
-        assets->GetTexture(static_cast<int>(AssetId::MONKEY_WALK)));
+        assets->GetTexture(static_cast<int>(AssetId::NINJA_IDLE)),
+        assets->GetTexture(static_cast<int>(AssetId::NINJA_WALK)),
+        assets->GetTexture(static_cast<int>(AssetId::ENERGY_BALL)),
+        assets->GetTexture(static_cast<int>(AssetId::ONIGIRI)));
     scene->AddChild(net);
 
-    // --- Background fill (hides transparent tile borders) ---
+    // --- Background fill ---
     class BackgroundFill : public Shabby::Core::IDrawable {
     public:
       void Draw() override { DrawRectangle(-5000, -5000, 10000, 10000, Color{55, 95, 20, 255}); }
@@ -76,7 +81,7 @@ int main(int argc, char** argv)
     bg->SetRenderLayer(-11);
     render->Register(bg.get());
 
-    // --- Tilemap (same layout as solo example) ---
+    // --- Field tilemap ---
     static const int MAP_COLS = 130;
     static const int MAP_ROWS = 90;
     static const int TILE_W   = 16;
@@ -147,6 +152,51 @@ int main(int argc, char** argv)
     render->Register(tilemap.get());
     scene->AddChild(tilemap);
 
+    // --- Nature tilemap (scattered individual trees) ---
+    Shabby::Core::Tileset nature_tileset{
+      assets->GetTexture(static_cast<int>(AssetId::NATURE_TILESET)),
+      16, 16
+    };
+    auto nature_map = std::make_shared<Shabby::Node::TileMapNode>(
+      Vector2{ -500.f, -432.f }, nature_tileset, MAP_COLS, MAP_ROWS
+    );
+
+    std::vector<int> nature_data(MAP_COLS * MAP_ROWS, -1);
+
+    auto nt = [&](int col, int row, int id) {
+      if (col >= 0 && col < MAP_COLS && row >= 0 && row < MAP_ROWS)
+        nature_data[row * MAP_COLS + col] = id;
+    };
+    auto big_tree = [&](int c, int r,
+      int t0, int t1, int t2, int t3,
+      int m0, int m1, int m2, int m3,
+      int f1, int f2)
+    {
+      nt(c,   r,   t0); nt(c+1, r,   t1); nt(c+2, r,   t2); nt(c+3, r,   t3);
+      nt(c,   r+1, m0); nt(c+1, r+1, m1); nt(c+2, r+1, m2); nt(c+3, r+1, m3);
+      nt(c+1, r+2, f1); nt(c+2, r+2, f2);
+    };
+    auto sm_tree = [&](int c, int r, int tl, int tr, int bl, int br) {
+      nt(c, r, tl); nt(c+1, r, tr);
+      nt(c, r+1, bl); nt(c+1, r+1, br);
+    };
+
+    big_tree(  3,  4, 72,73,74,75, 96,97,98,99, 121,122);
+    sm_tree ( 22,  9, 0,1,24,25);
+    sm_tree ( 50, 13, 10,11,34,35);
+    big_tree( 82, 15, 76,77,78,79, 100,101,102,103, 125,126);
+    sm_tree ( 15, 45, 2,3,26,27);
+    sm_tree ( 75, 38, 8,9,32,33);
+    big_tree( 35, 70, 88,89,90,91, 112,113,114,115, 137,138);
+    sm_tree (100, 61, 0,1,24,25);
+    sm_tree (112, 30, 10,11,34,35);
+    sm_tree (  8, 76, 8,9,32,33);
+
+    nature_map->LoadData(nature_data);
+    nature_map->SetRenderLayer(1);
+    render->Register(nature_map.get());
+    scene->AddChild(nature_map);
+
     net->ConnectToServer(ip, 7777);
     Raylog::GetInstance().Log(1, "Connecting to %s:7777", ip.c_str());
 
@@ -157,3 +207,4 @@ int main(int argc, char** argv)
 
   return 0;
 }
+
