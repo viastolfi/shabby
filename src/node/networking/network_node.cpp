@@ -6,6 +6,7 @@ void NetworkNode::CreateServer(int port)
 {
   _mode = NetworkMode::SERVER;
   _server = std::make_unique<Server>();
+  _server->EnableTLS();
 
   _server->OnClientConnected = [this](int id) {
     client_connected.emit(id);
@@ -26,6 +27,7 @@ void NetworkNode::ConnectToServer(const std::string& ip, int port)
 {
   _mode = NetworkMode::CLIENT;
   _client = std::make_unique<Client>();
+  _client->EnableTLS();
 
   _client->OnConnected = [this]() {
     connected.emit();

@@ -7,6 +7,11 @@ Server::~Server()
   Stop();
 }
 
+void Server::EnableTLS()
+{
+  _tls_ctx = TlsContext::MakeServer();
+}
+
 void Server::Start(int port)
 {
   if (_running.load())
@@ -57,11 +62,15 @@ void Server::Stop()
 
   {
     std::lock_guard<std::mutex> lock(_clients_mutex);
-    for (auto& [id, fd] : _client_fds) {
-      shutdown(fd, SHUT_RDWR);
-      close(fd);
+    for (auto& [id, conn] : _clients) {
+      if (conn.ssl) {
+        SSL_shutdown(conn.ssl);
+        SSL_free(conn.ssl);
+      }
+      shutdown(conn.fd, SHUT_RDWR);
+      close(conn.fd);
     }
-    _client_fds.clear();
+    _clients.clear();
   }
 
   if (_accept_thread.joinable())
@@ -77,16 +86,24 @@ void Server::Stop()
 void Server::Broadcast(const std::string& topic, const std::string& msg)
 {
   std::lock_guard<std::mutex> lock(_clients_mutex);
-  for (auto& [id, fd] : _client_fds)
-    NetProtocol::SendMessage(fd, topic, msg);
+  for (auto& [id, conn] : _clients) {
+    if (conn.ssl)
+      NetProtocol::SendMessage(conn.ssl, topic, msg);
+    else
+      NetProtocol::SendMessage(conn.fd, topic, msg);
+  }
 }
 
 void Server::SendToClient(int client_id, const std::string& topic, const std::string& msg)
 {
   std::lock_guard<std::mutex> lock(_clients_mutex);
-  auto it = _client_fds.find(client_id);
-  if (it != _client_fds.end())
-    NetProtocol::SendMessage(it->second, topic, msg);
+  auto it = _clients.find(client_id);
+  if (it == _clients.end()) return;
+  auto& conn = it->second;
+  if (conn.ssl)
+    NetProtocol::SendMessage(conn.ssl, topic, msg);
+  else
+    NetProtocol::SendMessage(conn.fd, topic, msg);
 }
 
 void Server::Poll()
@@ -128,11 +145,22 @@ void Server::AcceptLoop()
     int nodelay = 1;
     setsockopt(client_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
 
+    ClientConn conn{ client_fd, nullptr };
+
+    if (_tls_ctx) {
+      conn.ssl = _tls_ctx->CreateSSL(client_fd);
+      if (SSL_accept(conn.ssl) <= 0) {
+        SSL_free(conn.ssl);
+        close(client_fd);
+        continue;
+      }
+    }
+
     int client_id;
     {
       std::lock_guard<std::mutex> lock(_clients_mutex);
       client_id = _next_client_id++;
-      _client_fds[client_id] = client_fd;
+      _clients[client_id] = conn;
     }
 
     {
@@ -140,16 +168,27 @@ void Server::AcceptLoop()
       _incoming.push({client_id, "__connected", ""});
     }
 
-    _client_threads.emplace_back(&Server::ClientRecvLoop, this, client_id, client_fd);
+    _client_threads.emplace_back(&Server::ClientRecvLoop, this, client_id);
   }
 }
 
-void Server::ClientRecvLoop(int client_id, int fd)
+void Server::ClientRecvLoop(int client_id)
 {
+  // Snapshot conn once — fd and ssl don't change for the lifetime of this loop.
+  ClientConn conn;
+  {
+    std::lock_guard<std::mutex> lock(_clients_mutex);
+    auto it = _clients.find(client_id);
+    if (it == _clients.end()) return;
+    conn = it->second;
+  }
+
   while (_running.load()) {
     std::string topic, message;
-    if (!NetProtocol::RecvMessage(fd, topic, message))
-      break;
+    bool ok = conn.ssl
+      ? NetProtocol::RecvMessage(conn.ssl, topic, message)
+      : NetProtocol::RecvMessage(conn.fd,  topic, message);
+    if (!ok) break;
 
     std::lock_guard<std::mutex> lock(_queue_mutex);
     _incoming.push({client_id, topic, message});
@@ -158,10 +197,14 @@ void Server::ClientRecvLoop(int client_id, int fd)
   bool was_connected = false;
   {
     std::lock_guard<std::mutex> lock(_clients_mutex);
-    auto it = _client_fds.find(client_id);
-    if (it != _client_fds.end()) {
-      close(it->second);
-      _client_fds.erase(it);
+    auto it = _clients.find(client_id);
+    if (it != _clients.end()) {
+      if (it->second.ssl) {
+        SSL_shutdown(it->second.ssl);
+        SSL_free(it->second.ssl);
+      }
+      close(it->second.fd);
+      _clients.erase(it);
       was_connected = true;
     }
   }
