@@ -5,6 +5,7 @@
 #include <functional>
 #include <queue>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <atomic>
 #include <sys/socket.h>
@@ -12,8 +13,10 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <openssl/ssl.h>
 
 #include "node/networking/net_protocol.h"
+#include "node/networking/tls_context.h"
 
 namespace Shabby::Node {
 
@@ -25,6 +28,7 @@ public:
   void Connect(const std::string& ip, int port);
   void Disconnect();
   void Send(const std::string& topic, const std::string& msg);
+  void EnableTLS(); 
 
   void Poll();
 
@@ -44,6 +48,10 @@ private:
 
   std::atomic<bool> _connected{false};
   int _fd = -1;
+
+  std::optional<TlsContext> _tls_ctx;
+  SSL* _ssl = nullptr;
+
   std::mutex _send_mutex;
 
   std::mutex _queue_mutex;

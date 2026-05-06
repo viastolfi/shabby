@@ -31,6 +31,7 @@ SHABBY_LIB_SRC = \
 	$(SRC_DIR)/node/networking/client.cpp \
 	$(SRC_DIR)/node/networking/network_node.cpp \
 	$(SRC_DIR)/node/networking/networked_node.cpp \
+	$(SRC_DIR)/node/networking/tls_context.cpp \
 	$(SRC_DIR)/core/game_loop/standalone_loop_controller.cpp \
 	$(SRC_DIR)/core/game_loop/server_loop_controller.cpp \
 	$(SRC_DIR)/node/camera/camera.cpp \
@@ -60,6 +61,7 @@ SHABBY_LIB_OBJ = \
 	$(BUILD_DIR)/node/networking/client.o \
 	$(BUILD_DIR)/node/networking/network_node.o \
 	$(BUILD_DIR)/node/networking/networked_node.o \
+	$(BUILD_DIR)/node/networking/tls_context.o \
 	$(BUILD_DIR)/core/game_loop/standalone_loop_controller.o \
 	$(BUILD_DIR)/core/game_loop/server_loop_controller.o \
 	$(BUILD_DIR)/node/camera/camera.o \
@@ -85,7 +87,8 @@ ifeq ($(UNAME_S),Darwin)
                -framework Cocoa \
                -framework GLUT \
                -framework OpenGL \
-               -framework AudioToolbox
+               -framework AudioToolbox \
+               -lssl -lcrypto
 
 else ifeq ($(UNAME_S),Linux)
     ifeq ($(UNAME_M),x86_64)
@@ -93,7 +96,7 @@ else ifeq ($(UNAME_S),Linux)
         RAYLIB_ARCHIVE := raylib-5.5_linux_amd64.tar.gz
         RAYLIB_DIR := raylib-5.5_linux_amd64
 
-        LDFLAGS := -L$(RAYLIB_DIR)/lib -l:libraylib.a -lm
+        LDFLAGS := -L$(RAYLIB_DIR)/lib -l:libraylib.a -lm -lssl -lcrypto
     else
         $(error Unsupported architecture: $(UNAME_M))
     endif

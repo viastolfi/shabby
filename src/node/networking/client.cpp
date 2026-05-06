@@ -7,6 +7,11 @@ Client::~Client()
   Disconnect();
 }
 
+void Client::EnableTLS()
+{
+  _tls_ctx = TlsContext::MakeClient();
+}
+
 void Client::Connect(const std::string& ip, int port)
 {
   if (_connected.load())
@@ -30,6 +35,17 @@ void Client::Connect(const std::string& ip, int port)
   int nodelay = 1;
   setsockopt(_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
 
+  if (_tls_ctx) {
+    _ssl = _tls_ctx->CreateSSL(_fd);
+    if (SSL_connect(_ssl) <= 0) {
+      SSL_free(_ssl);
+      _ssl = nullptr;
+      close(_fd);
+      _fd = -1;
+      return;
+    }
+  }
+
   _connected.store(true);
 
   {
@@ -47,6 +63,12 @@ void Client::Disconnect()
 
   _connected.store(false);
 
+  if (_ssl) {
+    SSL_shutdown(_ssl);
+    SSL_free(_ssl);
+    _ssl = nullptr;
+  }
+
   if (_fd >= 0) {
     shutdown(_fd, SHUT_RDWR);
     close(_fd);
@@ -63,7 +85,10 @@ void Client::Send(const std::string& topic, const std::string& msg)
     return;
 
   std::lock_guard<std::mutex> lock(_send_mutex);
-  NetProtocol::SendMessage(_fd, topic, msg);
+  if (_ssl)
+    NetProtocol::SendMessage(_ssl, topic, msg);
+  else
+    NetProtocol::SendMessage(_fd, topic, msg);
 }
 
 void Client::Poll()
@@ -96,8 +121,10 @@ void Client::RecvLoop()
 {
   while (_connected.load()) {
     std::string topic, message;
-    if (!NetProtocol::RecvMessage(_fd, topic, message))
-      break;
+    bool ok = _ssl
+      ? NetProtocol::RecvMessage(_ssl, topic, message)
+      : NetProtocol::RecvMessage(_fd,  topic, message);
+    if (!ok) break;
 
     std::lock_guard<std::mutex> lock(_queue_mutex);
     _incoming.push({topic, message});

@@ -5,6 +5,7 @@
 #include <functional>
 #include <queue>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <atomic>
 #include <unordered_map>
@@ -13,8 +14,10 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <unistd.h>
+#include <openssl/ssl.h>
 
 #include "node/networking/net_protocol.h"
+#include "node/networking/tls_context.h"
 
 namespace Shabby::Node {
 
@@ -31,6 +34,7 @@ public:
 
   void Start(int port);
   void Stop();
+  void EnableTLS(); 
 
   void Broadcast(const std::string& topic, const std::string& msg);
   void SendToClient(int client_id, const std::string& topic, const std::string& msg);
@@ -45,15 +49,22 @@ public:
 
 private:
   void AcceptLoop();
-  void ClientRecvLoop(int client_id, int fd);
+  void ClientRecvLoop(int client_id);
 
   std::atomic<bool> _running{false};
   int _port = 0;
   int _server_fd = -1;
   int _next_client_id = 1;
 
+  std::optional<TlsContext> _tls_ctx;
+
+  struct ClientConn {
+    int  fd  = -1;
+    SSL* ssl = nullptr;
+  };
+
   std::mutex _clients_mutex;
-  std::unordered_map<int, int> _client_fds;
+  std::unordered_map<int, ClientConn> _clients;
 
   std::mutex _queue_mutex;
   std::queue<NetworkMessage> _incoming;
